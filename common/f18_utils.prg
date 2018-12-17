@@ -87,23 +87,29 @@ FUNCTION set_f18_params()
 
       CASE cTok == "-h"
          cHostName := hb_PValue( nI++ )
+         set_f18_param("host", cHostName)
          hParams[ "host" ] := cHostName
 
       CASE cTok == "-y"
          nPort := Val( hb_PValue( nI++ ) )
          //cParams += Space( 1 ) + "port=" + AllTrim( Str( nPort ) )
+         set_f18_param("port", nPort)
          hParams[ "port" ] := nPort
 
       CASE cTok == "-d"
          cDataBase := hb_PValue( nI++ )
+         set_f18_param("database", cDatabase)
          hParams[ "database" ] := cDatabase
+      
 
       CASE cTok == "-u"
          cUser := hb_PValue( nI++ )
+         set_f18_param("user", cUser)
          hParams[ "user" ] := cUser
 
       CASE cTok == "-p"
          cPassWord := hb_PValue( nI++ )
+         set_f18_param("password", cPassword)
          hParams[ "password" ]  := cPassword
 
       //CASE cTok == "-t"
@@ -116,17 +122,24 @@ FUNCTION set_f18_params()
 
 
       case cTok == "--show-postgresql-version"
-          altd()
           show_postgresql_version( hParams )
           __Quit()
+
+      case cTok == "--pos"
+          set_f18_param("run", "pos")
+   
+      case cTok == "--kalk"
+          set_f18_param("run", "kalk")
+
+      case cTok == "--fin"
+          set_f18_param("run", "fin")
 
       ENDCASE
 
 
-
    ENDDO
 
-   RETURN .T.
+   RETURN hParams
 
 
 
@@ -330,3 +343,33 @@ dbUseArea( .T., , "SELECT version() AS ver", "INFO" )
 OutStd( field->ver )
 
 RETURN
+
+
+
+PROCEDURE run_module()
+
+   LOCAL cModul := get_f18_param("run")
+   LOCAL oLogin
+
+   harbour_init()
+
+   init_parameters_cache()
+   set_f18_current_directory()
+   set_f18_home_root()
+   set_global_vars_0()
+   f18_error_block()
+
+   set_screen_dimensions()
+
+   oLogin := my_login()
+   oLogin:connect_user_database()
+
+   IF cModul == "pos"
+       RETURN MainPos( my_user(), "dummy", get_f18_param("p3"),  get_f18_param("p4"),  get_f18_param("p5"),  get_f18_param("p6"),  get_f18_param("p7") )
+   ELSEIF cModul == "fin"
+       RETURN MainFin( my_user(), "dummy", get_f18_param("p3"),  get_f18_param("p4"),  get_f18_param("p5"),  get_f18_param("p6"),  get_f18_param("p7") )
+   ELSEIF cModul == "kalk"
+       RETURN MainKalk( my_user(), "dummy", get_f18_param("p3"),  get_f18_param("p4"),  get_f18_param("p5"),  get_f18_param("p6"),  get_f18_param("p7") )
+   ENDIF
+
+   RETURN NIL

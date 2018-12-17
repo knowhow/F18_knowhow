@@ -94,28 +94,46 @@ METHOD F18Login:New()
 
 
    hDbParamsIni := hb_Hash()
-   hDbParamsIni[ "host" ] := nil
-   hDbParamsIni[ "database" ] := nil
-   hDbParamsIni[ "user" ] := nil
-   hDbParamsIni[ "schema" ] := nil
-   hDbParamsIni[ "port" ] := nil
-   hDbParamsIni[ "session" ] := nil
 
-   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @hDbParamsIni, .T. )
-      error_bar( "ini", "problem f18 ini read" )
+   IF is_f18_db_params_set()
+
+      hDbParamsIni[ "host" ] := get_f18_param("host")
+      hDbParamsIni[ "port" ] := get_f18_param("port")
+      hDbParamsIni[ "database" ] := get_f18_param("database")
+      hDbParamsIni[ "session" ] := right( get_f18_param("database"), 4)
+      
+      hDbParamsIni[ "user" ] := get_f18_param("user")
+      hDbParamsIni[ "password" ] := get_f18_param("password")
+          
+      hDbParamsIni[ "schema" ] := "fmk"
+   ELSE
+      hDbParamsIni[ "host" ] := nil
+      hDbParamsIni[ "database" ] := nil
+      hDbParamsIni[ "user" ] := nil
+      hDbParamsIni[ "schema" ] := nil
+      hDbParamsIni[ "port" ] := nil
+      hDbParamsIni[ "session" ] := nil
+
+      IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @hDbParamsIni, .T. )
+         error_bar( "ini", "problem f18 ini read" )
+      ENDIF
+
+      IF ValType( hDbParamsIni[ "port" ] ) == "C" // port je numeric
+         hDbParamsIni[ "port" ] := Val( hDbParamsIni[ "port" ] )
+      ENDIF
+      hDbParamsIni[ "password" ] := hDbParamsIni[ "user" ]
+
    ENDIF
 
-   IF ValType( hDbParamsIni[ "port" ] ) == "C" // port je numeric
-      hDbParamsIni[ "port" ] := Val( hDbParamsIni[ "port" ] )
-   ENDIF
-   hDbParamsIni[ "password" ] := hDbParamsIni[ "user" ]
-
+  
    my_server_params( hDbParamsIni )
 
    ::set_data_connection_params( hDbParamsIni )
 
    hDbParamsIni[ "database" ] := "postgres"
    ::set_postgresql_connection_params( hDbParamsIni )
+
+   altd()
 
    RETURN SELF
 

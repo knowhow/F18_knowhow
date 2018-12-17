@@ -14,35 +14,61 @@
 
 STATIC __relogin_opt := .F.
 
+STATIC s_hF18Params := NIL
+
+
+FUNCTION set_f18_param( cKey, xValue )
+    s_hF18Params[ cKey ] := xValue
+    RETURN s_hF18Params[ cKey ]
+
+FUNCTION get_f18_param( cKey )
+   IF !hb_hHasKey( s_hF18Params, cKey)
+     Alert("F18Param ne postoji: " + cKey)
+     QUIT_1
+   ENDIF 
+
+   RETURN s_hF18Params[ cKey ]
+
+
+FUNCTION is_f18_db_params_set()
+
+  RETURN hb_hHasKey( s_hF18Params, "password" ) .AND. hb_hHasKey( s_hF18Params, "user" ) .AND. hb_hHasKey( s_hF18Params, "port" ) .AND. hb_hHasKey( s_hF18Params, "database" ) .AND. ;
+         hb_hHasKey( s_hF18Params, "host" )
+
+STATIC FUNCTION to_run_f18_module()
+
+   RETURN hb_hHasKey( s_hF18Params, "run" )
+
 
 #ifndef TEST
 
 FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-   LOCAL _arg_v := hb_Hash()
 
-   cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-   set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-   harbour_init()
-
-   init_parameters_cache()
-   set_f18_current_directory()
-   set_f18_home_root()
-   set_global_vars_0()
-   f18_error_block()
-
-   set_screen_dimensions()
-
-   naslovni_ekran_splash_screen( "F18", f18_ver() )
-
-
-   IF no_sql_mode()
-      set_f18_home( "f18_test" )
-      RETURN .T.
+   IF s_hF18Params == NIL
+     s_hF18Params := init_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    ENDIF
 
+   set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-   f18_login_loop( NIL, _arg_v )
+altd()
+   IF to_run_f18_module()
+      run_module()
+   ELSE
+      harbour_init()
+      init_parameters_cache()
+      set_f18_current_directory()
+      set_f18_home_root()
+      set_global_vars_0()
+      f18_error_block()
+      set_screen_dimensions()
+      naslovni_ekran_splash_screen( "F18", f18_ver() )
+      IF no_sql_mode()
+         set_f18_home( "f18_test" )
+         RETURN .T.
+      ENDIF
+      f18_login_loop(NIL)
+   ENDIF
 
    RETURN .T.
 
@@ -51,7 +77,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 
 
-FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
+FUNCTION f18_login_loop(lAutoConnect)
 
    LOCAL oLogin
 
@@ -90,7 +116,7 @@ FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
          oLogin:disconnect_user_database()
          IF oLogin:connect_user_database()
-            f18_programski_moduli_meni( hProgramParametri )
+            f18_programski_moduli_meni()
          ELSE
             MsgBeep( "Spajanje na bazu traženog preduzeća/organizacije neuspješno !?" )
          ENDIF
@@ -168,37 +194,36 @@ PROCEDURE f18_http_server()
     vraca hash matricu sa parametrima
 */
 
-STATIC FUNCTION cre_arg_v_hash( hash )
+STATIC FUNCTION init_f18_params(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
 
    LOCAL nI := 2
-   LOCAL _param
-   LOCAL _count := 0
+   LOCAL xParam
+   LOCAL nCount := 0
 
-   hash := hb_Hash()
-   hash[ "p1" ] := NIL
-   hash[ "p2" ] := NIL
-   hash[ "p3" ] := NIL
-   hash[ "p4" ] := NIL
-   hash[ "p5" ] := NIL
-   hash[ "p6" ] := NIL
-   hash[ "p7" ] := NIL
-   hash[ "p8" ] := NIL
-   hash[ "p9" ] := NIL
-   hash[ "p10" ] := NIL
-   hash[ "p11" ] := NIL
+   hParams := hb_Hash()
+   hParams[ "p1" ] := NIL
+   hParams[ "p2" ] := NIL
+   hParams[ "p3" ] := NIL
+   hParams[ "p4" ] := NIL
+   hParams[ "p5" ] := NIL
+   hParams[ "p6" ] := NIL
+   hParams[ "p7" ] := NIL
+   hParams[ "p8" ] := NIL
+   hParams[ "p9" ] := NIL
+   hParams[ "p10" ] := NIL
+   hParams[ "p11" ] := NIL
 
    DO WHILE nI <= PCount()
-
-      _param := hb_PValue( nI++ ) // ucitaj parametar
-      hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param // p1, p2, p3...
+      xParam := hb_PValue( nI++ ) // ucitaj parametar
+      hParams[ "p" + AllTrim( Str( ++nCount ) ) ] := xParam // p1, p2, p3...
    ENDDO
 
-   RETURN .T.
+   RETURN hParams
 
 
 
 
-FUNCTION f18_programski_moduli_meni( hProgramArgumenti )
+FUNCTION f18_programski_moduli_meni()
 
    LOCAL aMeniOpcije := {}
    LOCAL aMeniExec := {}
@@ -219,9 +244,9 @@ FUNCTION f18_programski_moduli_meni( hProgramArgumenti )
 
    // info_bar( "init", "gen f18_programski_moduli_meni start" )
 
-   IF hProgramArgumenti == NIL
-      cre_arg_v_hash( @hProgramArgumenti ) // napravi NIL parametre
-   ENDIF
+   // IF hProgramArgumenti == NIL
+   //   cre_arg_v_hash( @hProgramArgumenti ) // napravi NIL parametre
+   //ENDIF
 
    DO WHILE .T.
 
@@ -254,7 +279,7 @@ FUNCTION f18_programski_moduli_meni( hProgramArgumenti )
       aMeniOpcije := {}
       aMeniExec := {}
 
-      set_program_module_menu( @aMeniOpcije, @aMeniExec, hProgramArgumenti[ "p3" ], hProgramArgumenti[ "p4" ], hProgramArgumenti[ "p5" ], hProgramArgumenti[ "p6" ], hProgramArgumenti[ "p7" ] )
+      set_program_module_menu( @aMeniOpcije, @aMeniExec, get_f18_param("p3"), get_f18_param("p4"), get_f18_param("p5"), get_f18_param("p6"), get_f18_param("p7") )
       // info_bar( "init", "gen f18_programski_moduli_meni end" )
 
       nMeniIzbor := meni_0_inkey( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )

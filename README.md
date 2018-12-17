@@ -40,10 +40,15 @@
 ### Show postgresql version
 
 
-    ./F18.sh -h 127.0.0.1 -p 5432 -u user -p password -d proba_2018 --show-postgresql-version
+    ./F18.sh -h 127.0.0.1 -y 5432 -u user -p password -d proba_2018 --show-postgresql-version
 
 =>
 
 <pre>
 PostgreSQL 10.4 (Ubuntu 10.4-2.pgdg18.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0, 64-bit
 </pre>
+
+
+### Run module
+
+     ./F18.sh -h 127.0.0.1 -y 5432 -u user -p password -d proba_2018 --pos  ## --{pos,fin,kalk}

@@ -812,6 +812,9 @@ FUNCTION run_on_start()
       RETURN .F.
    ENDIF
 
+
+   altd()
+   
    info_bar( "init", "run_on_start" )
 
    IF Left( cRun, 5 ) == "kalk_"
@@ -820,9 +823,13 @@ FUNCTION run_on_start()
       cModul := "FAKT"
    ELSEIF Left( cRun, 4 ) == "fin_"
       cModul := "FIN"
+   ELSEIF Left( cRun, 3 ) == "pos"
+      cModul := "TOPS"
    ELSE
       cModul := "KALK"
    ENDIF
+
+   
 
    SWITCH cModul
    CASE "FIN"
@@ -834,6 +841,9 @@ FUNCTION run_on_start()
    CASE "FAKT"
       oModul := TFaktMod():new( NIL, "FAKT", f18_ver(), f18_ver_date(), my_user(), "dummy" )
       EXIT
+   CASE "TOPS"
+      oModul := TFaktMod():new( NIL, "TOPS", f18_ver(), f18_ver_date(), my_user(), "dummy" )
+      EXIT
 
    ENDSWITCH
 
@@ -841,6 +851,11 @@ FUNCTION run_on_start()
    gModul := oModul:cName
 
    SWITCH ( cRun )
+
+   
+   CASE "pos_run"
+       goModul:run()
+       
    CASE "fakt_pretvori_otpremnice_u_racun"
       _fakt_doks := FaktDokumenti():New()
       _fakt_doks:pretvori_otpremnice_u_racun()

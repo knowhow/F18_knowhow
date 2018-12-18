@@ -57,6 +57,8 @@ FUNCTION f18_help()
 FUNCTION set_f18_params()
 
    LOCAL nI := 1
+   LOCAL cTok, hParams
+   LOCAL cHostName, nPort, cDataBase, cUser, cPassWord
 
    hParams := hb_hash()
 
@@ -64,9 +66,12 @@ FUNCTION set_f18_params()
 
 
       cTok := hb_PValue( nI++ ) // ucitaj parametar
-
+      altd()
 
       DO CASE
+
+      CASE cTok == NIL
+          EXIT
 
       CASE cTok == "--no-sql"
          no_sql_mode( .T. )
@@ -100,7 +105,7 @@ FUNCTION set_f18_params()
          cDataBase := hb_PValue( nI++ )
          set_f18_param("database", cDatabase)
          hParams[ "database" ] := cDatabase
-      
+
 
       CASE cTok == "-u"
          cUser := hb_PValue( nI++ )
@@ -127,7 +132,7 @@ FUNCTION set_f18_params()
 
       case cTok == "--pos"
           set_f18_param("run", "pos")
-   
+
       case cTok == "--kalk"
           set_f18_param("run", "kalk")
 
@@ -135,7 +140,7 @@ FUNCTION set_f18_params()
           set_f18_param("run", "fin")
 
       case LEFT(cTok, 7) == "--json_"
-          set_f18_param("run", SUBSTR(cTok, 3)) // json_konto, json_roba ... 
+          set_f18_param("run", SUBSTR(cTok, 3)) // json_konto, json_roba ...
 
       ENDCASE
 
@@ -375,7 +380,7 @@ PROCEDURE run_module()
           hRec := hb_hash()
           hRec[ "id" ] := hb_StrToUtf8(field->id)
           hRec[ "naz" ] := hb_StrToUtf8(field->naz)
-          AADD( aRet, hRec ) 
+          AADD( aRet, hRec )
           SKIP
        ENDDO
        OutErr( e"\n")
@@ -391,7 +396,7 @@ PROCEDURE run_module()
           hRec := hb_hash()
           hRec[ "id" ] := hb_StrToUtf8(field->id)
           hRec[ "naz" ] := hb_StrToUtf8(field->naz)
-          AADD( aRet, hRec ) 
+          AADD( aRet, hRec )
           SKIP
        ENDDO
        OutErr(e"\n")

@@ -66,7 +66,6 @@ FUNCTION set_f18_params()
 
 
       cTok := hb_PValue( nI++ ) // ucitaj parametar
-      altd()
 
       DO CASE
 

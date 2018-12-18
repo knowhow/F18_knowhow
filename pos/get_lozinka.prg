@@ -29,6 +29,12 @@ FUNCTION pos_get_lozinka( nSiflen )
       IF nChar == K_ESC
          cKorsif := ""
 
+      ELSEIF nChar == K_F12
+         k_f12()
+
+      ELSEIF nChar == K_F1
+         k_f1()
+
       ELSEIF ( nChar == 0 ) .OR. ( nChar > 128 )
          LOOP
 

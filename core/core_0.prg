@@ -45,9 +45,11 @@ FUNCTION harbour_init()
    SET ESCAPE ON
    SET SOFTSEEK ON
 
+   SetKey( K_F12, {|| k_f12() } )
+
    SetColor( f18_color_normal() )
 
-   if !is_electron_host() 
+   if !is_electron_host()
        hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
    endif
 

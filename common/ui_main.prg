@@ -673,10 +673,6 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
       CASE nTipka == K_ESC
          nVrati := nOpc
          EXIT
-      CASE nTipka == K_F1 .AND. cPom != NIL
-         // Help()
-      CASE nTipka == K_F12 .AND. cPom != NIL
-         // Help2()
       ENDCASE
    ENDDO
    Prozor0()

@@ -235,11 +235,11 @@ FUNCTION set_screen_dimensions()
          font_name("Liberation Mono")
          font_weight_bold()
          font_size(40)
-         font_width(24)  
+         font_width(24)
          // linux zavrsi 45x24, 37 rows x 132 cols
          ?E cMsg + "HiDPI"
        ENDIF
-              
+
    CASE nPixWidth >= 1440 .AND. nPixHeight >= 900
 
       IF is_mac()
@@ -762,7 +762,8 @@ FUNCTION set_hot_keys()
    info_bar( "init", "setting up hot keys" )
    SetKey( K_SH_F1, {|| f18_kalkulator() } )
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
-
+   SetKey( K_F1, {|| k_f1() } )
+   
    hb_SetKey( hb_keyNew( "C", HB_KF_CTRL ), {|| set_clipboard() } )
    hb_SetKey( hb_keyNew( "V", HB_KF_CTRL ), {|| get_clipboard() } )
 
@@ -812,7 +813,7 @@ FUNCTION run_on_start()
       RETURN .F.
    ENDIF
 
-   
+
    info_bar( "init", "run_on_start" )
 
    IF Left( cRun, 5 ) == "kalk_"
@@ -827,7 +828,7 @@ FUNCTION run_on_start()
       cModul := "KALK"
    ENDIF
 
-   
+
 
    SWITCH cModul
    CASE "FIN"
@@ -850,10 +851,10 @@ FUNCTION run_on_start()
 
    SWITCH ( cRun )
 
-   
+
    CASE "pos_run"
        goModul:run()
-       
+
    CASE "fakt_pretvori_otpremnice_u_racun"
       _fakt_doks := FaktDokumenti():New()
       _fakt_doks:pretvori_otpremnice_u_racun()

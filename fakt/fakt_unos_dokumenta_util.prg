@@ -533,7 +533,6 @@ FUNCTION fakt_stanje_roba( cIdRoba )
    LOCAL nPos, nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
    PushWa()
-   altd()
    seek_fakt_3( NIL, cIdRoba )
 
    aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }

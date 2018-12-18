@@ -168,6 +168,12 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
    CASE nKey == iif( is_mac(), K_F9, K_SH_F9 )
       Adresar()
 
+   CASE nKey == K_F1
+      k_f1()
+
+   CASE nKey == K_F12
+      k_f12()
+
    OTHERWISE
       IF !( "U" $ Type( "gaKeys" ) )
          FOR nI := 1 TO Len( gaKeys )
@@ -198,16 +204,19 @@ METHOD quit( lVratiseURP )
 
    RETURN .T.
 
-::lTerminate := .T.
+   /*
+   ::lTerminate := .T.
 
-CLEAR SCREEN
+   CLEAR SCREEN
 
-IF !( ::hasParent() )
-QUIT_1
-ENDIF
+   IF !( ::hasParent() )
+      QUIT_1
+   ENDIF
 
    RETURN .T.
+   */
 
+   
 
 
 METHOD gParams()
@@ -460,3 +469,19 @@ METHOD setTGVars()
    info_bar( ::cName, ::cName + " set_tg_vars end" )
 
    RETURN .T.
+
+
+PROCEDURE k_f1()
+
+     Run("stty cols 100 rows 40")
+     info_bar( "stty", "100 x 40" )
+
+   RETURN
+
+
+PROCEDURE k_f12()
+
+    Run("stty cols 100 rows 40")
+    info_bar( "stty", "F12: 100 x 40" )
+
+    RETURN

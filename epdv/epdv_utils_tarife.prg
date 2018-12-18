@@ -2,7 +2,7 @@
 
 FUNCTION s_tarifa( cIdTar )
 
-   LOCAL cPom := ""
+   LOCAL cPom
 
    PushWA()
 
@@ -11,7 +11,7 @@ FUNCTION s_tarifa( cIdTar )
    IF !select_o_tarifa( cIdTar )
       cPom := "-NEP.TAR- ?!"
    ELSE
-      cPom := AllTrim( naz )
+      cPom := AllTrim( field->naz )
    ENDIF
 
    PopWa()

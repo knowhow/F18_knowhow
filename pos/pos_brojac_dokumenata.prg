@@ -13,8 +13,8 @@
 
 FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
 
-   LOCAL nBrojDokumenta := 0
-   LOCAL _broj_doks := 0
+   LOCAL nBrojDokumenta
+   //LOCAL _broj_doks := 0
    LOCAL cPosBrojacParam
    LOCAL _tmp, _rest
    LOCAL _ret := ""
@@ -30,12 +30,12 @@ FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
    seek_pos_doks( cIdPos, cIdTipDokumenta, dDatDok )
    GO BOTTOM
    IF field->idpos == cIdPos .AND. field->idvd == cIdTipDokumenta .AND. DToS( field->datum ) == DToS( dDatDok )
-      _broj_doks := Val( field->brdok )
+      nBrojDokumenta := Val( field->brdok )
    ELSE
-      _broj_doks := 0
+      nBrojDokumenta := 0
    ENDIF
 
-   nBrojDokumenta := Max( nBrojDokumenta, _broj_doks )
+   nBrojDokumenta := Max( nBrojDokumenta, 0 )
 
    ++nBrojDokumenta
    _ret := PadL( AllTrim( Str( nBrojDokumenta ) ), 6  )
@@ -51,7 +51,7 @@ FUNCTION pos_set_param_broj_dokumenta()
 
    LOCAL cPosBrojacParam
    LOCAL nBrojDokumenta := 0
-   LOCAL _broj_old
+   LOCAL nBrojDokumentaOld
    LOCAL _id_pos := gIdPos
    LOCAL _tip_dok := "42"
    LOCAL GetList := {}
@@ -69,7 +69,7 @@ FUNCTION pos_set_param_broj_dokumenta()
 
    cPosBrojacParam := "pos" + "/" + _id_pos + "/" + _tip_dok
    nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
-   _broj_old := nBrojDokumenta
+   nBrojDokumentaOld := nBrojDokumenta
 
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
 
@@ -78,7 +78,7 @@ FUNCTION pos_set_param_broj_dokumenta()
    BoxC()
 
    IF LastKey() != K_ESC
-      IF nBrojDokumenta <> _broj_old
+      IF nBrojDokumenta <> nBrojDokumentaOld
          set_metric( cPosBrojacParam, nil, nBrojDokumenta )
       ENDIF
    ENDIF

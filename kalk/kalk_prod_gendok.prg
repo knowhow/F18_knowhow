@@ -33,64 +33,10 @@ FUNCTION kalk_prod_generacija_dokumenata()
    AAdd( _opcexe, {|| kalk_prod_kartica_mpc_svedi_mpc_sif() } )
 
 
-   // AAdd( _opc, "4. nivelacije" )
-   // AAdd( _opcexe, {|| MnuPNivel() } )
-
-   // AAdd( _opc, "5. setuj mpc po uzoru na postojecu za % " )
-   // AAdd( _opcexe, {|| set_mpc_2() } )
-
    f18_menu( "gdpr", nil, _izbor, _opc, _opcexe )
 
    RETURN .T.
 
-
-
-STATIC FUNCTION MnuPNivel()
-
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
-
-/*
-   AAdd( _opc, "1. nivelacija prema zadatnom %                  " )
-   AAdd( _opcexe, {|| NivPoProc() } )
-*/
-
-/*
-   AAdd( _opc, "2. vrati na cijene prije posljednje nivelacije" )
-   AAdd( _opcexe, {|| VratiZadNiv() } )
-*/
-
-   // AAdd( _opc, "---------------------------------------------" )
-   // AAdd( _opcexe, {|| nil } )
-
-/*
-   AAdd( _opc, "3. generacija nivelacije za sve prodavnice" )
-   AAdd( _opcexe, {|| get_nivel_p() } )
-*/
-
-/*
-   AAdd( _opc, "4. pregled promjene cijena (roba->zanivel)" )
-   AAdd( _opcexe, {|| rpt_zanivel() } )
-*/
-
-   // AAdd( _opc, "5. pregled efekata nivelacije za sve prodavnice" )
-   // AAdd( _opcexe, {|| result_nivel_p() } )
-   // AAdd( _opc, "6. azuriranje nivelacije za sve prodavnice" )
-   // AAdd( _opcexe, {|| obr_nivel_p() } )
-   // AAdd( _opc, "7. setovanje mpc nakon obradjenih nivelacija" )
-   // AAdd( _opcexe, {|| set_mpc_iz_zanivel() } )
-   // AAdd( _opc, "8. kopiranje podataka n.cijena 2 -> n.cijena 1" )
-   // AAdd( _opcexe, {|| zaniv2_zaniv() } )
-   // AAdd( _opc, "9. stampa obrazaca o prom.cijena za sve prod." )
-   // AAdd( _opcexe, {|| o_pr_cijena() } )
-   AAdd( _opc, "---------------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
-
-
-   f18_menu( "pmn", nil, _izbor, _opc, _opcexe  )
-
-   RETURN .T.
 
 
 

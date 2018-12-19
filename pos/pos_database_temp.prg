@@ -101,13 +101,13 @@ FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj )
    LOCAL cBrDok
 
    DO CASE
-   CASE cIdVd == VD_ZAD
+   CASE cIdVd == POS_VD_ZAD
       cSta := "zaduzenja"
    CASE cIdVd == VD_OTP
       cSta := "otpisa"
-   CASE cIdVd == VD_INV
+   CASE cIdVd == POS_VD_INV
       cSta := "inventure"
-   CASE cIdVd == VD_NIV
+   CASE cIdVd == POS_VD_NIV
       cSta := "nivelacije"
    OTHERWISE
       cSta := "ostalo"

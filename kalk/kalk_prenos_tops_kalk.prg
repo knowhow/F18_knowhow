@@ -333,7 +333,7 @@ FUNCTION pos_kalk_napuni_kalk_pripr( cTopskaImeDbf, cIdVdKalk ) // , lAutoRazduz
       ELSEIF cIdVdKalk == "42"
          tops_kalk_import_row_42( cBrKalk, cIdKontoProdavnica, cRedniBroj )
       ELSEIF cIdVdPos == "IN"
-         tops_kalk_import_row_ip( cBrKalk, cIdKontoProdavnica, cRedniBroj )  // inventura
+         tops_kalk_import_row_in2ip( cBrKalk, cIdKontoProdavnica, cRedniBroj )  // inventura
       ENDIF
 
 /*
@@ -401,9 +401,11 @@ STATIC FUNCTION get_topska_ime_txt( cTopskaImeDbf )
    RETURN cRet
 
 
+/*
+   POS 'IN' -> KALK 'IP'
+*/
 
-
-STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
+STATIC FUNCTION tops_kalk_import_row_in2ip( cBrDok, cIdKontoProdavnica, nRbr )
 
    LOCAL _tip_dok := "IP"
    LOCAL nDbfArea := Select()
@@ -416,7 +418,6 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
    IF ( topska->kol2 == 0 )
       RETURN .F.
    ENDIF
-
 
    kalk_roba_prodavnica_stanje( cIdKontoProdavnica, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp ) // sracunaj za ovu stavku stanje inventurno u kalk-u
 

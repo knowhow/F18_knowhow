@@ -181,7 +181,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
       ENDDO
 
 
-      // IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
+      // IF s_lAutom // nakon što smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
 
       IF automatska_obrada_error()
          MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )

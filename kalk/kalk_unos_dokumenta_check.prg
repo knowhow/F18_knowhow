@@ -37,10 +37,10 @@ FUNCTION o_kalk_tabele_izvj()
   // o_sifv()
   // o_tarifa()
    // select_o_roba()
-   o_koncij()
-   select_o_konto()
-   select_o_partner()
-   o_kalk_doks()
+   // o_koncij()
+   // select_o_konto()
+   // select_o_partner()
+   // o_kalk_doks()
    o_kalk()
 
    RETURN .T.
@@ -100,9 +100,6 @@ FUNCTION KalkNaF( cIdroba, nKols )
    RETURN .T.
 
 
-
-
-
 FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj, lSilent )
 
    LOCAL lExist := .F.
@@ -127,150 +124,6 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj, lSilent )
 
 
 
-/* VVT
- *     Prikaz PPP i proracun marze za visokotarifnu robu
-
-
-FUNCTION VVT()
-
-   @ box_x_koord() + 13, box_y_koord() + 2 SAY "PPP:"
-   @ box_x_koord() + 13, Col() + 2 SAY tarifa->opp PICT "99.99%"
-   IF roba->tip = "X"
-      @ box_x_koord() + 13, Col() + 2 SAY roba->mpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
-      _marza := roba->mpc / ( 1 + tarifa->opp / 100 ) - _nc
-   ELSE
-      @ box_x_koord() + 13, Col() + 2 SAY _vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
-      _marza := _vpc / ( 1 + tarifa->opp / 100 ) - _nc
-   ENDIF
-   _tmarza := "A"
-
-   RETURN .T.
-*/
-
-/*
- *     Obrada slucaja pojavljivanja duplog unosa robe u dokumentu
- */
-
-/*
-FUNCTION DuplRoba()
-
-
-   LOCAL nRREC, fdupli := .F., dkolicina := 0, dfcj := 0
-   PRIVATE GetList := {}
-
-
-   // pojava robe vise puta unutar kalkulacije!!!
-   IF ( ( roba->tip $ "UTY" ) .OR. Empty( kalk_metoda_nc() ) .OR. gMagacin == "1" )
-      RETURN .T.
-   ENDIF
-   SELECT kalk_pripr
-   SET ORDER TO TAG "3"
-   nRRec := RecNo()
-   SEEK _idfirma + _idvd + _brdok + _idroba
-   fdupli := .F.
-   dkolicina := _kolicina
-   dfcj := _fcj
-   DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _idroba == idfirma + idvd + brdok + idroba
-      IF Val( rbr ) <> nRbr .AND. ( nRRec <> RecNo() .OR. -----fnovi )
-         Beep( 2 )
-         // skocio je na donji zapis
-         IF Pitanje(, "Artikal " + _idroba + " se pojavio vise puta unutar - spojiti ?", "N" ) == "D"
-            fdupli := .T.
-            dfcj := ( dfcj * dkolicina + fcj * kolicina ) / ( dkolicina + kolicina )
-            dkolicina += kolicina
-            my_delete()
-         ELSE
-            --_ERROR := "1"
-         ENDIF
-      ENDIF
-      SKIP
-   ENDDO
-   GO nRRec
-   IF fdupli
-      _kolicina := dkolicina
-      _fcj := dfcj
-   ENDIF
-   SELECT kalk_pripr
-   SET ORDER TO TAG "1"
-
-   RETURN .T.
-
-   RETURN .T.
-*/
-
-/*
- *     Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
-
-
-
---FUNCTION check_datum_posljednje_kalkulacije()
-
-
-
-   find_kalk_by_mkonto_idroba( _IdFirma, _MKonto, _IdRoba )
-
-   GO BOTTOM
-   IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
-      error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + trim(_brdok), trim(_mkonto) + " / " + trim(_idroba) + " zadnji dokument: " + DToC( field->datdok ) )
-      //_ERROR := "1"
-   ENDIF
-
-   SELECT kalk_pripr
-
-   RETURN .T.
- */
-
-/*
- *  Ispituje da li je datum zadnje promjene na zadanoj prodavnici i za zadani artikal noviji od one koja se unosi
- */
-
-/*
---FUNCTION kalk_dat_poslj_promjene_prod()
-
-   find_kalk_by_pkonto_idroba( _IdFirma, _IdKonto, _IdRoba )
-   GO BOTTOM
-
-   IF _datdok < field->datdok
-      error_bar( "KA_" + _idfirma + "-" + _idkonto + "-" + _idroba, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
-      // _ERROR := "1"
-   ENDIF
-
-   SELECT kalk_pripr
-
-   RETURN .T.
-*/
-
-
-/* kalk_sljedeci_broj(cidfirma,cIdvD,nMjesta)
- *     Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
-
-
---FUNCTION kalk_sljedeci_broj( cIdfirma, cIdvD, nMjesta )
-
-   LOCAL cReturn := "0"
-
-   find_kalk_doks_za_tip( cIdFirma, cIdVd )
-   GO BOTTOM
-   IF field->idvd <> cIdVd
-      cBrKalk := Space( 8 )
-   ELSE
-      cBrKalk := field->brdok
-   ENDIF
-
-
-   IF AllTrim( cReturn ) >= "99999"
-      cReturn := PadR( novasifra( AllTrim( cReturn ) ), 5 )
-   ELSE
-    --  cReturn := UBrojDok( Val( Left( cReturn, 5 ) ) + 1, 5, Right( cReturn ) )
-   ENDIF
-
-   RETURN cReturn
-
-*/
-
-
-
-
 
 
 /* kalk_marza_maloprodaja()
@@ -290,96 +143,6 @@ FUNCTION kalk_marza_maloprodaja()
    RETURN nMarza2
 
 
-
-
-
-/* knjizno_stanje_prodavnica()
- *     Proracun knjiznog stanja za zadanu robu i prodavnicu
-
-
-FUNCTION knjizno_stanje_prodavnica()
-
-   LOCAL nUlaz := nIzlaz := 0
-   LOCAL nMPVU := nMPVI := nNVU := nNVI := 0
-   LOCAL cIdRoba := _idroba
-   LOCAL cIdfirma := _idfirma
-   LOCAL cIdkonto := _idkonto
-   LOCAL nRabat := 0
-
-  -- SELECT roba
---   HSEEK cIdRoba
---   SELECT koncij
---   HSEEK cIdKonto
-
-   SELECT kalk
-
-   PushWA()
-
-   SET ORDER TO TAG "4"
-
-   HSEEK cIdfirma + cIdKonto + cIdroba
-
-   DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba
-
-      IF _datdok < field->datdok
-         // preskoci
-         SKIP
-         LOOP
-      ENDIF
-
-      IF roba->tip $ "UT"
-         SKIP
-         LOOP
-      ENDIF
-
-      IF field->pu_i == "1"
-         nUlaz += field->kolicina - field->GKolicina - field->GKolicin2
-         nMPVU += field->mpcsapp * field->kolicina
-         nNVU += field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "5" .AND. !( field->idvd $ "12#13#22" )
-         nIzlaz += field->kolicina
-         nMPVI += field->mpcsapp * field->kolicina
-         nNVI += field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
-         // povrat
-         nUlaz -= field->kolicina
-         nMPVU -= field->mpcsapp * field->kolicina
-         nNvu -= field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "3"
-         // nivelacija
-         nMPVU += field->mpcsapp * field->kolicina
-
-      ELSEIF field->pu_i == "I"
-         nIzlaz += field->gkolicin2
-         nMPVI += field->mpcsapp * field->gkolicin2
-         nNVI += field->nc * field->gkolicin2
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   _gkolicina := nUlaz - nIzlaz
-   _fcj := nMpvu - nMpvi
-
-   // stanje mpvsapp
-
-   IF Round( nUlaz - nIzlaz, 4 ) <> 0
-      _mpcsapp := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
-      _nc := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )
-   ELSE
-      _mpcsapp := 0
-   ENDIF
-
-   PopWa()
-
-   SELECT kalk_pripr
-
-   RETURN .T.
-*/
 
 
 // -------------------------------------------------
@@ -499,58 +262,9 @@ FUNCTION KaKaProd( nUlaz, nIzlaz, nMPV, nNV )
       nMPV += mpcsapp * kolicina
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-
-/*
- *     Proracun stanja i nabavne vrijednosti za zadani artikal i prodavnicu
- */
-
-FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
-
-   LOCAL nArr := Select()
-
-   nKolS := 0
-   nKolZN := 0
-   nc1 := nc2 := 0
-   dDatNab := CToD( "" )
-   _kolicina := nKolicina
-   _datdok   := dDatDok
-   SELECT KALK
-   PushWA()
-
-   kalk_get_nabavna_prod( _idfirma, PadR( _idroba, Len( idroba ) ), _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-
-   SELECT KALK
-   PopWA()
-   SELECT ( nArr )
-
-   RETURN nc2
-
-
-
-
-/* KalkTrUvoz()
- *     Proracun carine i ostalih troskova koji se javljaju pri uvozu
- *  \todo samo otvorena f-ja
- */
-
-FUNCTION KalkTrUvoz()
-
-   // {
-   LOCAL nT1 := 0, nT2 := 0, nT3 := 0, nT4 := 0, nT5 := 0, CP := "999999999.999999999"
-   Box( "#Unos troskova", 7, 75 )
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY c10T1 GET nT1 PICT CP
-   @ box_x_koord() + 3, box_y_koord() + 2 SAY c10T2 GET nT2 PICT CP
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY c10T3 GET nT3 PICT CP
-   @ box_x_koord() + 5, box_y_koord() + 2 SAY c10T4 GET nT4 PICT CP
-   @ box_x_koord() + 6, box_y_koord() + 2 SAY c10T5 GET nT5 PICT CP
-   READ
-   BoxC()
-   MsgBeep( "Opcija jos nije u funkciji jer je dorada u toku!" )
-   CLOSERET
-   // }
 
 
 /* ObracunPorezaUvoz()

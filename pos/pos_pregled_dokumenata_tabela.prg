@@ -51,9 +51,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    AAdd( ImeKol, { "VP", {|| IdVrsteP } } )
    AAdd( ImeKol, { "Datum", {|| datum } } )
 
-
    AAdd( ImeKol, { "Smj", {|| smjena } } )
-
 
    AAdd( ImeKol, { PadC( "Iznos", 10 ), {|| pos_iznos_dokumenta( NIL ) } } )
    AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
@@ -63,7 +61,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
       AAdd( Kol, i )
    NEXT
 
-   //SELECT pos_doks
+
    seek_pos_doks_za_period( NIL, cIdVd, dDatOd, dDatDo )
    SET CURSOR ON
 
@@ -202,31 +200,34 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
             ENDPRINT
 
          ELSEIF cOdg == "D"
-
             pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .T. )
 
          ENDIF
 
       CASE pos_doks->IdVd == "16"
          PrepisZad( "ZADUZENJE " )
+
       CASE pos_doks->IdVd == VD_OTP
          PrepisZad( "OTPIS " )
+
       CASE pos_doks->IdVd == VD_REK
          PrepisZad( "REKLAMACIJA" )
          // CASE pos_doks->IdVd == VD_RZS
          // PrepisRazd()
 
-
       CASE pos_doks->IdVd == "IN"
          pos_prepis_inventura_nivelacija( .T. )
-      CASE pos_doks->IdVd == VD_NIV
+
+      CASE pos_doks->IdVd == POS_VD_NIV
          pos_prepis_inventura_nivelacija( .F. )
          RETURN ( DE_REFRESH )
 
       CASE pos_doks->IdVd == VD_PRR
          pos_kumulativ_prometa()
+
       CASE pos_doks->IdVd == POS_VD_POCETNO_STANJE
          pos_prepis_pocetno_stanje()
+
       ENDCASE
 
    CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )
@@ -266,7 +267,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
       _br_dok := field->brdok
       _dat_dok := field->datum
 
-      IF field->idvd <> VD_INV
+      IF field->idvd <> POS_VD_INV
          MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !" )
          RETURN ( DE_CONT )
       ENDIF
@@ -275,7 +276,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
          RETURN ( DE_CONT )
       ENDIF
 
-      IF field->idvd == VD_INV
+      IF field->idvd == POS_VD_INV
 
          pos_povrat_dokumenta_u_pripremu()
          pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )

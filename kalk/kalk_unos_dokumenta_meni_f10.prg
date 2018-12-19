@@ -81,17 +81,6 @@ FUNCTION kalk_meni_f10()
    AAdd( aOpc, "K. veleprodaja na osnovu dopreme u magacin (16->14)" )
    AAdd( aOpcExe, {|| Iz16u14() } )
 
-   AAdd( aOpc, "L. ubacivanje troškova-uvozna kalkulacija" )
-   AAdd( aOpcexe, {|| KalkTrUvoz() } )
-
-   /*
-   AAdd( opc, "2. pretvori maloprodajni popust u smanjenje MPC" )
-   AAdd( opcexe, {|| PopustKaoNivelacijaMP() } )
-   */
-
-   AAdd( aOpc, "M. obračun poreza pri uvozu" )
-   AAdd( aOpcExe, {|| ObracunPorezaUvoz() } )
-
    AAdd( aOpc, "N. pregled smeća" )
    AAdd( aOpcExe, {|| kalk_pregled_smece_pripr9() } )
 

@@ -167,10 +167,8 @@ FUNCTION pos_pdv_po_tarifama
       ASort ( aTarife,,, {| x, y | x[ 1 ] < y[ 1 ] } )
 
       ? m
-
       ? "Tarifa (Stopa %)"
       ? PadL ( "MPV bez PDV", 12 ), PadL ( "PDV", 12 ), PadL( "MPV sa PDV", 12 )
-
       ? m
 
       FOR nCnt := 1 TO Len( aTarife )

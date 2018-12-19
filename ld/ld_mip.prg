@@ -720,7 +720,7 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
 
    _xml_head()
 
-   // ovo ne treba zato sto je u headeru sadrzan ovaj prvi sub-node !!!
+   // ovo ne treba zato što je u headeru sadrzan ovaj prvi sub-node !!!
    // <paketniuvozobrazaca>
    // xml_subnode("PaketniUvozObrazaca", .f.)
 

@@ -624,160 +624,11 @@ FUNCTION pos_racun_info( cBrRn )
    RETURN .T.
 
 
+STATIC FUNCTION gvars_fill()
 
-/* StampaRekap(cIdRadnik, cBrojStola)
- *     Stampa rekapitulacije racuna
-
-
---FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
-
-   LOCAL nRecNoTrenutni
-   LOCAL nRecNoNext
-   PRIVATE aGrupni
-
-   cZakljucen := "N"
-
-   SELECT pos_doks
-   SET ORDER TO TAG "8"
-   GO TOP
-   SEEK gIdPos + cIdRadnik + cZakljucen
-
-   aGrupni := {}
-
-   nTek := 0
-   nCnt := 0
-
-   DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->idradnik == cIdRadnik .AND. field->datum <= dDatumDo .AND. field->datum >= dDatumOd
-
-      IF field->zakljucen <> "N"
-         SKIP
-         LOOP
-      ENDIF
-
-      IF ( field->sto <> cBrojStola )
-         SKIP
-         LOOP
-      ENDIF
-      // markiraj ga kao zakljucen sa Z
-      IF ( field->zakljucen == "N" )
-
-         ++nCnt
-
-         IF nTek == 0
-            nTek := RecNo()
-         ENDIF
-
-         AAdd( aGrupni, { pos_doks->idpos, pos_doks->brdok, pos_doks->idvrstep, pos_doks->datum } )
-
-         nTRec := RecNo()
-         SKIP
-         nNNRec := RecNo()
-         SKIP -1
-         REPLACE field->zakljucen WITH "Z"
-
-         GO nNNRec
-      ENDIF
-   ENDDO
-
-   GO nTek
-
-   IF nCnt == 0
-      MsgBeep( "Ne postoje otvoreni racuni za stol br." + cBrojStola )
-      RETURN .F.
-   ENDIF
-
---   pos_stampa_priprema( gIdPos, DToS( aGrupni[ 1, 4 ] ) + aGrupni[ 1, 2 ], aGrupni, .F., .F. )
-
-   RETURN .T.
-
-
-FUNCTION StampaNezakljRN( cIdRadnik, dDatumOd, dDatumDo )
-
-   START PRINT CRET
-
-   cZaklj := "N"
-
-   SELECT pos_doks
-   SET ORDER TO TAG "8"
-   GO TOP
-
-   SEEK gIdPos + cIdRadnik + cZaklj
-
-   ? Space( 2 ),  Date()
-   ? Space( 2 ) + "Nezakljuceni racuni:"
-   ? Space( 2 ) + "----------------------"
-   ?
-   ? Space( 2 ) + "Rn.Br.       Sto"
-   ? Space( 2 ) + "----------------"
-
-
-   DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->idradnik == cIdRadnik .AND. field->datum <= dDatumDo .AND. field->datum >= dDatumOd
-      IF field->zakljucen <> "N"
-         SKIP
-         LOOP
-      ENDIF
-      cBrDok := pos_doks->brdok
-      cIdPos := pos_doks->idpos
-      cBrojStola := pos_doks->sto
-
-      ? Space( 2 ) + AllTrim( cIdPos ) + "-" + AllTrim( cBrDok ) + "  -> " + AllTrim( cBrojStola )
-      SKIP
-   ENDDO
-
-   FF
-   ENDPRINT
-
-   SELECT pos_doks
-   SET ORDER TO TAG "1"
-
-   RETURN
-
-
-
-FUNCTION SetujZakljuceno()
-
-   // {
-   LOCAL nCounter
-
-   IF !spec_funkcije_sifra( "RNZAK" )
-      MsgBeep( "Nemate ovlastenja za koristenje opcije!!!" )
-      RETURN
-   ENDIF
-
-   IF Pitanje(, "Setovati sve racune na zakljuceno (D/N) ?", "N" ) == "N"
-      RETURN
-   ENDIF
-
-   IF Pitanje(, "Sto posto sigurni da zelite (D/N) ?", "N" ) == "N"
-      RETURN
-   ENDIF
-
-   SELECT pos_doks
-   SET ORDER TO TAG 0
-   GO TOP
-
-   nCounter := 0
-
-   DO WHILE !Eof()
-      REPLACE field->zakljucen WITH "Z"
-      ++nCounter
-      SKIP
-   ENDDO
-
-   MsgBeep( "Setovano ukupno " + AllTrim( Str( nCounter ) ) + " racuna!!!" )
-
-   RETURN
-
-*/
-
-FUNCTION gvars_fill()
-
-   // prikaz cijene sa pdv, bez pdv
-   add_drntext( "P20", AllTrim( Str( grbCjen ) ) )
-   // stampa id robe na racunu
-   add_drntext( "P21", grbStId )
-   // redukcija trake
-   add_drntext( "P22", AllTrim( Str( grbReduk ) ) )
+   add_drntext( "P20", AllTrim( Str( grbCjen ) ) ) // prikaz cijene sa pdv, bez pdv
+   add_drntext( "P21", grbStId ) // stampa id robe na racunu
+   add_drntext( "P22", AllTrim( Str( grbReduk ) ) ) // redukcija trake
 
    RETURN .T.
 
@@ -901,9 +752,6 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       ENDIF
 
-      // SELECT osob
-      // SET ORDER TO TAG "NAZ"
-      // HSEEK cIdRadnik
       find_pos_osob_by_naz( cIdRadnik )
       cRdnkNaz := osob->naz
 
@@ -1046,10 +894,10 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
 
 
-   // ako je prepis
-   IF lPrepis == .T.
-      // podaci o kupcu
-      add_drntext( "K01", dokspf->knaz )
+
+   IF lPrepis  // ako je prepis
+
+      add_drntext( "K01", dokspf->knaz ) // podaci o kupcu
       add_drntext( "K02", dokspf->kadr )
       add_drntext( "K03", dokspf->kidbr )
       add_drntext( "D01", "A" )

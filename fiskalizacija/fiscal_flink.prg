@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC s_cPath, s_cPath2, s_cName
 
 THREAD STATIC F_POS_RN := "POS_RN" // pos komande
@@ -30,6 +29,7 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
    LOCAL aPosData := {}
    LOCAL aStruct := {}
    LOCAL nErr := 0
+   LOCAL cTmp_date, cTmp_time
 
    IF lStorno == nil
       lStorno := .F.
@@ -39,12 +39,9 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
       cError := "N"
    ENDIF
 
-
    fl_d_tmp() // pobrisi temp fajlove
 
-
    cFName := f_filepos( aData[ 1, 1 ] ) // naziv fajla
-
 
    _f_err_delete( cFPath, cFName ) // izbrisi fajl greske odmah na pocetku ako postoji
 
@@ -60,11 +57,10 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
    fiscal_array_to_file( cFPath, cFName, aStruct, aPosData )
 
    IF cError == "D"
-      MsgO( "...provjeravam greske..." )
+      MsgO( "Provjera grešaka ..." )
       Sleep( 3 )
       MsgC()
-      // provjeri da li je racun odstampan
-      nErr := fc_pos_err( cFPath, cFName, cTmp_date, cTmp_time )
+      nErr := fc_pos_err( cFPath, cFName, cTmp_date, cTmp_time ) // provjeri da li je racun odstampan
    ENDIF
 
    RETURN nErr
@@ -126,8 +122,8 @@ FUNCTION fc_pos_err( cFPath, cFName, cDate, cTime )
       // patern pretrage
       cE_patt := AllTrim( cE_name ) + cE_date + cE_th + cE_tm
 
-      IF cE_patt == cF_patt
-         // imamo error fajl !!!
+      IF cE_patt == cF_patt // imamo error fajl !!!
+
          nErr := 1
          EXIT
       ENDIF
@@ -163,7 +159,7 @@ STATIC FUNCTION f_filepos( cBrRn )
 // ----------------------------------------------
 STATIC FUNCTION fl_d_tmp()
 
-   LOCAL cTmp
+   LOCAL cTmp, cF_path
 
    MsgO( "brisem tmp fajlove..." )
 
@@ -428,6 +424,7 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
    LOCAL cSep := ";"
    LOCAL aPolog := {}
    LOCAL aStruct := {}
+   LOCAL GetList := {}
 
    IF nPolog == nil
       nPolog := 0
@@ -437,12 +434,11 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
    IF nPolog = 0
 
       Box(, 1, 60 )
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
-         PICT "999999.99"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Zadužujem kasu za:" GET nPolog PICT "999999.99"
       READ
       BoxC()
 
-      IF nPolog = 0
+      IF nPolog == 0
          MsgBeep( "Polog mora biti <> 0 !" )
          RETURN .F.
       ENDIF
@@ -498,7 +494,7 @@ FUNCTION fl_reset( cFPath, cFName )
 
    fiscal_array_to_file( cFPath, cFName, aStruct, aReset )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -509,21 +505,21 @@ FUNCTION flink_dnevni_izvjestaj( cFPath, cFName )
    LOCAL aRpt := {}
    LOCAL aStruct := {}
    LOCAL cRpt := "Z"
+   LOCAL GetList := {}
 
    Box(, 6, 60 )
 
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dnevni izvjestaji..."
-   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Z - dnevni izvjestaj"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "X - presjek stanja"
-   @ box_x_koord() + 6, box_y_koord() + 2 SAY "         ------------>" GET cRpt ;
-      VALID cRpt $ "ZX" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Dnevni izvještaji:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Z - dnevni izvještaj"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "X - presjek stanja"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "         ------------>" GET cRpt VALID cRpt $ "ZX" PICT "@!"
 
 
    READ
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // pobrisi ulazni direktorij
@@ -662,13 +658,13 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    LOCAL nReklRn := 0
    LOCAL cStPatt := "/S"
    LOCAL GetList := {}
+   LOCAL nStornoIdentifikator, nTRec
 
    SELECT fakt_doks
    SEEK cFirma + cTipDok + cBrDok
 
    flink_name( hDeviceParams[ "out_file" ] )
    flink_path( hDeviceParams[ "out_dir" ] )
-
 
    IF cStPatt $ AllTrim( field->brdok )  // ako je storno racun
       nReklRn := Val( StrTran( AllTrim( field->brdok ), cStPatt, "" ) )
@@ -697,7 +693,6 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
          lStorno := .F.
          EXIT
       ENDIF
-
       SKIP
 
    ENDDO
@@ -716,11 +711,9 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    IF cTipDok $ "10#"
 
-
       nTipRac := 2 // veleprodajni racun
 
-
-      nPartnId := _g_spart( fakt_doks->idpartner ) // daj mi partnera za ovu fakturu
+      nPartnId := get_sifra_partner( fakt_doks->idpartner ) // daj mi partnera za ovu fakturu
 
       nSemCmd := 20 // stampa vp racuna
 
@@ -753,17 +746,15 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    // upisi u [items] stavke
    DO WHILE !Eof() .AND. field->idfirma == cFirma .AND. field->idtipdok == cTipDok .AND. field->brdok == cBrDok
 
-
       SELECT roba
       SEEK fakt->idroba
 
       SELECT fakt
 
-
-      nSt_Id := 0 // storno identifikator
+      nStornoIdentifikator := 0
 
       IF ( field->kolicina < 0 ) .AND. lStorno == .F.
-         nSt_id := 1
+         nStornoIdentifikator := 1
       ENDIF
 
       nSifRoba := _g_sdob( field->idroba )
@@ -778,7 +769,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
       AAdd( aItems, { nBrDok, ;
          nTipRac, ;
-         nSt_id, ;
+         nStornoIdentifikator, ;
          nSifRoba, ;
          cNazRoba, ;
          cBarKod, ;
@@ -830,7 +821,6 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
       nPrMemoDo, ;
       nPartnId, ;
       nReklRn } )
-
 
    IF nTipRac == 2
 
@@ -906,10 +896,8 @@ STATIC FUNCTION _g_sdob( id_roba )
    RETURN _ret
 
 
-// ------------------------------------------------
-// vraca sifru partnera
-// ------------------------------------------------
-STATIC FUNCTION _g_spart( id_partner )
+
+STATIC FUNCTION get_sifra_partner( id_partner )
 
    LOCAL _ret := 0
    LOCAL _tmp

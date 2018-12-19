@@ -293,7 +293,6 @@ FUNCTION set_a_dbf_fin_koliz()
 
 
 
-
 FUNCTION set_a_dbf_fin_koniz()
 
    LOCAL _alg, _tbl, _item

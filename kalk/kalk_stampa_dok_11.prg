@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION kalk_stampa_dok_11( fZaTops )
 
    LOCAL nCol0 := 0

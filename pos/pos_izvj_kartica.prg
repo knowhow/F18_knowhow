@@ -80,15 +80,6 @@ FUNCTION pos_kartica_artikla()
    cI := R_I
    // cRSdbf := "ROBA"
 
-   IF cPPar == "D"
-      // o_pos_doks()
-      // SELECT ( F_POS_DOKS )
-      // SET ORDER TO TAG "1"
-   ENDIF
-
-   // SELECT POS
-   // SET ORDER TO TAG "2"
-
 
    IF Empty( cIdRoba )
       // Seek2( cIdOdj )

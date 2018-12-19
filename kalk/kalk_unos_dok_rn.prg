@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION Get1_RN()
 
    LOCAL nNV

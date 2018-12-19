@@ -163,9 +163,7 @@ FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUpl
    ENDCASE
 
    IF nErrorLevel > 0
-
       IF cFiskalniDravjerIme == __DRV_TREMOL
-
          _cont := "2"
          nErrorLevel := pos_to_tremol( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno, _cont )
 
@@ -185,14 +183,10 @@ STATIC FUNCTION pos_dok_is_storno( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
 
    LOCAL lStorno := .F.
 
-   // SELECT pos
-   // SET ORDER TO TAG "1"
-   // GO TOP
-   // SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
+
    seek_pos_pos( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
 
-   DO WHILE !Eof() .AND. pos->idpos == cIdPos  .AND. pos->idvd == cIdTipDok ;
-         .AND. DToS( pos->Datum ) == DToS( dDatDok ) .AND. pos->brdok == cBrojRacuna
+   DO WHILE !Eof() .AND. pos->idpos == cIdPos  .AND. pos->idvd == cIdTipDok .AND. DToS( pos->Datum ) == DToS( dDatDok ) .AND. pos->brdok == cBrojRacuna
 
       IF !Empty( AllTrim( field->c_1 ) )
          lStorno := .T.

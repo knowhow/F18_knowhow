@@ -552,13 +552,14 @@
 
 // vrste dokumenata
 #define POS_VD_RACUN        "42"       // racuni
-#define VD_ZAD       "16"       // zaduzenje
+#define POS_VD_ZAD       "16"       // zaduzenje
 #define VD_OTP       "95"       // otpis
 #define VD_REK       "98"       // reklamacija
-#define VD_INV       "IN"       // inventura
-#define VD_NIV       "NI"       // nivelacija
+#define POS_VD_INV       "IN"       // inventura
+#define POS_VD_NIV       "NI"       // nivelacija
 #define VD_RZS       "96"       // razduzenje sirovina-otprema pr. magacina
 #define POS_VD_POCETNO_STANJE       "00"       // pocetno stanje
+
 #define VD_PRR       "01"       // prenos realizacije iz prethodnih sezona
 #define VD_CK        "90"       // dokument cek
 #define VD_SK        "91"       // dokument sindikalni kredit

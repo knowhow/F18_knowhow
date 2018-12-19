@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION kalk_stampa_dok_41()
 
    LOCAL nCol0 := nCol1 := nCol2 := 0

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION kalk_stampa_dok_80( fBezNc )
+FUNCTION kalk_stampa_dok_80( lStampatiBezNabavneCijene )
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
@@ -20,8 +20,8 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
    // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-   IF fbezNc == NIL
-      fBezNC := .F.
+   IF lStampatiBezNabavneCijene == NIL
+      lStampatiBezNabavneCijene := .F.
    ENDIF
 
    nStr := 0
@@ -46,7 +46,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
 
    m := "--- -------------------------------------------- ----------" + ;
-      iif( fBezNC, "", " ---------- ----------" ) + ;
+      iif( lStampatiBezNabavneCijene, "", " ---------- ----------" ) + ;
       " ---------- ----------"
 
 
@@ -55,11 +55,11 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
    // 1. red
    ? "*R.* Roba                                       * kolicina *" + ;
-      iif( fBezNC, "", "  Nab.cj  * marza    *" ) + ;
+      iif( lStampatiBezNabavneCijene, "", "  Nab.cj  * marza    *" ) + ;
       "   MPC    *  MPC    *"
    // 2.red
    ? "*br* Tarifa                                     *          *" + ;
-      iif( fBezNC, "", "          *          *" ) + ;
+      iif( lStampatiBezNabavneCijene, "", "          *          *" ) + ;
       "  bez PDV * sa PDV  *"
 
 
@@ -139,7 +139,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
          @ PRow() + 1, 4 SAY IdRoba
          @ PRow(), PCol() + 35  SAY Kolicina             PICTURE PicCDEM
          nCol1 := PCol() + 1
-         IF !fBezNC  // bez nc
+         IF !lStampatiBezNabavneCijene  // bez nc
             @ PRow(), nCol1    SAY NC                    PICTURE PicCDEM
             IF Round( nc, 5 ) <> 0
                @ PRow(), PCol() + 1 SAY nMarza2 / NC * 100        PICTURE PicProc
@@ -151,7 +151,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
          @ PRow(), PCol() + 1 SAY MPCSaPP               PICTURE PicCDEM
 
          @ PRow() + 1, 4 SAY IdTarifa
-         IF !fBezNC
+         IF !lStampatiBezNabavneCijene
             @ PRow(), nCol1     SAY nU8         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
@@ -172,7 +172,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
          ELSE
             ?? cidkont2
          ENDIF
-         IF !fBezNC
+         IF !lStampatiBezNabavneCijene
             @ PRow(), nCol1     SAY nTot8         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
@@ -193,7 +193,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    print_nova_strana( 125, @nStr, 3 )
    ? m
    @ PRow() + 1, 0        SAY "Ukupno:"
-   IF !fBezNC
+   IF !lStampatiBezNabavneCijene
       @ PRow(), nCol1     SAY unTot8         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY unTot9         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY unTotA         PICTURE         PICDEM

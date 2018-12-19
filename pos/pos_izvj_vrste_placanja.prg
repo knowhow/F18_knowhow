@@ -32,10 +32,8 @@ FUNCTION pos_pregled_prometa_po_vrstama_placanja()
    BoxC()
 
    dDatDo := dDatOd
-   // SELECT PROMVP
-   seek_pos_promvp( dDatum )
 
-   // GO TOP
+   seek_pos_promvp( dDatum )
 
    nIznPKM := nIznPEURO := nIznKred := nIznVirm := nIznU := nIznU2 := nIznTrosk := 0
 

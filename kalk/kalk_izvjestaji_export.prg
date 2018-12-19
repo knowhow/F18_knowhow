@@ -89,8 +89,6 @@ FUNCTION krpt_export()
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
 
-   // o_roba()
-   //o_konto()
    o_koncij()
    o_tarifa()
 
@@ -100,30 +98,7 @@ FUNCTION krpt_export()
 
    my_close_all_dbf()
 
-/*
-STATIC FUNCTION set_launcher( cLauncher )
 
-   LOCAL cPom
-
-   cPom = Upper( AllTrim( cLauncher ) )
-
-
-   IF ( cPom == "OO" ) .OR.  ( cPom == "OOO" ) .OR.  ( cPom == "OPENOFFICE" )
-      cLauncher := cLauncher1
-      RETURN .F.
-
-   ELSEIF ( Left( cPom, 6 ) == "OFFICE" )
-      // OFFICEXP, OFFICE97, OFFICE2003
-      cLauncher := msoff_start( SubStr( cPom, 7 ) )
-      RETURN .F.
-   ELSEIF ( Left( cPom, 5 ) == "EXCEL" )
-      // EXCELXP, EXCEL97
-      cLauncher := msoff_start( SubStr( cPom, 6 ) )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-*/
 
 /* get_uio_fields(aArr)
  *     napuni matricu aArr sa specifikacijom polja tabele
@@ -207,7 +182,6 @@ FUNCTION kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
 
 
-
 // napuni r_uio
 STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
@@ -227,11 +201,6 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    SELECT ( F_KALK )
 
-// /
-// SELECT ( F_ROBA )
-// IF !Used()
-// o_roba()
-   // ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()
@@ -259,7 +228,6 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
          ++nCount
 
-
          cIdTarifa := idTarifa
          cIdRoba := IdRoba
 
@@ -267,16 +235,12 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          @ box_x_koord() + 2, box_y_koord() + 2 SAY cIdRoba + "/" + cIdTarifa
          SELECT r_export
 
-         // SEEK cIdRoba
-         // if !found()
 
          ++nRbr
          APPEND BLANK
          REPLACE rbr WITH nRbr, id_tarifa WITH cIdTarifa, id_roba WITH cIdRoba
 
-
          select_o_roba(  cIdRoba )
-
          select_o_tarifa( cIdTarifa )
 
          cPom1 := KonvznWin( Left( roba->naz, 40 ), cKonverzija )
@@ -318,7 +282,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          SKIP
 
       ENDDO
-      // krugovi
+
    NEXT
 
    BoxC()

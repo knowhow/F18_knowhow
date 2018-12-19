@@ -1300,7 +1300,7 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
       RETURN .F.
    ENDIF
 
-   // bitne tabele za reset podataka baze
+   // tabele prometa - potrebno nulirati kod reseta podataka
    cQuery := ""
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk;"
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_doks;"

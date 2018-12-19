@@ -668,7 +668,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
    // upisi header
    _xml_head()
 
-   // ovo ne treba zato sto je u headeru sadrzan ovaj prvi sub-node !!!
+   // ovo ne treba zato što je u headeru sadržan ovaj prvi sub-node
    // <paketniuvozobrazaca>
    // xml_subnode("PaketniUvozObrazaca", .f.)
 

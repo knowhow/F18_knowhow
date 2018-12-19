@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_stampa_dok_19()
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
@@ -152,7 +151,7 @@ FUNCTION head_19()
 
 FUNCTION Obraz19()
 
-   // {
+
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2

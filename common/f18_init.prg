@@ -18,7 +18,6 @@ STATIC s_psqlServer_log := .F. // logiranje na server
 
 STATIC s_cF18HomeRoot := NIL // za sve threadove identican cHomeRootDir
 STATIC s_cF18HomeBackup := NIL // svi threadovi ista backup lokacija
-
 STATIC s_cF18CurrentDirectory := NIL
 
 THREAD STATIC s_cF18Home := NIL // svaki thread ima svoj my home ovisno o tekucoj bazi
@@ -763,7 +762,7 @@ FUNCTION set_hot_keys()
    SetKey( K_SH_F1, {|| f18_kalkulator() } )
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
    SetKey( K_F1, {|| k_f1() } )
-   
+
    hb_SetKey( hb_keyNew( "C", HB_KF_CTRL ), {|| set_clipboard() } )
    hb_SetKey( hb_keyNew( "V", HB_KF_CTRL ), {|| get_clipboard() } )
 

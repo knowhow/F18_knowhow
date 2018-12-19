@@ -304,7 +304,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
 
    IF ( ( lUI == NIL ) .OR. lUI )
 
-      IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK // ulazi
+      IF pos_doks->IdVd $ POS_VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK // ulazi
 
          seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
@@ -318,7 +318,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
    ENDIF
 
    IF ( ( lUI == NIL ) .OR. !lUI ) // izlazi
-      IF pos_doks->idvd $ POS_VD_RACUN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
+      IF pos_doks->idvd $ POS_VD_RACUN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + POS_VD_NIV
 
          seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
 
@@ -330,7 +330,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
                IF pos->kol2 <> 0
                   nIznos += pos->kol2 * pos->cijena
                ENDIF
-            CASE pos_doks->IdVd == VD_NIV
+            CASE pos_doks->IdVd == POS_VD_NIV
                nIznos += pos->kolicina * ( pos->ncijena - pos->cijena )
             OTHERWISE
                nIznos += pos->kolicina * pos->cijena

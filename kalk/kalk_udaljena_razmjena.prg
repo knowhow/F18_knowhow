@@ -95,8 +95,6 @@ STATIC FUNCTION kalk_export_start()
    RETURN .T.
 
 
-
-
 STATIC FUNCTION kalk_import_start()
 
    LOCAL nImportovanoZapisa

@@ -173,9 +173,9 @@ FUNCTION os_pregled_po_kontima()
    IF !Empty( cFiltK3 )
       ? "Filter grupacija K3 pravljen po uslovu: '" + Trim( cFiltK3 ) + "'"
       IF cIzbUbac == "U"
-         ?? " sve sto sadrzi."
+         ??U " sve što sadrži."
       ELSE
-         ?? " sve sto ne sadrzi."
+         ??U " sve što ne sadrži."
       ENDIF
    ENDIF
 

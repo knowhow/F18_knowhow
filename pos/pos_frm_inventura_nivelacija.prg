@@ -49,9 +49,9 @@ FUNCTION pos_inventura_nivelacija()
    ENDIF
 
    IF fInvent
-      cIdVd := VD_INV
+      cIdVd := POS_VD_INV
    ELSE
-      cIdVd := VD_NIV
+      cIdVd := POS_VD_NIV
    ENDIF
 
    IF fInvent
@@ -132,11 +132,11 @@ FUNCTION pos_inventura_nivelacija()
          o_pos_tables()
       ENDIF
 
-      IF stanje_dn == "N" .AND. cIdVd == VD_INV
+      IF stanje_dn == "N" .AND. cIdVd == POS_VD_INV
          fPocInv := .F.
       ENDIF
 
-      IF fPocInv .AND. !fPreuzeo .AND. cIdVd == VD_INV
+      IF fPocInv .AND. !fPreuzeo .AND. cIdVd == POS_VD_INV
 
          MsgO( "GENERIŠEM DATOTEKU " + cNazDok + "E" )
 
@@ -173,9 +173,9 @@ FUNCTION pos_inventura_nivelacija()
 
                ELSEIF pos->idvd $ "42#96#01#IN#NI"
                   DO CASE
-                  CASE pos->idvd == VD_INV
+                  CASE pos->idvd == POS_VD_INV
                      nKolicina -= pos->kolicina - pos->kol2
-                  CASE pos->idvd == VD_NIV
+                  CASE pos->idvd == POS_VD_NIV
                   OTHERWISE
                      nKolicina -= pos->kolicina
                   ENDCASE
@@ -236,7 +236,7 @@ FUNCTION pos_inventura_nivelacija()
 
       AAdd( ImeKol, { "Sifra i naziv", {|| idroba + "-" + Left( robanaz, 25 ) } } )
       AAdd( ImeKol, { "BARKOD", {|| barkod } } )
-      IF cIdVd == VD_INV
+      IF cIdVd == POS_VD_INV
          AAdd( ImeKol, { "Knj.kol.", {|| Str( kolicina, 9, 3 ) } } )
          AAdd( ImeKol, { "Pop.kol.", {|| Str( kol2, 9, 3 ) }, "kol2" } )
       ELSE
@@ -244,7 +244,7 @@ FUNCTION pos_inventura_nivelacija()
       ENDIF
       AAdd( ImeKol, { "Cijena ", {|| Str( cijena, 7, 2 ) } } )
 
-      IF cIdVd == VD_NIV
+      IF cIdVd == POS_VD_NIV
          AAdd( ImeKol, { "Nova C.",     {|| Str( ncijena, 7, 2 ) } } )
       ENDIF
 
@@ -298,7 +298,6 @@ FUNCTION pos_inventura_nivelacija()
          ELSEIF i == 3
 
             IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
-
                SELECT PRIPRZ
                my_dbf_zap()
                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
@@ -306,7 +305,6 @@ FUNCTION pos_inventura_nivelacija()
                RETURN .T.
 
             ELSE
-
                SELECT _POS
                AppFrom( "PRIPRZ", .F. )
                SELECT PRIPRZ
@@ -407,7 +405,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
    CASE Ch == K_ALT_P
 
-      IF cIdVd == VD_INV
+      IF cIdVd == POS_VD_INV
          pos_stampa_zaduzenja_inventure( .T. )
          o_pos_tables()
          SELECT priprz
@@ -570,7 +568,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       nLX++
 
-      IF cIdVd == VD_INV
+      IF cIdVd == POS_VD_INV
          @ nLX, box_y_koord() + 3 SAY8 "Knj. količina:" GET nKolicina PICT _pict ;
             WHEN {|| .F. }
       ELSE
@@ -580,7 +578,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       nLX++
 
-      IF cIdVd == VD_INV
+      IF cIdVd == POS_VD_INV
 
          @ nLX, box_y_koord() + 3 SAY8 "Pop. količina:" GET _kol2 PICT _pict ;
             VALID _pop_kol( _kol2 ) ;
@@ -594,7 +592,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
          WHEN {|| .T. } ;
          VALID {|| _cijena < 999999.99 }
 
-      IF cIdVd == VD_NIV
+      IF cIdVd == POS_VD_NIV
 
          nLX++
 
@@ -735,9 +733,9 @@ STATIC FUNCTION update_ip_razlika()
 
          ELSEIF pos->idvd $ "42#96#01#IN#NI"
             DO CASE
-            CASE pos->idvd == VD_INV
+            CASE pos->idvd == POS_VD_INV
                nKolicinaZaInventuru -= pos->kolicina - pos->kol2
-            CASE pos->idvd == VD_NIV
+            CASE pos->idvd == POS_VD_NIV
             OTHERWISE
                nKolicinaZaInventuru -= pos->kolicina
             ENDCASE
@@ -834,7 +832,7 @@ STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
       SELECT ( _area )
    ENDIF
 
-   IF cIdVD == VD_INV
+   IF cIdVD == POS_VD_INV
       get_field_set_focus( "_kol2" )
    ELSE
       get_field_set_focus( "_cijena" )
@@ -863,7 +861,7 @@ FUNCTION _set_cijena_artikla( id_vd, cIdRoba )
 
    PushWa()
 
-   IF id_vd == VD_INV
+   IF id_vd == POS_VD_INV
 
       select_o_roba( cIdRoba )
       _cijena := pos_get_mpc()
@@ -918,9 +916,9 @@ FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
          nKol += pos->Kolicina
       ELSEIF POS->idvd $ "42#01#IN#NI"
          DO CASE
-         CASE POS->IdVd == VD_INV
+         CASE POS->IdVd == POS_VD_INV
             nKol := pos->kol2
-         CASE POS->idvd == VD_NIV
+         CASE POS->idvd == POS_VD_NIV
          OTHERWISE
             nKol -= pos->kolicina
          ENDCASE

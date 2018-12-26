@@ -50,7 +50,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
       RETURN .F.
    ENDIF
 
-   cQuery := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable
+   cQuery := "SELECT * FROM " + f18_sql_schema( cTable )
 
    IF cId != NIL
       cQuery += " WHERE id=" + sql_quote( cId ) // select from fmk.partn where id='BRING01'
@@ -154,6 +154,14 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    RETURN .T.
 
+
+FUNCTION f18_sql_schema( cTable )
+
+   IF "." $ cTable
+      RETURN cTable
+   ENDIF
+
+   RETURN F18_PSQL_SCHEMA_DOT + cTable
 
 
 FUNCTION use_sql( cTable, cSqlQuery, cAlias )
@@ -405,7 +413,7 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
    LOCAL cSql
    LOCAL cWhere := ""
 
-   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * FROM " + f18_sql_schema( cTable )
 
    IF cShema <> NIL
       cWhere += " shema = " + sql_quote( cShema )

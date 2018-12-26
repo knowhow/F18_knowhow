@@ -28,7 +28,7 @@ ALTER SCHEMA fmk OWNER TO admin;
 -- Name: SCHEMA fmk; Type: COMMENT; Schema: -; Owner: admin
 --
 
-COMMENT ON SCHEMA fmk IS 'fmk/F118';
+COMMENT ON SCHEMA fmk IS 'fmk/F18';
 
 
 --

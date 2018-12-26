@@ -1428,9 +1428,7 @@ METHOD F18Admin:create_new_pg_db_params( hParams )
       RETURN lOk
    ENDIF
 
-
    cDatabaseName := AllTrim( cDatabaseName ) + "_" + AllTrim( cDatabaseSezona )    // formiranje strina naziva baze
-
 
    // template empty
    IF Empty( cDatabaseTemplate )

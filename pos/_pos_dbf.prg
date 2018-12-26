@@ -389,7 +389,7 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    cWhere += " AND brdok = " + sql_quote( cBroj )
    cWhere += " AND idroba = " + sql_quote( cIdRoba )
 
-   IF ( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
+   IF table_count( f18_sql_schema( "pos_pos" ), cWhere ) > 0
       lRet := .T.
    ENDIF
 

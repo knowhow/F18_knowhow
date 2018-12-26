@@ -19,6 +19,7 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 
    LOCAL cOdgovor
    LOCAL nMenuExeOpcija
+
    IF lOsnovniMeni == NIL
       lOsnovniMeni := .F.
    ENDIF
@@ -57,7 +58,7 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
             IF ValType( nMenuExeOpcija ) == "B"
                Eval( nMenuExeOpcija )
             ELSE
-               MsgBeep( "meni cudan ?" + hb_ValToStr( nIzbor ) )
+               MsgBeep( "meni čudan ?" + hb_ValToStr( nIzbor ) )
             ENDIF
 
          ENDIF
@@ -83,7 +84,7 @@ FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
    LOCAL xM := 0, nYm := 0
 
    xM := Len( aNiz )
-   AEval( aNiz, {| x| iif( Len( x ) > nYm, nYm := Len( x ), ) } )
+   AEval( aNiz, {| x | iif( Len( x ) > nYm, nYm := Len( x ), ) } )
 
    box_crno_na_zuto( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
 
@@ -116,6 +117,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    LOCAL cLocalInvertedColor
    LOCAL nTItemNo
    LOCAL nChar
+   LOCAL cMeniItem
 
    // LOCAL ItemSav
    LOCAL aMenu := {}
@@ -138,7 +140,13 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    ENDIF
 
    nN1 := iif( Len( aItems ) > nMaxVR, nMaxVR, Len( aItems ) )
-   nLength := Len( aItems[ 1 ] ) + 1
+
+   IF ValType( aItems[ 1 ] ) == "B"
+      cMeniItem := Eval( aItems[ 1 ] )
+   ELSE
+      cMeniItem := aItems[ 1 ]
+   ENDIF
+   nLength := Len( cMeniItem ) + 1
 
    IF lInvert == NIL
       lInvert := .F.
@@ -177,7 +185,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    SetColor( f18_color_invert() )
 
    IF nItemNo == 0
-      CentrTxt( h[ 1 ], f18_max_rows() -1 )
+      CentrTxt( h[ 1 ], f18_max_rows() - 1 )
    END IF
 
    SetColor( cLocalColor )
@@ -197,8 +205,13 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    @ box_x_koord(), box_y_koord() TO box_x_koord() + nN1 + 1, box_y_koord() + nLength + 3
 
    IF nTItemNo <> 0 // Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
+      IF ValType( aItems[ nTItemNo ] ) == "B"
+         cMeniItem := Eval( aItems[ nTItemNo ] )
+      ELSE
+         cMeniItem := aItems[ nTItemNo ]
+      ENDIF
       SetColor( cLocalInvertedColor )
-      @ box_x_koord() + Min( nTItemNo, nMaxVR ), box_y_koord() + 1 SAY8 " " + aItems[ nTItemNo ] + " "
+      @ box_x_koord() + Min( nTItemNo, nMaxVR ), box_y_koord() + 1 SAY8 " " + cMeniItem + " "
       @ box_x_koord() + Min( nTItemNo, nMaxVR ), box_y_koord() + 2 SAY ""
    END IF
 
@@ -208,7 +221,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
       @ box_x_koord(), box_y_koord() CLEAR TO box_x_koord() + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 )
       aMenu := StackPop( aMenuStack )
 
-      RestScreen( box_x_koord(), box_y_koord(), box_x_koord() + nN1 + 2 -iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ), aMenu[ 4 ] )
+      RestScreen( box_x_koord(), box_y_koord(), box_x_koord() + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ), aMenu[ 4 ] )
    END IF
 
    SetColor( cOldColor )
@@ -254,6 +267,7 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
    LOCAL nI, nWidth, nLen, nOldCurs, cOldColor, nOldItemNo, cSavC
    LOCAL nGornja
    LOCAL nVisina
+   LOCAL cMeniItem
 
    // LOCAL nCtrlKeyVal := 0
    LOCAL nChar
@@ -264,7 +278,6 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
    IF nItemNo == 0
       RETURN nItemNo
    ENDIF
-
 
    lExitFromMeni := .F.
 
@@ -306,7 +319,12 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
             SetColor( cOldColor )
          ENDIF
          IF nLen >= nI
-            @ nX1 + nI - nGornja, nY1 SAY PadRU( aItems[ nI ], nWidth )
+            IF ValType( aItems[ nI ] ) == "B"
+               cMeniItem := Eval( aItems[ nI ] )
+            ELSE
+               cMeniItem := aItems[ nI ]
+            ENDIF
+            @ nX1 + nI - nGornja, nY1 SAY PadRU( cMeniItem, nWidth )
          ENDIF
       NEXT
 
@@ -385,13 +403,13 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
 
 
 
-// STATIC FUNCTION meni_0_okvir(  nN1, nLength, lFiksneKoordinate )
+
 STATIC FUNCTION meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
 
    LOCAL nI, nLength := nY2 - nY1
 
-   //@ nX1 - 1, nY1 - 2 CLEAR TO nX2, nY2 + 2
-   @ nX1 , nY1 - 1 CLEAR TO nX2 - 1, nY1 - 1 // ispis lijeve praznine (#) :  |#1. opcija 1 %|
+   // @ nX1 - 1, nY1 - 2 CLEAR TO nX2, nY2 + 2
+   @ nX1, nY1 - 1 CLEAR TO nX2 - 1, nY1 - 1 // ispis lijeve praznine (#) :  |#1. opcija 1 %|
    @ nX1,  nY2     CLEAR TO nX2 - 1, nY2 + 1 // ispis desne praznine (%)  :  |#2. opcija 2 %|
    IF lFiksneKoordinate
       @ nX1 - 1, nY1 - 2 TO nX2, nY2 + 2
@@ -399,7 +417,7 @@ STATIC FUNCTION meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
 
       @ nX1 - 1, nY1 - 2 TO nX2, nY2 + 2 DOUBLE // okvir duple linije
 
-      FOR nI := 1 TO (nX2 - nX1 + 2)
+      FOR nI := 1 TO ( nX2 - nX1 + 2 )
          @ nX1 + nI - 1, nY1 + nLength + 3 SAY Chr( 177 ) // sjena desno
       NEXT
       @ nX2 + 1, nY1 - 1 SAY Replicate( Chr( 177 ), nLength + 5 ) // sjena dno

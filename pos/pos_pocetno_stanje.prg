@@ -158,7 +158,7 @@ STATIC FUNCTION pocetno_stanje_sql( hParams )
       "WHEN idvd IN ('IN') THEN -(kolicina - kol2) * cijena " + ;
       "WHEN idvd IN ('42') THEN -kolicina * cijena " + ;
       "END ) as vrijednost " + ;
-      "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos "
+      "FROM " + f18_sql_schema( "pos_pos " )
 
    _qry += " WHERE "
    _qry += _sql_cond_parse( "idpos", _id_pos )

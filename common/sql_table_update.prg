@@ -56,7 +56,12 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       _dbf_wa    := hDbfRec[ "wa" ]
       _dbf_alias := hDbfRec[ "alias" ]
       lSqlTable := hDbfRec[ "sql" ]
-      cSqlTable   := F18_PSQL_SCHEMA_DOT + cTable
+
+      IF "." $ cTable
+         cSqlTable := cTable
+      ELSE
+         cSqlTable   := F18_PSQL_SCHEMA_DOT + cTable
+      ENDIF
 
       // uvijek je algoritam 1 nivo recorda
       _alg := hDbfRec[ "algoritam" ][ 1 ]

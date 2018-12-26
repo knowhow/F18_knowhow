@@ -14,7 +14,7 @@
 
 
 
-FUNCTION kalk_meni_mag_izvjestaji()
+FUNCTION kalk_meni_izvjestaji()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}

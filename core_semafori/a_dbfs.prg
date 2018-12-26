@@ -114,10 +114,19 @@ FUNCTION set_a_dbfs_key_fields()
 
 FUNCTION f18_dbfs_add( cTable, hItem )
 
+   LOCAL cItem
    LOCAL cDatabase := my_database()
 
    hb_mutexLock( s_mtxMutex )
+
+   FOR EACH cItem IN s_hF18Dbfs[ cDatabase ]:Keys
+      // ako vec postoje tabele sa istom workarea izbrisati ih
+      IF s_hF18Dbfs[ cDatabase ][ cItem ][ "wa" ] == hItem[ "wa" ]
+         hb_HDel( s_hF18Dbfs[ cDatabase ], cItem )
+      ENDIF
+   NEXT
    s_hF18Dbfs[ cDatabase ][ cTable ] := hItem
+
    hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.

@@ -18,6 +18,15 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "adres", "ADRES", F_ADRES    )
 
    set_a_sql_sifarnik( "roba", "ROBA", F_ROBA    )
+
+   /*
+      ROBA_P - alias tabele roba koji se koristi u sastavnicama
+
+      roba _p hack se koristi u ovoj sekvenci kod dbf update server:
+      IF " _p" $ cTabela  // HACK "roba _p"
+        cTabela := StrTran( cTabela, " _p", "" )
+       ENDIF
+   */
    set_a_sql_sifarnik( "roba _p", "ROBA_P", F_ROBA_P   )
 
    set_a_sql_sifarnik( "konto", "KONTO", F_KONTO      )

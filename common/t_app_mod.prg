@@ -135,6 +135,9 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
    LOCAL lPushWa
    LOCAL nI
 
+
+   pq_receive()
+
    DO CASE
 
 #ifdef __PLATFORM__DARWIN
@@ -216,7 +219,7 @@ METHOD quit( lVratiseURP )
    RETURN .T.
    */
 
-   
+
 
 
 METHOD gParams()
@@ -485,3 +488,4 @@ PROCEDURE k_f12()
     info_bar( "stty", "F12: 100 x 40" )
 
     RETURN
+  

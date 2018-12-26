@@ -143,7 +143,7 @@ FUNCTION roba_max_fiskalni_plu()
    LOCAL nPlu := 0
    LOCAL cSql, oQuery
 
-   cSql := "SELECT MAX( fisc_plu ) AS max_plu FROM " + F18_PSQL_SCHEMA_DOT + "roba"
+   cSql := "SELECT MAX( fisc_plu ) AS max_plu FROM " + f18_sql_schema( "roba" )
    oQuery := run_sql_query( cSql )
 
    nPlu := query_row( oQuery, "max_plu" )
@@ -160,7 +160,7 @@ FUNCTION is_roba_aktivna( cIdRoba )
    LOCAL nCnt
    LOCAL cSql, oQuery
 
-   cSql := "SELECT count(idroba) AS cnt FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk"
+   cSql := "SELECT count(idroba) AS cnt FROM " + f18_sql_schema( "kalk_kalk" )
    cSql += " WHERE idroba=" + sql_quote( cIdRoba )
    oQuery := run_sql_query( cSql )
 
@@ -174,7 +174,7 @@ FUNCTION find_roba_id_by_barkod( cBarkodId )
    LOCAL nCnt
    LOCAL cSql, oQuery
 
-   cSql := "SELECT id FROM " + F18_PSQL_SCHEMA_DOT + "roba"
+   cSql := "SELECT id FROM " + f18_sql_schema( "roba" )
    cSql += " WHERE barkod=" + sql_quote( cBarkodId )
    cSql += " LIMIT 1"
    oQuery := run_sql_query( cSql )
@@ -310,7 +310,7 @@ FUNCTION kalk_aktivna_konta( cKontoTip, cIdRoba )
    LOCAL cSql, cKonto
    LOCAL oQry, oRow, aKonta := {}
 
-   cSql :=  "SELECT distinct( " + cKontoTip + ") AS kto FROM "  + F18_PSQL_SCHEMA_DOT + "kalk_kalk "
+   cSql :=  "SELECT distinct( " + cKontoTip + ") AS kto FROM "  + f18_sql_schema( "kalk_kalk " )
    cSql += " WHERE idroba=" + sql_quote( cIdRoba )
    cSql += " ORDER BY " + cKontoTip
 

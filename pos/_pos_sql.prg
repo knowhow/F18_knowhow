@@ -297,7 +297,7 @@ FUNCTION seek_pos_h( hParams )
    ENDIF
 
 
-   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * from " + f18_sql_schema( cTable )
 
    IF cIdPos != NIL .AND. !Empty( cIdPos )
       IF lWhere
@@ -424,7 +424,7 @@ FUNCTION seek_pos_doks( cIdPos, cIdVd, dDatum, cBrDok, cTag, dDatOd, dDatDo )
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
 
-   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * from " + f18_sql_schema( cTable )
 
    IF cIdPos != NIL .AND. !Empty( cIdPos )
       IF lWhere
@@ -564,8 +564,8 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
    cSql := "SELECT "
    cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
-   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos "
-   cSql += "WHERE "
+   cSql += "FROM " + f18_sql_schema( "pos_pos" )
+   cSql += " WHERE "
    cSql += " idpos = " + sql_quote( cIdPos )
    cSql += " AND idvd = " + sql_quote( cIdVd )
    cSql += " AND brdok = " + sql_quote( cBrDok )
@@ -598,8 +598,8 @@ FUNCTION pos_get_mpc()
 
    cField := pos_get_mpc_field()
 
-   cQry := "SELECT " + cField + " FROM " + F18_PSQL_SCHEMA_DOT + "roba "
-   cQry += "WHERE id = " + sql_quote( roba->id )
+   cQry := "SELECT " + cField + " FROM " + f18_sql_schema( "roba" )
+   cQry += " WHERE id = " + sql_quote( roba->id )
 
    oData := run_sql_query( cQry )
 

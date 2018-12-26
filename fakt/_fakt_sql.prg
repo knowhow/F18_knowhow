@@ -192,7 +192,7 @@ FUNCTION seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cTag, aWorkare
    LOCAL hIndexes, cKey, lWhere := .F.
    LOCAL nWa := F_FAKT_DOKS, cAlias := "FAKT_DOKS"
 
-   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * from " + f18_sql_schema( cTable )
 
    IF aWorkarea != NIL
       nWa := aWorkarea[ 1 ]
@@ -298,7 +298,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
 
-   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * from " + f18_sql_schema( cTable )
 
    IF cAlias == NIL
       cAlias := "FAKT"
@@ -426,7 +426,7 @@ FUNCTION seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok, cTag )
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
 
-   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql := "SELECT * from " + f18_sql_schema( cTable )
 
 
    IF cIdFirma != NIL .AND. !Empty( cIdFirma )

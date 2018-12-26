@@ -50,7 +50,7 @@ FUNCTION update_dbf_from_server( cTabela, cAlgoritam )
    _sql_order  := hDbfRec[ "sql_order" ]
    _dbf_wa     := hDbfRec[ "wa" ]
    _dbf_alias  := hDbfRec[ "alias" ]
-   _sql_tbl    := F18_PSQL_SCHEMA_DOT + cTabela
+   _sql_tbl    := f18_sql_schema( cTabela )
 
    //_x := f18_max_rows() - 15
    //_y := f18_max_cols() - 20

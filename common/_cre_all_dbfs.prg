@@ -276,7 +276,7 @@ FUNCTION dbCreate2( cImeDbf, aDbf, cDbfEngine )
 FUNCTION fill_tbl_valute()
 
    LOCAL _rec, nTmp, _id, cQuery
-   LOCAL _table := F18_PSQL_SCHEMA_DOT + "valute"
+   LOCAL _table := f18_sql_schema( "valute" )
 
    nTmp := table_count( _table )
 

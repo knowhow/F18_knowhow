@@ -51,7 +51,7 @@ METHOD TKalkMod:programski_modul_osnovni_meni()
    AAdd( opcexe, {|| kalk_pripr_obrada() } )
 
    AAdd( opc,   "2. izvještaji" )
-   AAdd( opcexe, {|| kalk_meni_mag_izvjestaji() } )
+   AAdd( opcexe, {|| kalk_meni_izvjestaji() } )
    AAdd( opc,   "3. pregled dokumenata" )
    AAdd( opcexe, {|| kalk_pregled_dokumenata() } )
    AAdd( opc,   "4. generacija dokumenata" )
@@ -64,13 +64,12 @@ METHOD TKalkMod:programski_modul_osnovni_meni()
    AAdd( opcexe, {|| kalk_ostale_operacije_doks() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
+
    AAdd( opc,   "8. šifarnici" )
    AAdd( opcexe, {|| kalk_sifrarnik() } )
 
-/*
-   AAdd( opc,   "9. administriranje baze podataka" )
-   AAdd( opcexe, {|| MAdminKalk() } )
-  */
+   AAdd( opc,   "9. maloprodaja" )
+   AAdd( opcexe, {|| kalk_maloprodaja() } )
 
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )

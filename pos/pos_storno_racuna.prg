@@ -23,8 +23,8 @@ FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( cFiskalniBroj, cBrojRacuna, dDatumR
    cQuery := " SELECT pd.datum, pd.brdok, pd.fisc_rn, " + ;
       " SUM( pp.kolicina * pp.cijena ) as iznos, " + ;
       " SUM( pp.kolicina * pp.ncijena ) as popust " + ;
-      " FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos pp " + ;
-      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " pos_doks pd " + ;
+      " FROM " + f18_sql_schema( "pos_pos" ) + " pp " + ;
+      " LEFT JOIN " + f18_sql_schema( "pos_doks" ) + " pd " + ;
       " ON pd.idpos = pp.idpos AND pd.idvd = pp.idvd AND pd.brdok = pp.brdok AND pd.datum = pp.datum " + ;
       " WHERE pd.idpos = " + sql_quote( cIdPos ) + ;
       " AND pd.idvd = '42' AND pd.fisc_rn = " + AllTrim( Str( cFiskalniBroj ) ) + ;

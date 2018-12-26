@@ -49,7 +49,7 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
    // 4) ja cu pokupiti 100 000 stavki a necu posljednjih 500
    // 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
 
-   _sql_table  := F18_PSQL_SCHEMA_DOT + cDbfTable
+   _sql_table  := f18_sql_schema( cDbfTable )
    aDbfRec  := get_a_dbf_rec( cDbfTable )
    _sql_fields := sql_fields( aDbfRec[ "dbf_fields" ] )
 

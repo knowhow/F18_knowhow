@@ -20,14 +20,25 @@ STATIC s_nFinNalogCount := 0
 
 FUNCTION add_global_idle_handlers()
 
-
    if is_electron_host()
        RETURN .T.
    endif
 
+   AAdd( aIdleHandlers, hb_idleAdd( {||  pq_receive() } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
 
    RETURN .T.
+
+PROCEDURE pq_receive()
+
+    //? "START PQ_RECEIVE"
+    LOCAL aNotify := PQReceive( sql_data_conn():pDB )
+    // hb_idleSleep(5)
+    //? "KRAJ PQ_RECEIVE"
+    IF aNotify != NIL
+       ? pp( aNotify )
+    ENDIF
+   RETURN
 
 
 /*
@@ -125,7 +136,7 @@ PROCEDURE update_fin_nalog_count()
       s_nFinNalogCount := oQry:FieldGet( 1 )
       IF ValType( s_nFinNalogCount ) != "N"
          RETURN
-      ENDIF 
+      ENDIF
       hb_DispOutAt( f18_max_rows() + 1,  f18_max_cols() - 10, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
    */
@@ -177,6 +188,5 @@ FUNCTION remove_global_idle_handlers()
 
 
 INIT PROCEDURE idle_init()
-
 
    RETURN

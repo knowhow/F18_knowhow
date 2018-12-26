@@ -37,6 +37,8 @@
 #define F_OBJEKTI   34
 #define F_PRODAJA   35
 
+#define F_ROBA_PRODAVNICA  36
+
 // modul FIN (wa 50-80)
 #define F_FIN_PRIPR     50
 #define F_SUBAN    51

@@ -31,6 +31,7 @@ FUNCTION add_global_idle_handlers()
 
 PROCEDURE pq_receive()
 
+   /*
     //? "START PQ_RECEIVE"
     LOCAL aNotify := PQReceive( sql_data_conn():pDB )
     // hb_idleSleep(5)
@@ -39,6 +40,7 @@ PROCEDURE pq_receive()
        // ? pp( aNotify )
        error_bar( "notify", pp(aNotify) )
     ENDIF
+   */
    RETURN
 
 

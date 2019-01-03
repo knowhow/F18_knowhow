@@ -124,7 +124,12 @@ METHOD FinBrutoBilans:print_b_rpt()
 
    DO CASE
    CASE ::tip == 1
-      fin_bb_subanalitika_b( ::hParams )
+      altd()
+      IF ::hParams[ "pdf" ]
+        fin_bb_subanalitika_pdf( ::hParams )
+      ELSE
+        fin_bb_subanalitika_b( ::hParams )
+      ENDIF
    CASE ::tip == 2
       fin_bb_analitika_b( ::hParams )
    CASE ::tip == 3
@@ -167,20 +172,17 @@ METHOD FinBrutoBilans:get_vars()
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** BRUTO BILANS *****"
 
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "ODABERI VRSTU BILANSA:"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
 
-   ++nX
-   ++nX
-
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "VRSTA ŠTAMPE:"
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] TXT [2] ODT-LO [3] PDF:" GET _var_txt PICT "@!" VALID _var_txt $ "123"
 
    READ
 
@@ -189,19 +191,16 @@ METHOD FinBrutoBilans:get_vars()
       RETURN _ok
    ENDIF
 
-   IF _var_txt == "1"
+   IF _var_txt == "1" .OR. _var_txt == "3"
       _var_ab := "B"
    ELSE
       _var_ab := "A"
    ENDIF
 
-   ++nX
-   ++nX
-
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
 
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
@@ -213,7 +212,6 @@ METHOD FinBrutoBilans:get_vars()
    @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _dat_do
 
    ++nX
-
    IF _var_txt == "1"
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
@@ -274,6 +272,7 @@ METHOD FinBrutoBilans:get_vars()
    ::hParams[ "podklase" ] := ( _podklase == "D" )
    ::hParams[ "format" ] := _format
    ::hParams[ "txt" ] := ( _var_txt == "1" )
+   ::hParams[ "pdf" ] := ( _var_txt == "3" )
 
    ::tip := _tip
 
@@ -282,7 +281,6 @@ METHOD FinBrutoBilans:get_vars()
    _ok := .T.
 
    RETURN _ok
-
 
 
 
@@ -295,12 +293,12 @@ METHOD FinBrutoBilans:get_data()
    LOCAL _id_rj := ::hParams[ "id_rj" ]
    LOCAL _iznos_dug := "iznosbhd"
    LOCAL _iznos_pot := "iznosbhd"
-   LOCAL _table := F18_PSQL_SCHEMA_DOT + "fin_suban"
+   LOCAL _table := f18_sql_schema( "fin_suban" )
    LOCAL _date_field := "sub.datdok"
 
    IF ::tip == 2
 
-      _table := F18_PSQL_SCHEMA_DOT + "fin_anal"
+      _table := f18_sql_schema( "fin_anal" )
       _date_field := "sub.datnal"
 
       _iznos_dug := "dugbhd"
@@ -308,7 +306,7 @@ METHOD FinBrutoBilans:get_data()
 
    ELSEIF ::tip > 2
 
-      _table := F18_PSQL_SCHEMA_DOT + "fin_sint"
+      _table := f18_sql_schema( "fin_sint" )
       _date_field := "sub.datnal"
 
       _iznos_dug := "dugbhd"
@@ -484,7 +482,6 @@ METHOD FinBrutoBilans:set_txt_lines()
 
 
 
-
 METHOD FinBrutoBilans:zaglavlje_txt()
 
    Preduzece()
@@ -555,7 +552,7 @@ METHOD FinBrutoBilans:gen_xml()
 
    DO WHILE !Eof()
 
-      __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", field->idkonto )
+      __konto := _set_sql_record_to_hash( f18_sql_schema( "konto" ), field->idkonto )
 
       _klasa := Left( field->idkonto, _kl_len )
 
@@ -724,7 +721,6 @@ METHOD FinBrutoBilans:gen_xml()
    xml_node( "tek_pot", AllTrim( Str( _tt_tek_pot, 12, 2 ) ) )
    xml_node( "sld_dug", AllTrim( Str( _tt_sld_dug, 12, 2 ) ) )
    xml_node( "sld_pot", AllTrim( Str( _tt_sld_pot, 12, 2 ) ) )
-
    xml_subnode( "total", .F. )
 
    FOR nI := 1 TO Len( _a_klase )
@@ -746,11 +742,8 @@ METHOD FinBrutoBilans:gen_xml()
    NEXT
 
    xml_subnode( "total", .T. )
-
    xml_subnode( "bilans", .T. )
-
    xml_subnode( "rpt", .T. )
-
    close_xml()
 
    my_close_all_dbf()
@@ -809,8 +802,6 @@ METHOD FinBrutoBilans:print_odt()
    ENDIF
 
    RETURN SELF
-
-
 
 
 

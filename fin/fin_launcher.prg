@@ -21,7 +21,7 @@ FUNCTION MainFin( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    oFin := TFinMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oFin
 
-   OutErr("LISTEN FIN:")
+   // OutErr("LISTEN FIN:")
    run_sql_query("LISTEN FIN;")
    // run_sql_query("NOTIFY FIN, 'START FIIIIIIIIIN';")
    // run_sql_query("NOTIFY FIN, 'F18 FIN/2';")

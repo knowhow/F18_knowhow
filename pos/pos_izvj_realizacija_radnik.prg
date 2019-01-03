@@ -20,7 +20,7 @@ FUNCTION pos_realizacija_radnik
    PRIVATE cVrsteP := Space( 60 )
    PRIVATE cFilterVrstePlacanja := ".t."
    PRIVATE cSmjena := Space( 1 )
-   PRIVATE cIdPos := gIdPos
+   PRIVATE cIdPos := pos_prodajno_mjesto()
 
    // PRIVATE cIdDio := gIdDio
    PRIVATE dDatOd := gDatum
@@ -51,7 +51,7 @@ FUNCTION pos_realizacija_radnik
       aNiz := {}
       cIdPos := gIdPos
 
-      AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
+      AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cIdPos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
       AAdd( aNiz, { "Sifra radnika  (prazno-svi)", "cIdRadnik", "IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",, } )
       AAdd( aNiz, { "Vrsta placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
       AAdd( aNiz, { "Smjena (prazno-sve)", "cSmjena",,, } )

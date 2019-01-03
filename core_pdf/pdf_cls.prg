@@ -278,26 +278,38 @@ METHOD MaxRow() CLASS PDFClass
    LOCAL nPageHeight, nMaxRow
 
    IF ::nType == PDF_TXT_PORTRAIT
-      SWITCH ::nFontSize
+      SWITCH Round(::nFontSize, 0)
       CASE 9
          RETURN 63
       CASE 8
          RETURN 65
       CASE 7
          RETURN 80
+      CASE 6
+         RETURN 82
+      CASE 5
+         RETURN 85
       OTHERWISE
          RETURN 66
       ENDSWITCH
    ENDIF
 
    IF ::nType == PDF_TXT_LANDSCAPE
-      SWITCH ::nFontSize
+      IF ::nFontSize == 5.5
+        RETURN 65
+      ENDIF
+
+      SWITCH Round( ::nFontSize, 0)
       CASE 9
          RETURN 35
       CASE 8
          RETURN 40
       CASE 7
          RETURN 45
+      CASE 6
+         RETURN 50
+      CASE 5
+         RETURN 70
       OTHERWISE
          RETURN 35
       ENDSWITCH
@@ -314,7 +326,7 @@ METHOD MaxCol() CLASS PDFClass
    LOCAL nPageWidth, nMaxCol
 
    IF ::nType == PDF_TXT_PORTRAIT
-      SWITCH ::nFontSize
+      SWITCH ROUND(::nFontSize, 0)
       CASE 9
          RETURN 102
       CASE 8
@@ -323,15 +335,22 @@ METHOD MaxCol() CLASS PDFClass
          RETURN 132
       CASE 6
          RETURN 145
+      CASE 5
+         RETURN 152
       OTHERWISE
          RETURN 102
       ENDSWITCH
 
    ENDIF
 
+
    IF ::nType == PDF_TXT_LANDSCAPE
 
-      SWITCH ::nFontSize
+      IF ::nFontSize == 5.5
+         RETURN 240
+      ENDIF
+
+      SWITCH Round(::nFontSize, 0)
       CASE 9
          RETURN 155
       CASE 8
@@ -339,13 +358,12 @@ METHOD MaxCol() CLASS PDFClass
       CASE 7
          RETURN 180
       CASE 6
-         RETURN 204
-
+         RETURN 190
+      CASE 5
+         RETURN 225
       OTHERWISE
          RETURN 155
       ENDSWITCH
-
-
    ENDIF
 
    nPageWidth := HPDF_Page_GetWidth( ::oPage ) - ( ::nMargin * 2 )
@@ -389,8 +407,8 @@ METHOD PageHeader() CLASS PDFClass
    ::AddPage()
    ::DrawText( 0, 0, "(c) bring.out" )
    ::DrawText( 0, ( ::MaxCol() - Len( ::cHeader ) ) / 2, ::cHeader )
-   ::DrawText( 0, ::MaxCol() - 12, "Str: " + StrZero( ::nPageNumber, 6 ) )
-   ::DrawLine( 0.5, 0, 0.5, ::MaxCol() )
+   ::DrawText( 0, ::MaxCol() - 16, "Str: " + StrZero( ::nPageNumber, 6 ) )
+   ::DrawLine( 0.5, 1.5 , 0.5, ::MaxCol() - 2 )
    ::nRow := 2
    ::nCol := 0
 

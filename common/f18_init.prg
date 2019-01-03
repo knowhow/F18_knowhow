@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 THREAD STATIC s_lAlreadyRunStartup := .F. // startup funkcija vec pokrenuta
 
 STATIC s_psqlServer_log := .F. // logiranje na server

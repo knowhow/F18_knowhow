@@ -98,9 +98,8 @@ METHOD getParent()
 METHOD setName()
 
    ::cName := "F18"
-
+   
    RETURN .T.
-
 
 
 METHOD run()
@@ -476,16 +475,15 @@ METHOD setTGVars()
 
 PROCEDURE k_f1()
 
-     Run("stty cols 100 rows 40")
-     info_bar( "stty", "100 x 40" )
+     Run("stty cols 120 rows 40")
+     info_bar( "stty", "120 x 40" )
 
    RETURN
 
 
 PROCEDURE k_f12()
 
-    Run("stty cols 100 rows 40")
-    info_bar( "stty", "F12: 100 x 40" )
+    Run("stty cols 120 rows 40")
+    info_bar( "stty", "F12: 120 x 40" )
 
     RETURN
-  

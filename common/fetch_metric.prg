@@ -42,6 +42,7 @@ FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
       RETURN s_hParametri[ cSection ]
    ENDIF
 
+   // za sada i POS drži parametre u select * from fmk.metric; (2166 rows) 
    cQuery := "SELECT " + F18_PSQL_SCHEMA + ".fetchmetrictext(" + sql_quote( cSection )  + ")"
 
    oQuery := run_sql_query( cQuery )

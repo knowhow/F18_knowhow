@@ -60,7 +60,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       IF "." $ cTable
          cSqlTable := cTable
       ELSE
-         cSqlTable   := F18_PSQL_SCHEMA_DOT + cTable
+         cSqlTable   := f18_sql_schema( cTable )
       ENDIF
 
       // uvijek je algoritam 1 nivo recorda

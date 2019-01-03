@@ -44,3 +44,4 @@ FUNCTION pos_menu_gendok()
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "gdok" )
 
    RETURN .T.
+   

@@ -49,7 +49,7 @@ FUNCTION o_adres( cId )
 FUNCTION find_roba_by_naz_or_id( cId )
 
    LOCAL cAlias := "ROBA"
-   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cSqlQuery := "select * from " + f18_sql_schema( "roba")
    LOCAL cIdSql
 
    cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
@@ -80,7 +80,7 @@ FUNCTION find_roba_by_naz_or_id( cId )
 FUNCTION find_roba_p_by_naz_or_id( cId )
 
    LOCAL cAlias := "ROBA_P"
-   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cSqlQuery := "select * from " + f18_sql_schema( "roba")
    LOCAL cIdSql
 
    cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
@@ -124,7 +124,7 @@ FUNCTION select_o_roba( cId )
 
 FUNCTION roba_update_vpc( cId, nVpc )
 
-   LOCAL oQry, cSql := "update fmk.roba set vpc=" + sql_quote( nVpc )
+   LOCAL oQry, cSql := "update " + f18_sql_schema( "roba") + " set vpc=" + sql_quote( nVpc )
 
    cSql := " WHERE id=" + sql_quote( cId )
 
@@ -492,8 +492,7 @@ FUNCTION use_sql_roba( hParams )
    ENDIF
 */
 
-   cSql += " FROM fmk.roba"
-
+   cSql += " FROM " + f18_sql_schema("roba")
 
    cWhere := use_sql_roba_where( hParams )
    cOrder := use_sql_roba_order( hParams )

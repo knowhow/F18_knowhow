@@ -15,6 +15,7 @@ STATIC s_mtxMutex
 STATIC s_aTransactions := {}
 STATIC s_lSqlTransactionError := .F.
 
+STATIC s_cPrimarnaSchema := "fmk"
 
 FUNCTION automatska_obrada_error( lSet )
 
@@ -25,13 +26,22 @@ FUNCTION automatska_obrada_error( lSet )
    RETURN s_lSqlTransactionError
 
 
-FUNCTION set_sql_search_path()
+FUNCTION set_sql_search_path( cPrimarnaSchema )
 
-   //LOCAL cSqlSearchPath := my_server_search_path()
+   // LOCAL cSqlSearchPath := my_server_search_path()
 
-   LOCAL cQuery := "SET search_path TO fmk,public"
+   LOCAL cQuery
    // + cSqlSearchPath
    LOCAL oQuery
+
+   IF cPrimarnaSchema == NIL
+      cPrimarnaSchema := "fmk"
+   ELSE
+      s_cPrimarnaSchema := cPrimarnaSchema
+   ENDIF
+
+   cQuery := "SET search_path TO " + cPrimarnaSchema + ",public"
+   // altd()
 
    oQuery := run_sql_query( cQuery )
 
@@ -44,6 +54,10 @@ FUNCTION set_sql_search_path()
    ENDIF
 
    RETURN .T.
+
+FUNCTION sql_primarna_schema()
+
+   RETURN s_cPrimarnaSchema
 
 
 
@@ -157,7 +171,7 @@ FUNCTION run_sql_query( cQry, hParams )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )
-            ASize( s_aTransactions, Len( s_aTransactions ) -1 )
+            ASize( s_aTransactions, Len( s_aTransactions ) - 1 )
          ENDIF
          hb_mutexUnlock( s_mtxMutex )
 
@@ -187,7 +201,7 @@ FUNCTION run_sql_query( cQry, hParams )
          error_bar( "sql",  cQry + " pokušaj: " + AllTrim( Str( nI ) ) )
       ENDIF
 
-      BEGIN SEQUENCE WITH {| err| Break( err ) }
+      BEGIN SEQUENCE WITH {| err | Break( err ) }
 
          oQuery := oServer:Query( cQry + ";" )
 

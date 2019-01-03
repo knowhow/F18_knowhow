@@ -12,6 +12,8 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
+STATIC s_lPtxt := NIL
+
 MEMVAR GetList
 
 FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
@@ -418,4 +420,17 @@ FUNCTION is_legacy_kalk_pr()
 */
 FUNCTION is_legacy_ptxt()
 
+   IF legacy_ptxt() != NIL
+      RETURN legacy_ptxt()
+   ENDIF
+
    RETURN fetch_metric( "legacy_ptxt", NIL, "D" ) == "D"
+
+
+FUNCTION legacy_ptxt( lSet )
+
+     IF lSet != NIL
+        s_lPtxt := lSet
+     ENDIF
+
+     RETURN s_lPtxt

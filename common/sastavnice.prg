@@ -157,7 +157,7 @@ STATIC FUNCTION sast_key_handler( nCh )
 FUNCTION o_roba_tip_p( cId )
 
    LOCAL cAlias := "ROBA_P"
-   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cSqlQuery := "select * from " + f18_sql_schema( "roba")
    LOCAL cIdSql
 
    cSqlQuery += " WHERE tip='P'"

@@ -31,6 +31,7 @@ FUNCTION check_nova_strana( bZagl, oPDF, lForceBreakPage, nOduzmi, nPraznihRedov
    hb_default( @nOduzmi, 0 )
    hb_default( @nPraznihRedovaIliNovaStrana, 0 )
 
+
    IF ValType( oPDF ) == "O"
       nMaxRow := oPDF:MaxRow()
    ELSE
@@ -44,10 +45,12 @@ FUNCTION check_nova_strana( bZagl, oPDF, lForceBreakPage, nOduzmi, nPraznihRedov
    NEXT
 
    IF lForceBreakPage .OR. ( PRow() > ( nMaxRow - nOduzmi ) )
+
       IF ValType( oPDF ) == "O"
-         oPDF:DrawText( oPDF:MaxRow() + 1, 0, "" )
+         // oPDF:DrawText( oPDF:MaxRow(), 0, "" )
          oPDF:PageHeader()
       ELSE
+         // txt obicni
          FF
       ENDIF
       SetPRC( 0, 0 )

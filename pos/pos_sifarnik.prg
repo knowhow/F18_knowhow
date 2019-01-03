@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR ImeKol, Kol
+MEMVAR ImeKol, Kol, gIdPos
 
 FUNCTION p_pos_kase( cId, dx, dy )
 
@@ -109,10 +109,10 @@ FUNCTION P_Osob( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   //SELECT F_OSOB
-   //IF !Used()
-    //    o_pos_osob()
-   //ENDIF
+   // SELECT F_OSOB
+   // IF !Used()
+   // o_pos_osob()
+   // ENDIF
    PushWa()
 
    select_o_pos_osob()
@@ -201,7 +201,7 @@ FUNCTION pos_osob_key_handler( Ch )
                _korsif := CryptSC( _korsif )
 
                APPEND BLANK
-               hRec := get_hash_record_from_global_vars()          
+               hRec := get_hash_record_from_global_vars()
                update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                nVrati := DE_REFRESH
@@ -288,7 +288,7 @@ FUNCTION pos_get_osob( fNovi )
    select_o_pos_strad( gStRad )
    cLevel := strad->prioritet
 
-  // SELECT strad
+   // SELECT strad
    select_o_pos_strad( _status )
 
 
@@ -392,3 +392,8 @@ FUNCTION pos_roba_block( cCh )
    ENDCASE
 
    RETURN DE_CONT
+
+
+FUNCTION pos_prodajno_mjesto()
+
+   RETURN gIdPos

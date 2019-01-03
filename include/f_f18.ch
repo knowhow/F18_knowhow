@@ -61,6 +61,8 @@
 #define F_BUIZ     68
 #define F__KONTO   69
 #define F__PARTN   70
+
+
 //#define F_ULIMIT   72
 #define F_FIDOKS   73
 #define F_FIDOKS2  74

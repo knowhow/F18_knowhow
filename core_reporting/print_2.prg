@@ -534,7 +534,9 @@ FUNCTION gpNR()
 
 FUNCTION gPFF()
 
+altd()
    IF !is_legacy_ptxt()
+
       SetPRC( 0, 0 )
       RETURN .F.
    ENDIF

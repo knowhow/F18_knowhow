@@ -19,9 +19,7 @@ MEMVAR m
 MEMVAR PicDEM, PicKOL, PicPROC
 MEMVAR cIdFirma, cIdVD, cBrDok, cIdPartner, cBrFaktP, dDatFaktP, cIdKonto, cIdKonto2
 
-
 FIELD IdFirma, BrDok, IdVD, IdTarifa, rbr, DatDok, idpartner, brfaktp, idkonto, idkonto2, GKolicina, GKolicin2
-
 
 FUNCTION kalk_stampa_dok_10()
 
@@ -179,7 +177,6 @@ FUNCTION kalk_stampa_dok_10()
 
       SKIP
    ENDDO
-
 
    check_nova_strana( bZagl, s_oPDF )
 

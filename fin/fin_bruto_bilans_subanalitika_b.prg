@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC REP1_LEN
 STATIC PICD
 
@@ -118,7 +117,6 @@ FUNCTION fin_bb_subanalitika_b( hParams )
    EOF CRET
 
    nStr := 0
-
    IF !start_print()
       RETURN .F.
    ENDIF
@@ -136,7 +134,7 @@ FUNCTION fin_bb_subanalitika_b( hParams )
 
    nCol1 := 50
 
-   DO WHILE !Eof() .AND. IdFirma = cIdFirma
+   DO WHILE !Eof() .AND. IdFirma == cIdFirma
 
       IF PRow() == 0
          zagl_bb_suban( hParams, @nStr )
@@ -150,7 +148,7 @@ FUNCTION fin_bb_subanalitika_b( hParams )
       D3PS := P3PS := D3TP := P3TP := D3KP := P3KP := D3S := P3S := 0
       cKlKonto := Left( IdKonto, 1 )
 
-      DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cKlKonto == Left( IdKonto, 1 )
+      DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. cKlKonto == Left( IdKonto, 1 )
 
          cSinKonto := Left( IdKonto, 3 )
          D2PS := P2PS := D2TP := P2TP := D2KP := P2KP := D2S := P2S := 0
@@ -482,7 +480,6 @@ FUNCTION fin_bb_subanalitika_b( hParams )
       nKumPPot  += KumPPot
       nSalPDug  += SalPDug
       nSalPPot  += SalPPot
-
       SKIP
 
    ENDDO
@@ -513,8 +510,7 @@ FUNCTION fin_bb_subanalitika_b( hParams )
       open_r_export_table()
    ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -552,15 +548,9 @@ STATIC FUNCTION zagl_bb_suban( hParams, nStr )
    ?? " (v.B)"
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
-   IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-      ? "Firma:"
-      @ PRow(), PCol() + 2 SAY hParams[ "idfirma" ]
-      select_o_partner( hParams[ "idfirma" ] )
-      @ PRow(), PCol() + 2 SAY Naz
-      @ PRow(), PCol() + 2 SAY Naz2
-   ENDIF
+
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+
 
    IF !Empty( hParams[ "konto" ] )
       ? "Odabrana konta: " + AllTrim( hParams[ "konto" ] )
@@ -578,7 +568,7 @@ STATIC FUNCTION zagl_bb_suban( hParams, nStr )
 
    SELECT SUBAN
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -602,7 +592,7 @@ STATIC FUNCTION dodaj_stavku_u_tabelu_eksporta( cKonto, cIdPart, cNaziv, nPsDug,
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -631,4 +621,4 @@ FUNCTION fin_bb_txt_header()
    M9 := "*        *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *    POTRAŽUJE *"
    M10 := "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
 
-   RETURN
+   RETURN .T.

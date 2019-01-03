@@ -161,7 +161,7 @@ FUNCTION f18_sql_schema( cTable )
       RETURN cTable
    ENDIF
 
-   RETURN F18_PSQL_SCHEMA_DOT + cTable
+   RETURN sql_primarna_schema() + "." + cTable
 
 
 FUNCTION use_sql( cTable, cSqlQuery, cAlias )

@@ -25,7 +25,7 @@ FUNCTION add_global_idle_handlers()
    endif
 
    AAdd( aIdleHandlers, hb_idleAdd( {||  pq_receive() } ) )
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
+   // AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
 
    RETURN .T.
 
@@ -36,7 +36,8 @@ PROCEDURE pq_receive()
     // hb_idleSleep(5)
     //? "KRAJ PQ_RECEIVE"
     IF aNotify != NIL
-       ? pp( aNotify )
+       // ? pp( aNotify )
+       error_bar( "notify", pp(aNotify) )
     ENDIF
    RETURN
 

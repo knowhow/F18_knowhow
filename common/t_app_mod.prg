@@ -476,11 +476,11 @@ METHOD setTGVars()
 PROCEDURE k_f1()
 
    IF is_windows()
-     Run("mode con: cols=120 lines=40")
+     // Run("mode con: cols=120 lines=40")
    ELSE
-     Run("stty cols 120 rows 40")
+     // Run("stty cols 120 rows 40")
    ENDIF
-   info_bar( "tty", "120 x 40" )
+   // info_bar( "tty", "120 x 40" )
 
    RETURN
 
@@ -488,10 +488,10 @@ PROCEDURE k_f1()
 PROCEDURE k_f12()
 
    IF is_windows()
-     Run("mode con: cols=120 lines=40")
+     // Run("mode con: cols=120 lines=40")
    ELSE
-     Run("stty cols 120 rows 40")
+     // Run("stty cols 120 rows 40")
    ENDIF
-   info_bar( "tty", "F12: 120 x 40" )
+   // info_bar( "tty", "F12: 120 x 40" )
 
     RETURN

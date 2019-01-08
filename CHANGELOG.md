@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.317-std, 2019-01-08
+
+- FAKT lista dokumenata partn.idrefer
+
 ## 3.1.316-std, 2018-09-30
 
 - appveyor F18_RNAL out

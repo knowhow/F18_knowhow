@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.318-std, 2019-01-08
+
+- FAKT partn.idrefer specifikacija prodaje po količinama
+
 ## 3.1.317-std, 2019-01-08
 
 - FAKT lista dokumenata partn.idrefer

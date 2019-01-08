@@ -117,9 +117,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
 
       nX := nX + 2
-
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Export u XLSX?" GET cExport VALID cExport $ "DN" PICT "@!"
-
 
       READ
 
@@ -165,13 +163,11 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    // _o_tables()
 
-
    // SELECT fakt
 
    cFilter := ".t."
 
    IF ( !Empty( dDatOd ) .OR. !Empty( dDatDo ) )
-
       IF cDDokOtpr == "D"
          cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + " .and. datdok<=" + dbf_quote( dDatDo )
       ENDIF
@@ -230,12 +226,11 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       cLinija += " ------------"
    ENDIF
 
-   cIdPartner := idPartner
+   cIdPartner := fakt->idPartner
 
    fakt_zagl_specif_prodaje( cIdFirma )
 
    IF cPrikaz == "1"
-
       seek_fakt( cIdFirma )
       nC := 0
       nCol1 := 10
@@ -296,7 +291,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             nKolicina += kolicina
-
 
             SKIP 1
 
@@ -511,7 +505,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    ? Space( gnLMarg )
    ?? cLinija
 
-   // ukini filter
    SET FILTER TO
 
    IF lExpRpt
@@ -520,7 +513,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    FF
    ENDPRINT
-
 
    IF lExpRpt
       open_r_export_table()
@@ -539,7 +531,6 @@ STATIC FUNCTION fakt_zagl_specif_prodaje( cIdFirma )
    IspisFirme( cIdFirma )
 
    ?
-
    SET CENTURY ON
 
    P_12CPI
@@ -581,7 +572,6 @@ STATIC FUNCTION fakt_zagl_specif_prodaje( cIdFirma )
    SET CENTURY OFF
 
    P_COND
-
    ? Space( gnLMarg )
    ?? cLinija
 

@@ -36,3 +36,4 @@ include/f18_ver.ch
 /keyrings/live/secring.gpg
 /test_secret.txt
 F18_util
+docker/postgresql_data

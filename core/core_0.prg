@@ -44,6 +44,7 @@ FUNCTION harbour_init()
    SET WRAP ON
    SET ESCAPE ON
    SET SOFTSEEK ON
+   CLEAR TYPEAHEAD
 
    SetKey( K_F12, {|| k_f12() } )
 

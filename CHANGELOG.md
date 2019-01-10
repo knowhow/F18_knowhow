@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.319-std, 2019-01-10
+
+- IM cijena (vpc=nc)
+
+
 ## 3.1.318-std, 2019-01-08
 
 - FAKT partn.idrefer specifikacija prodaje po količinama

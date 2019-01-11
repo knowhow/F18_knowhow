@@ -191,8 +191,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    SetColor( cLocalColor )
 
 
-   nItemNo := meni_0_inkey(  box_x_koord() + 1, box_y_koord() + 2, box_x_koord() + nN1 + 1, box_y_koord() + nLength + 1, aItems, nItemNo, ;
-      .T., lFiksneKoordinate )
+   nItemNo := meni_0_inkey(  box_x_koord() + 1, box_y_koord() + 2, box_x_koord() + nN1 + 1, box_y_koord() + nLength + 1, aItems, nItemNo, .T., lFiksneKoordinate )
 
 
    nTItemNo := nItemNo // nTItemNo := RetItem( nItemNo )
@@ -336,7 +335,7 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
       ENDIF
 
       nChar := Inkey( 0 )
-
+      
       IF ValType( goModul ) == "O"
          goModul:GProc( nChar )
       ENDIF

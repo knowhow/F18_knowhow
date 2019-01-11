@@ -20,7 +20,7 @@ fi
 set
 
 export HB_PLATFORM=linux
-export HB_ROOT=$(pwd)/hb
+export HB_ROOT=$(pwd)/hb-linux-i386
 #export HB_USER_CFLAGS=-m32
 #export HB_USER_DFLAGS='-m32 -L/usr/lib32'
 #export HB_USER_LDFLAGS='-m32 -L/usr/lib32'

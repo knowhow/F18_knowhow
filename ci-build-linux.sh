@@ -22,10 +22,10 @@ export HB_ROOT=$(pwd)/hb-linux-i386
 #export HB_USER_DFLAGS='-m32 -L/usr/lib32'
 #export HB_USER_LDFLAGS='-m32 -L/usr/lib32'
 
-apt-get update -y
-apt install -y g++ gcc libc6 \
+sudo apt-get update -y
+sudo apt-get install -y g++ gcc libc6 \
      libx11-dev libpcre3-dev libssl-dev \
-     libncurses5 libstdc++6 lib32stdc++6  libpq-dev lib32z1
+     libncurses5 libstdc++6  libpq-dev lib32z1
 
 PATH=$HB_ROOT/bin:$PATH
 

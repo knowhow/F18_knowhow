@@ -16,14 +16,14 @@ uname -a
 if [ "$BUILD_ARCH" == "ia32" ] ; then
 
    #sudo dpkg --add-architecture i386
-   #sudo apt-get install -y g++-multilib gcc-multilib libc6:i386 \
-   #  libx11-dev:i386 libpcre3-dev:i386 libssl-dev:i386 \
-   #  libncurses5:i386 libstdc++6:i386 lib32stdc++6  libpq-dev:i386 lib32z1
+   sudo apt-get install -y g++-multilib gcc-multilib libc6:i386 \
+     libx11-dev:i386 libpcre3-dev:i386 libssl-dev:i386 \
+     libncurses5:i386 libstdc++6:i386 lib32stdc++6  libpq-dev:i386 lib32z1
 
-   sudo apt-get update -y
-   sudo apt-get install -y g++ gcc libc6 \
-      libx11-dev libpcre3-dev libssl-dev \
-      libncurses5 libstdc++6  libpq-dev lib32z1
+   #sudo apt-get update -y
+   #sudo apt-get install -y g++ gcc libc6 \
+   #   libx11-dev libpcre3-dev libssl-dev \
+   #   libncurses5 libstdc++6  libpq-dev lib32z1
 
    curl -L https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz > hb.tar.gz
    tar xvf hb.tar.gz
@@ -33,6 +33,9 @@ if [ "$BUILD_ARCH" == "ia32" ] ; then
    export HB_USER_LDFLAGS='-m32 -L/usr/lib32'
     
    export HB_ROOT=$(pwd)/hb-linux-i386
+
+   cp -av /usr/lib/i386-linux-gnu/libpq.so .
+   export LD_LIBRARY_PATH=.
 
 else
     sudo apt-get update -y
@@ -59,6 +62,8 @@ export LX_UBUNTU=1
 export F18_POS=1
 export F18_RNAL=0
 export F18_GT_CONSOLE=1
+
+
 hbmk2 -workdir=.h F18.hbp
 
 cp -av /usr/lib/i386-linux-gnu/libpq.so .

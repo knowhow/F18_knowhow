@@ -11,13 +11,16 @@ gcc --version
 # sudo dpkg --add-architecture i386
 
 if [ "$BUILD_ARCH" == "ia32" ] ; then
-   curl -L https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz > l.tar.gz
+   curl -L https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz > hb.tar.gz
+   tar xvf hb.tar.gz
 else
    exit 1
 fi
 
+set
+
 export HB_PLATFORM=linux
-export HB_ROOT=$(pwd)/hb-linux-i386
+export HB_ROOT=$(pwd)/hb
 #export HB_USER_CFLAGS=-m32
 #export HB_USER_DFLAGS='-m32 -L/usr/lib32'
 #export HB_USER_LDFLAGS='-m32 -L/usr/lib32'

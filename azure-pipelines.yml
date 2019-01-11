@@ -1,7 +1,8 @@
 trigger:
 - 4
+
 variables:
-  ELECTRON_VERSION: 3.0.13
+- group: API_KEYS
 
 resources:
   containers:
@@ -44,14 +45,23 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: vscode-x64
   variables:
-    BUILD_ARCH: x64
+    BUILD_ARCH: ia32
+    BINTRAY_ARCH: i386
   steps:
   - script: |
       ./ci-build-linux.sh
     displayName: CI-Build
     env:
       CHERE_INVOKING: yes
-        
+
+  - script: |
+      ./upload_bintray.sh
+    displayName: upload F18-linux-$(BINTRAY_ARCH) version $(BUILD.BUILDNUMBER)
+    env:
+      CHERE_INVOKING: yes
+      BINTRAY_API_KEY: $(BINTRAY_API_KEY)
+
+
 #- job: Linux_x64
 #  pool:
 #    vmImage: 'Ubuntu-16.04'

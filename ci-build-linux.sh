@@ -9,7 +9,6 @@ gcc --version
 # https://redmine.bring.out.ba/issues/35387
 
 # sudo dpkg --add-architecture i386
-curl -LO https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz
 
 if [ "$BUILD_ARCH" == "ia32" ] ; then
    curl -L https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz > l.tar.gz

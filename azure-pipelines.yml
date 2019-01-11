@@ -43,7 +43,7 @@ jobs:
 - job: Linux_ia32
   pool:
     vmImage: 'Ubuntu-16.04'
-  container: vscode-x64
+  container: vscode-ia32
   variables:
     BUILD_ARCH: ia32
     BINTRAY_ARCH: i386

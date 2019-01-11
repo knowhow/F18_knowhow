@@ -10,7 +10,6 @@ resources:
   - container: vscode-ia32
     image: joaomoreno/vscode-linux-build-agent:ia32
 
-
 jobs:
 #- job: Windows_x64
 #  pool:
@@ -42,28 +41,27 @@ jobs:
 
 - job: Linux_ia32
   pool:
-    #name: Default
     vmImage: 'Ubuntu-16.04'
   container: vscode-x64
   variables:
     BUILD_ARCH: x64
   steps:
   - script: |
-      ci-build-linux.sh
+      ./ci-build-linux.sh
     displayName: CI-Build
     env:
       CHERE_INVOKING: yes
         
-- job: Linux_x64
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  container: vscode-ia32
-  variables:
-    BUILD_ARCH: ia32
-  steps:
-  - script: |
-      ci-build-linux.sh
-    displayName: CI-Build
-    env:
-      CHERE_INVOKING: yes
+#- job: Linux_x64
+#  pool:
+#    vmImage: 'Ubuntu-16.04'
+#  container: vscode-ia32
+#  variables:
+#    BUILD_ARCH: x64
+#  steps:
+#  - script: |
+#      ./ci-build-linux.sh
+#    displayName: CI-Build
+#    env:
+#      CHERE_INVOKING: yes
 

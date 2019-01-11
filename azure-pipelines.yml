@@ -12,41 +12,60 @@ resources:
 
 
 jobs:
-- job: Windows_x64
-  pool:
-    vmImage: VS2017-Win2016
-  variables:
-    VSCODE_ARCH: x64
-  steps:
-  - template: build/azure-pipelines/win32/build-win32-x64.yml
+#- job: Windows_x64
+#  pool:
+#    vmImage: VS2017-Win2016
+#  variables:
+#    VSCODE_ARCH: x64
+#  steps:
+#    - script: |
+#        set PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+#        %CD:~0,2%\msys64\usr\bin\sed -i "s|#CacheDir.*|CacheDir=/c/Users/%USERNAME%/AppData/Local/Temp|g" /etc/pacman.conf
+#        %CD:~0,2%\msys64\usr\bin\bash -lc "bash ci-build-win32.sh %CD:~0,1%"
+#      displayName: CI-Build
 
-- job: Windows_ia32
-  pool:
-    vmImage: VS2017-Win2016
-  variables:
-    VSCODE_ARCH: ia32
-  steps:
-  - template: build/azure-pipelines/win32/build-win32-ia32.yml
-
+#- job: Windows_ia32
+#  pool:
+#    vmImage: VS2017-Win2016
+#  variables:
+#    VSCODE_ARCH: ia32
+#  steps:
+#    - script: |
+#        set PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+#        %CD:~0,2%\msys64\usr\bin\sed -i "s|#CacheDir.*|CacheDir=/c/Users/%USERNAME%/AppData/Local/Temp|g" /etc/pacman.conf
+#        %CD:~0,2%\msys64\usr\bin\bash -lc "bash ci-build-win32.sh %CD:~0,1%"
+#      displayName: CI-Build
+#      env:
+#        MSYSTEM: $(MINGW_UPPER)
+#        CHERE_INVOKING: yes
+#        MINGW_INSTALLS: $(MINGW_LOWER)
 
 - job: Linux_ia32
   pool:
     #name: Default
     vmImage: 'Ubuntu-16.04'
-  # unutar containera izvrsiti operacije
   container: vscode-x64
   variables:
-    BUIKD_ARCH: x64
+    BUILD_ARCH: x64
   steps:
-  - template: build/azure-pipelines/linux/build-linux.yml
-
+    - script: |
+        ci-build-linux.sh
+      displayName: CI-Build
+      env:
+        CHERE_INVOKING: yes
+        MINGW_INSTALLS: $(MINGW_LOWER)
+        
 
 - job: Linux_x64
   pool:
-    #name: Default
     vmImage: 'Ubuntu-16.04'
   container: vscode-ia32
   variables:
     BUILD_ARCH: ia32
   steps:
-  - template: build/azure-pipelines/linux/build-linux.yml
+    - script: |
+        ci-build-linux.sh
+      displayName: CI-Build
+      env:
+        CHERE_INVOKING: yes
+        MINGW_INSTALLS: $(MINGW_LOWER)

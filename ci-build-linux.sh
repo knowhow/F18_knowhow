@@ -20,6 +20,8 @@ if [ "$BUILD_ARCH" == "ia32" ] ; then
      libx11-dev:i386 libpcre3-dev:i386 libssl-dev:i386 \
      libncurses5:i386 libstdc++6:i386 lib32stdc++6  libpq-dev:i386 lib32z1
 
+   dpkg -L libpq5:i386
+
    #sudo apt-get update -y
    #sudo apt-get install -y g++ gcc libc6 \
    #   libx11-dev libpcre3-dev libssl-dev \
@@ -35,6 +37,8 @@ if [ "$BUILD_ARCH" == "ia32" ] ; then
    export HB_ROOT=$(pwd)/hb-linux-i386
 
    cp -av /usr/lib/i386-linux-gnu/libpq.so .
+   cp -av /usr/lib/i386-linux-gnu/libpq.so linux_32/
+   
    export LD_LIBRARY_PATH=.
 
 else

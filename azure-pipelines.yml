@@ -48,14 +48,12 @@ jobs:
   variables:
     BUILD_ARCH: x64
   steps:
-    - script: |
-        ci-build-linux.sh
-      displayName: CI-Build
-      env:
-        CHERE_INVOKING: yes
-        MINGW_INSTALLS: $(MINGW_LOWER)
+  - script: |
+      ci-build-linux.sh
+    displayName: CI-Build
+    env:
+      CHERE_INVOKING: yes
         
-
 - job: Linux_x64
   pool:
     vmImage: 'Ubuntu-16.04'
@@ -63,9 +61,9 @@ jobs:
   variables:
     BUILD_ARCH: ia32
   steps:
-    - script: |
-        ci-build-linux.sh
-      displayName: CI-Build
-      env:
-        CHERE_INVOKING: yes
-        MINGW_INSTALLS: $(MINGW_LOWER)
+  - script: |
+      ci-build-linux.sh
+    displayName: CI-Build
+    env:
+      CHERE_INVOKING: yes
+

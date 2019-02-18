@@ -2,7 +2,7 @@
 
 ## 3.1.20-std, 2019-02-18
 
-- Fix GIP PeriodOd-Do
+- Fix GIP PeriodOd-Do redime `#37169`
 
 ## 3.1.319-std, 2019-01-10
 

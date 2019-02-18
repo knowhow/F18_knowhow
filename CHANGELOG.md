@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.20-std, 2019-02-18
+
+- Fix GIP PeriodOd-Do
+
 ## 3.1.319-std, 2019-01-10
 
 - IM cijena (vpc=nc)

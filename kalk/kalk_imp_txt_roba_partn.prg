@@ -387,7 +387,6 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
       SELECT partn // pronadji partnera
       cTmpPar := AllTrim( kalk_imp_temp->idpartner )
       IF select_o_partner( cTmpPar )
-
          // 1. ako je lEditOld .t. onda ispravi postojeci
          // 2. ako je lEditOld .f. onda preskoci
          IF !lEditOld

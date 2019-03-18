@@ -8,7 +8,7 @@ environment:
   BUILD_OWNER: hernad
   # disable powershell on linux
   APPVEYOR_YML_DISABLE_PS_LINUX: true
-  F18_VERSION: 3.1.346
+  F18_VERSION: 3.1.347
 
   matrix:
   # - MSYS2_ARCH: x86_64
@@ -100,7 +100,7 @@ deploy:
   subject: hernad
   repo: F18
   package: F18-linux-x86
-  version: '$(F18_VERSION)'
+  version: 3.1.347
   #artifact: 'hello_linux_x86_$(APPVEYOR_REPO_TAG_NAME).zip'
   api_key:
     secure: CmTociD4LaDugZgY8k5Esn0tcA1nGvV583hTrbUGmGrnBtb6B1xyArOBmFzN5TjTLuRrfB9kBNiYtqyhBf0v2HZE8uKm2cl8zGoYTU8Afb0=

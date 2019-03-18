@@ -73,7 +73,7 @@ on_success:
 
 artifacts:
   # relative to build folder
-  - path: F18_$(BUILD_ARTIFACT)_$(APPVEYOR_REPO_TAG_NAME).zip
+  - path: F18_$(BUILD_ARTIFACT)_$(F18_VERSION).zip
 
 
 deploy:
@@ -100,8 +100,8 @@ deploy:
   subject: hernad
   repo: F18
   package: F18-linux-x86
-  version: '3.1.347'
-  artifact: 'F18_linux_x86_3.1.347.zip'
+  version: '$(F18_VERSION)'
+  artifact: 'F18_linux_x86_$(F18_VERSION).zip'
   api_key:
     secure: CmTociD4LaDugZgY8k5Esn0tcA1nGvV583hTrbUGmGrnBtb6B1xyArOBmFzN5TjTLuRrfB9kBNiYtqyhBf0v2HZE8uKm2cl8zGoYTU8Afb0=
   publish: true

@@ -23,8 +23,8 @@ environment:
     appveyor_repo_tag: true
 
 
-only_commits:
-  message: /BUILD_RELEASE/
+#only_commits:
+#  message: /BUILD_RELEASE/
 
 skip_commits:
   author: /John|Jack/

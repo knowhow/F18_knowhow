@@ -100,8 +100,8 @@ deploy:
   subject: hernad
   repo: F18
   package: F18-linux-x86
-  version: '$(F18_VERSION)'
-  artifact: 'F18_linux_x86_$(F18_VERSION).zip'
+  version: '3.1.347'
+  artifact: 'F18_linux_x86_3.1.347.zip'
   api_key:
     secure: CmTociD4LaDugZgY8k5Esn0tcA1nGvV583hTrbUGmGrnBtb6B1xyArOBmFzN5TjTLuRrfB9kBNiYtqyhBf0v2HZE8uKm2cl8zGoYTU8Afb0=
   publish: true

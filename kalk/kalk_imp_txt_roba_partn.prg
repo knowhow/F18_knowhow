@@ -399,9 +399,7 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
          lNovi := .T.
       ENDIF
 
-
       SELECT partn // dodaj zapis u partn
-
       IF lNovi
          APPEND BLANK
       ENDIF

@@ -48,4 +48,4 @@ hbmk2 -workdir=.h F18.hbp
 
 cp -av /usr/lib/i386-linux-gnu/libpq.so* .
 
-zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18
+zip F18_${BUILD_ARTIFACT}_3.1.345.zip F18

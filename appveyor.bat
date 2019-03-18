@@ -44,5 +44,8 @@ bash -xlc "export HB_ARCHITECTURE=win; export HB_COMPILER=mingw; export F18_VER=
 REM postgresql dlls libpq.dll i kompanija
 bash -xlc "curl -LO https://dl.bintray.com/hernad/F18/postgresql_windows_x86_dlls.zip; unzip postgresql_windows_x86_dlls.zip"
 
-REM run hello.exe
+
+APPVEYOR_REPO_TAG_NAME=3.1.345
+
+
 bash -xlc "zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18.exe"

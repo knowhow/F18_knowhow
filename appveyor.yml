@@ -8,7 +8,7 @@ environment:
   BUILD_OWNER: hernad
   # disable powershell on linux
   APPVEYOR_YML_DISABLE_PS_LINUX: true
-  F18_VERSION: 3.1.345
+  F18_VERSION: 3.1.346
 
   matrix:
   # - MSYS2_ARCH: x86_64
@@ -21,7 +21,7 @@ environment:
 
   - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     BUILD_ARTIFACT: linux_x86
-    appveyor_repo_tag: true
+    #appveyor_repo_tag: true
 
 
 only_commits:

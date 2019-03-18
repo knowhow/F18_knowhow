@@ -8,7 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
- 
+
 #include "f18.ch"
 
 MEMVAR m_x, m_y
@@ -260,8 +260,7 @@ STATIC FUNCTION kalk_impt_txt_check_partnere()
       ? "----------------------------"
       ?
       FOR i := 1 TO Len( aPomPart )
-         ? aPomPart[ i, 1 ]
-         ?? " " + aPomPart[ i, 2 ]
+         ? aPomPart[ i ]
       NEXT
       ?
       end_print_editor()

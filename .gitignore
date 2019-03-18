@@ -41,4 +41,5 @@ docker/tds_fdw/
 *.conv.txt
 CHANGELOG_MERGE.md
 template/
-docker/
+docker/*
+docker/scripts/*

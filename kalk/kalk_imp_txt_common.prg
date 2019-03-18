@@ -8,7 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
- 
+
 #include "f18.ch"
 
 STATIC s_cKalkAutoImportPodatakaKonto := nil
@@ -448,7 +448,7 @@ FUNCTION kalk_imp_partn_exist()
       ++nCount
       @ box_x_koord() + 1, box_y_koord() + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()
-         AAdd( aRet, { kalk_imp_temp->idpartner } )
+         AAdd( aRet, kalk_imp_temp->idpartner )
       ENDIF
       SELECT kalk_imp_temp
       SKIP

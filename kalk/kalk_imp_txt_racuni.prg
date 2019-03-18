@@ -572,7 +572,7 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
          ? "------------------------------"
          ?
          FOR i := 1 TO Len( aPomPart )
-            ? Str( i, 4 ), aPomPart[ i, 1 ]
+            ? Str( i, 4 ), aPomPart[ i ]
          NEXT
          ?
       ENDIF

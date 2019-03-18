@@ -1,4 +1,4 @@
-set APPVEYOR_REPO_TAG_NAME=3.1.345
+set APPVEYOR_REPO_TAG_NAME=%F18_VERSION%
 
 REM https://superuser.com/questions/345964/start-bash-shell-cygwin-with-correct-path-without-changing-directory
 set CHERE_INVOKING=yes

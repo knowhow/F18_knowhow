@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APPVEYOR_REPO_TAG_NAME=3.1.345
+APPVEYOR_REPO_TAG_NAME=${F18_VERSION}
 
 echo "artifakt: $BUILD_ARTIFACT tag: $APPVEYOR_REPO_TAG_NAME pwd: $(pwd)"
 

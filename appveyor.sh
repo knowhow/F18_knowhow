@@ -46,4 +46,5 @@ hbmk2 -workdir=.h F18.hbp
 
 cp -av /usr/lib/i386-linux-gnu/libpq.so* .
 
-zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18
+echo "F18_VERSION=${F18_VERSION}"
+zip F18_${BUILD_ARTIFACT}_${F18_VERSION}.zip F18

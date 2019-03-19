@@ -13,10 +13,10 @@ sudo apt-get update -y
 sudo apt-get install -y unzip
 
 #curl -LO https://dl.bintray.com/hernad/harbour/hb-linux-i386.tar.gz
-curl -LO https://dl.bintray.com/bringout/harbour/harbour-linux-x86_20190119.4.zip
+curl -LO https://dl.bintray.com/bringout/harbour/harbour-linux-x86_20190316.1.zip
 mkdir hb-linux-i386
 cd hb-linux-i386
-unzip ../harbour-linux-x86_20190119.4.zip
+unzip ../harbour-linux-x86_20190316.1.zip
 #tar xf hb-linux-i386.tar.gz
 cd ..
 

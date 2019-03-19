@@ -30,7 +30,7 @@ bash -xlc "pacman --noconfirm -S --needed mingw-w64-%MSYS2_ARCH%-postgresql"
 
 rem Invoke subsequent bash in the build tree
 cd %APPVEYOR_BUILD_FOLDER%
-bash -xlc "cd /c ; curl -LO https://dl.bintray.com/bringout/harbour/harbour-windows-x86_20190119.4.zip ; mkdir hbwin ; cd hbwin ; unzip ../harbour-windows-x86_20190119.4.zip"
+bash -xlc "cd /c ; curl -LO https://dl.bintray.com/bringout/harbour/harbour-windows-x86_20190316.1.zip ; mkdir hbwin ; cd hbwin ; unzip ../harbour-windows-x86_20190316.1.zip"
 set PATH=C:\hbwin\bin;%PATH%
 
 rem Build/test scripting

@@ -20,7 +20,7 @@ environment:
 
   - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     BUILD_ARTIFACT: linux_x86
-    appveyor_repo_tag: true
+    #appveyor_repo_tag: true
 
 
 only_commits:
@@ -89,7 +89,7 @@ deploy:
   publish: true
   override: true
   on:
-    appveyor_repo_tag: true
+    #appveyor_repo_tag: true
     BUILD_ARTIFACT: windows_x86
     CI_WINDOWS: true
 
@@ -108,4 +108,4 @@ deploy:
   on:
     BUILD_ARTIFACT: linux_x86
     CI_LINUX: true
-    appveyor_repo_tag: true
+    #appveyor_repo_tag: true

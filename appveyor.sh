@@ -10,6 +10,7 @@ echo "artifakt: $BUILD_ARTIFACT tag: $APPVEYOR_REPO_TAG_NAME pwd: $(pwd)"
 
 gcc --version
 
+
 # https://redmine.bring.out.ba/issues/35387
 
 sudo dpkg --add-architecture i386

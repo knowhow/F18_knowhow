@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.322-std, 2019-11-08
+## 3.1.323-std, 2019-11-08
 
 - fin preknjizenje fix: order_by
 

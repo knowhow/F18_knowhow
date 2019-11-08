@@ -2,7 +2,7 @@
 
 ## 3.1.322-std, 2019-11-08
 
-- fin preknjizenje fix: order_by BUILD
+- fin preknjizenje fix: order_by
 
 ## 3.1.20-std, 2019-02-18
 

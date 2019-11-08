@@ -4,7 +4,7 @@ echo "hello world"
 
 #sudo apt install -y zip
 
-expoirt APPVEYOR_REPO_TAG_NAME='3.1.327'
+export APPVEYOR_REPO_TAG_NAME=3.1.327
 
 echo "artifakt: $BUILD_ARTIFACT tag: $APPVEYOR_REPO_TAG_NAME pwd: $(pwd)"
 

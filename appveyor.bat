@@ -1,4 +1,3 @@
-set APPVEYOR_REPO_TAG_NAME=3.1.327
 
 REM https://superuser.com/questions/345964/start-bash-shell-cygwin-with-correct-path-without-changing-directory
 set CHERE_INVOKING=yes
@@ -39,11 +38,11 @@ bash -xlc "set pwd"
 
 REM build hello.hbp
 
-bash -xlc "export HB_ARCHITECTURE=win; export HB_COMPILER=mingw; export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0} ; scripts/update_f18_ver_ch.sh $F18_VER; export F18_POS=1; source scripts/mingw_appveyor_set_envars.sh ; hbmk2 -workdir=.h F18.hbp"
+bash -xlc "export HB_ARCHITECTURE=win; export HB_COMPILER=mingw; export F18_VER=${F18_VERSION:=0.0.0} ; scripts/update_f18_ver_ch.sh $F18_VER; export F18_POS=1; source scripts/mingw_appveyor_set_envars.sh ; hbmk2 -workdir=.h F18.hbp"
 
 
 REM postgresql dlls libpq.dll i kompanija
 bash -xlc "curl -LO https://dl.bintray.com/hernad/F18/postgresql_windows_x86_dlls.zip; unzip postgresql_windows_x86_dlls.zip"
 
 REM run hello.exe
-bash -xlc "zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18.exe"
+bash -xlc "zip F18_${BUILD_ARTIFACT}_${F18_VERSION}.zip F18.exe"

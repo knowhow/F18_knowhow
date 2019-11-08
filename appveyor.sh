@@ -4,9 +4,7 @@ echo "hello world"
 
 #sudo apt install -y zip
 
-export APPVEYOR_REPO_TAG_NAME=3.1.327
-
-echo "artifakt: $BUILD_ARTIFACT tag: $APPVEYOR_REPO_TAG_NAME pwd: $(pwd)"
+echo "artifakt: $BUILD_ARTIFACT tag: $F18_VERSION pwd: $(pwd)"
 
 gcc --version
 
@@ -39,7 +37,7 @@ PATH=$HB_ROOT/bin:$PATH
 
 echo $PATH
 
-export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0}
+export F18_VER=${F18_VERSION:=0.0.0}
 scripts/update_f18_ver_ch.sh $F18_VER
 
 export LX_UBUNTU=1
@@ -51,4 +49,4 @@ hbmk2 -workdir=.h F18.hbp
 
 cp -av /usr/lib/i386-linux-gnu/libpq.so* .
 
-zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18
+zip F18_${BUILD_ARTIFACT}_${F18_VERSION}.zip F18

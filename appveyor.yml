@@ -1,7 +1,7 @@
 #image: 
 #  - Visual Studio 2015
 #  - Ubuntu
-skip_non_tags: true
+#skip_non_tags: true
 
 environment:
   # these variables are common to all jobs
@@ -23,11 +23,11 @@ environment:
     appveyor_repo_tag: true
 
 
-only_commits:
-  message: /BUILD_RELEASE/
+#only_commits:
+#  message: /BUILD_RELEASE/
 
-skip_commits:
-  author: /John|Jack/
+#skip_commits:
+#  author: /John|Jack/
 
 
 platform:

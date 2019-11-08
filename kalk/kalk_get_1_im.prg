@@ -42,15 +42,10 @@ FUNCTION kalk_get_1_im()
    SELECT kalk_pripr
 
    // DuplRoba()
-<<<<<<< HEAD
-   @ box_x_koord() + 13, box_y_koord() + 2   SAY8 "Knjižna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
-   @ box_x_koord() + 13, Col() + 2 SAY8 "Popisana Količina" GET _Kolicina PICTURE PicKol
-   @ box_x_koord() + 15, box_y_koord() + 2    SAY "CIJENA" GET _vpc PICT picdem
-=======
+
    @ box_x_koord() + 13, box_y_koord() + 2  SAY8 "Knjižna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
    @ box_x_koord() + 13, Col() + 2 SAY8 "Popisana Količina" GET _Kolicina PICTURE PicKol
    @ box_x_koord() + 15, box_y_koord() + 2 SAY8 "CIJENA" GET _vpc PICT picdem
->>>>>>> 3
 
    READ
    ESC_RETURN K_ESC

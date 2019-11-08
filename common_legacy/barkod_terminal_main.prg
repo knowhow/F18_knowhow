@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION barkod_terminal_import_sa_terminala( cI_File )
 
    LOCAL cPath := ""

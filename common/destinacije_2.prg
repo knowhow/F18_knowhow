@@ -165,9 +165,6 @@ STATIC FUNCTION destinacija_get_novi_id()
 
 
 
-// -----------------------------------
-// edit destinacije
-// -----------------------------------
 STATIC FUNCTION edit_dest( lNova )
 
    LOCAL nRec

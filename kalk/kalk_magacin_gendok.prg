@@ -421,7 +421,7 @@ FUNCTION MNivPoProc()
 FUNCTION KorekPC()
 
    LOCAL dDok := Date(), nPom := 0, nRobaVPC := 0
-   PRIVATE cMagac := PadR( "1310   ", gDuzKonto )
+   PRIVATE cMagac := PadR( "1310   ", FIELD_LENGTH_IDKONTO )
 
    o_koncij()
    o_konto()

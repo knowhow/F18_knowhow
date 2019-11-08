@@ -12,24 +12,22 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_get_1_19()
 
    _DatFaktP := _datdok
    PRIVATE aPorezi := {}
 
-   @ box_x_koord() + 8, box_y_koord() + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2   SAY8 "Konto koji zadužuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
    // IF gNW <> "X"
    // @ box_x_koord() + 8, box_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
-
    READ
+
    ESC_RETURN K_ESC
 
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
-
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
 /*
    IF roba_barkod_pri_unosu()
     --  @ box_x_koord() + 11, box_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
@@ -37,7 +35,7 @@ FUNCTION kalk_get_1_19()
     --  @ box_x_koord() + 11, box_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
 */
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -99,7 +97,7 @@ FUNCTION kalk_get_1_19()
    @ box_x_koord() + 17, box_y_koord() + 2  SAY "NOVA CIJENA  " +  "(MPCSAPDV):"
    @ box_x_koord() + 17, box_y_koord() + 50 GET nNCj     PICT "999999.9999"
 
-   SayPorezi( 19 )
+   kalk_say_pdv_a_porezi_var( 19 )
 
    READ
    ESC_RETURN K_ESC
@@ -113,7 +111,7 @@ FUNCTION kalk_get_1_19()
    IF Pitanje(, "Staviti u šifrarnik novu cijenu", gDefNiv ) == "D"
       select_o_koncij( _idkonto )
     //  SELECT roba
-      StaviMPCSif( _fcj + _mpcsapp )
+      roba_set_mcsapp_na_osnovu_koncij_pozicije( _fcj + _mpcsapp )
       SELECT kalk_pripr
    ENDIF
 

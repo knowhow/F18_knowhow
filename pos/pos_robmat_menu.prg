@@ -29,7 +29,6 @@ FUNCTION pos_menu_robmat()
 
 
 
-
 FUNCTION pos_menu_gendok()
 
    PRIVATE Opc := {}
@@ -40,7 +39,6 @@ FUNCTION pos_menu_gendok()
    AAdd( opcexe, {|| pos_pocetno_stanje() } )
    //AAdd( opc, "2. import sifrarnika ROBA iz fmk-tops     " )
    //AAdd( opcexe, {|| pos_import_fmk_roba() } )
-
 
    Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "gdok" )

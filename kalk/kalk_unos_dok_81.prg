@@ -103,11 +103,11 @@ FUNCTION kalk_unos_dok_81( hParams )
    nX += 2
    _kord_x := box_x_koord() + nX
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, box_y_koord() + 2, @aPorezi, _idPartner )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, box_y_koord() + 2, @aPorezi, _idPartner )
 
 
 
-   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -336,13 +336,11 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       @ box_x_koord() + nX, Col() + 2 GET _ZavTr PICT PicDEM ;
          VALID {|| kalk_when_valid_nc_ulaz(), .T. }
 
-      ++nX
-      ++nX
+      nX += 2
 
    ENDIF
 
    // NC
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "NABAVNA CIJENA:"
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _nc PICT PicDEM
 
@@ -354,26 +352,20 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
    // PRODAJNA CIJENA
    ++nX
-
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PC BEZ PDV:"
-
 
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpc PICT PicDEM WHEN W_MPC_( "81", ( cProracunMarzeUnaprijed == "F" ), @aPorezi ) ;
       VALID V_Mpc_( "81", ( cProracunMarzeUnaprijed == "F" ), @aPorezi )
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PDV (%):"
    @ box_x_koord() + nX, Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PC SA PDV:"
 
-
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpcsapp PICT PicDEM ;
-      WHEN {|| cProracunMarzeUnaprijed := " ", _Marza2 := 0, .T. } VALID V_MpcSaPP_( "81", .F., @aPorezi, .T. )
+      WHEN {|| cProracunMarzeUnaprijed := " ", _Marza2 := 0, .T. } VALID kalk_valid_mpcsapdv( "81", .F., @aPorezi, .T. )
 
    READ
 
@@ -381,7 +373,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
    select_o_koncij( _idkonto )
 
-   StaviMPCSif( _mpcsapp, .T. )
+   roba_set_mcsapp_na_osnovu_koncij_pozicije( _mpcsapp, .T. )
 
    SELECT kalk_pripr
 

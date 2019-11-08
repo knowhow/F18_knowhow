@@ -232,14 +232,12 @@ FUNCTION max_kolicina_kod_unosa( read_par )
    RETURN __max_kolicina
 
 
-
-
 STATIC FUNCTION Popust( nx, ny )
 
    LOCAL nC1 := 0
    LOCAL nC2 := 0
 
-   FrmGetRabat( aRabat, _cijena )
+   pos_get_popust_sve_varijante( aRabat, _cijena )
    ShowRabatOnForm( nx, ny )
 
    RETURN .T.
@@ -275,7 +273,6 @@ STATIC FUNCTION when_pos_kolicina( kolicina )
 
 STATIC FUNCTION valid_pos_kolicina( kolicina, cijena )
    RETURN KolicinaOK( kolicina ) .AND. pos_check_qtty( @kolicina ) .AND. cijena_ok( cijena )
-
 
 
 
@@ -409,7 +406,7 @@ STATIC FUNCTION KolicinaOK( nKolicina )
       _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + Str( nStanjeRobe, 12, 2 )
 
       IF gPratiStanje = "!"
-         _msg += "#Unos artikla onemogućen !!!"
+         _msg += "#Unos artikla onemogućen !?"
          lOk := .F.
       ENDIF
 
@@ -543,7 +540,6 @@ FUNCTION pos_brisi_stavku_racuna( oBrowse )
 
 
 
-
 FUNCTION pos_ispravi_stavku_racuna()
 
    PRIVATE GetList := {}
@@ -613,7 +609,6 @@ FUNCTION pos_ispravi_stavku_racuna()
    ENDDO
 
    RETURN ( DE_CONT )
-
 
 
 

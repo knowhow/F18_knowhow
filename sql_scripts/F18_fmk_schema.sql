@@ -45,7 +45,7 @@ BEGIN
   SELECT brojac_value::TEXT INTO _returnVal
     FROM brojac
    WHERE brojac_name = _pBrojacName;
-  
+
   IF (FOUND) THEN
      RETURN _returnVal;
   ELSE
@@ -131,7 +131,7 @@ BEGIN
      WHERE (brojac_name=pBrojacName);
      RETURN TRUE;
   END IF;
-  
+
   SELECT brojac_id INTO _brojacid
   FROM brojac
   WHERE (brojac_name=pBrojacName);
@@ -2162,7 +2162,7 @@ CREATE TABLE fmk.pos_doks (
     zak_br numeric(6,0),
     sto_br numeric(3,0),
     funk numeric(3,0),
-    fisc_st character(10),
+    -- fisc_st character(10),
     rabat numeric(15,5),
     ukupno numeric(15,5)
 );
@@ -5056,4 +5056,3 @@ GRANT ALL ON TABLE fmk.vrstep TO xtrole;
 --
 -- PostgreSQL database dump complete
 --
-

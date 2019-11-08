@@ -1,0 +1,7 @@
+---
+
+- hosts: klijenti
+  roles:
+   - basic
+   - F18_db
+

@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( cFiskalniBroj, cBrojRacuna, dDatumRacuna )
 
    LOCAL cQuery, _qry_ret, oTable
@@ -113,7 +111,7 @@ STATIC FUNCTION izaberi_racun_iz_liste( arr, cBrojRacuna, dDatumRacuna )
 // ---------------------------------------------------------------
 // koriguje broj racuna
 // ---------------------------------------------------------------
-STATIC FUNCTION _fix_rn_no( cBrRacuna )
+STATIC FUNCTION pos_fix_rn_no( cBrRacuna )
 
    LOCAL _a_rn := {}
 
@@ -217,7 +215,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
       _datum := NIL
    ENDIF
 
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "stornirati pos račun broj:" GET cSt_rn VALID {|| pos_lista_racuna( @_datum, @cSt_rn, .T. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "stornirati pos račun broj:" GET cSt_rn VALID {|| pos_lista_racuna( @_datum, @cSt_rn, .T. ), pos_fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "od datuma:" GET dSt_date
 
    READ

@@ -16,7 +16,6 @@ FUNCTION Adresar()
 
    PushWA()
 
-
    //o_adresar()
    // Select( F_SIFK )
    // IF !Used()
@@ -27,7 +26,6 @@ FUNCTION Adresar()
    // IF !Used()
    // use_sql_sifv( PadR( "ADRES", 8 ) )
    // ENDIF
-
    p_adresar()
 
    USE

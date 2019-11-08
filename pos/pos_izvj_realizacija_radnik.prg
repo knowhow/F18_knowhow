@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_realizacija_radnik
 
    PARAMETERS lTekuci, fPrik, fZaklj
@@ -51,10 +50,8 @@ FUNCTION pos_realizacija_radnik
    ELSE
       aNiz := {}
       cIdPos := gIdPos
-      IF gVrstaRS <> "K"
 
-         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
-      ENDIF
+      AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
       AAdd( aNiz, { "Sifra radnika  (prazno-svi)", "cIdRadnik", "IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",, } )
       AAdd( aNiz, { "Vrsta placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
       AAdd( aNiz, { "Smjena (prazno-sve)", "cSmjena",,, } )
@@ -338,7 +335,7 @@ FUNCTION pos_realizacija_radnik
    ENDIF
 
    IF fZaklj
-      C_RealRadn()
+      pos_close_dbfs_real_radnici()
    ELSE
       CLOSE ALL
    ENDIF
@@ -346,11 +343,7 @@ FUNCTION pos_realizacija_radnik
    RETURN .T.
 
 
-/* fn C_RealRadn()
- *     Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
- */
-
-FUNCTION C_RealRadn()
+FUNCTION pos_close_dbfs_real_radnici()
 
    SELECT DIO
    USE

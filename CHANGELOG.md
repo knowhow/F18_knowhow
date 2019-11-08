@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.322-std, 2019-11-08
+
+- fin preknjizenje fix: order_by
+
 ## 3.1.20-std, 2019-02-18
 
 - Fix GIP PeriodOd-Do redime `#37169`
@@ -20,6 +24,9 @@
 ## 3.1.316-std, 2018-09-30
 
 - appveyor F18_RNAL out
+## 3.1.216-std, 2018-09-26
+
+- naša slova "prosječna ..."
 
 ## 3.1.214-std, 2018-06-27
 ### CORE

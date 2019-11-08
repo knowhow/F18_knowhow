@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ------------------------------------------------------------
-// prijem prodavnica, predispozicija
-// ------------------------------------------------------------
+
 FUNCTION kalk_get1_80( atrib )
 
    LOCAL nX := 5
@@ -63,7 +61,6 @@ FUNCTION kalk_get1_80( atrib )
       ?? _DatFaktP
 
       ++nX
-
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto zaduzuje/razduzuje: "
       ?? _IdKonto
       // IF gNW <> "X"
@@ -88,9 +85,9 @@ FUNCTION kalk_get1_80( atrib )
 
    nX += 2
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
 
-   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  VALID P_Tarifa( @_IdTarifa )
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
@@ -119,7 +116,6 @@ FUNCTION kalk_get1_80( atrib )
 
       select_o_koncij( _idkonto )
       select_o_roba( _idroba )
-
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 
       _TMarza2 := "%"
@@ -130,9 +126,7 @@ FUNCTION kalk_get1_80( atrib )
 
    SELECT kalk_pripr
 
-
    nX += 2 // NC
-
 
    _kord_x := box_x_koord() + nX
 
@@ -157,17 +151,13 @@ FUNCTION kalk_get1_80( atrib )
    ++nX
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PC SA PDV:"
-
-
-   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _MPCSaPP PICT PicDEM VALID kalk_valid_mpcsapdv( "80", .F., @aPorezi, .T. )
 
    READ
    ESC_RETURN K_ESC
 
-
    select_o_koncij( _idkonto )
-
-   StaviMPCSif( _MpcSapp, .T. )
+   roba_set_mcsapp_na_osnovu_koncij_pozicije( _MpcSapp, .T. )
 
    SELECT kalk_pripr
 
@@ -213,12 +203,11 @@ FUNCTION kalk_get_1_80_protustavka()
    nX := 12
    _kord_x := box_x_koord() + nX
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
 
 
 
-   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" ;
-      GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
 
@@ -289,7 +278,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    select_o_koncij( _idkonto )
 
-   StaviMPCSif( _mpcsapp, .T. )
+   roba_set_mcsapp_na_osnovu_koncij_pozicije( _mpcsapp, .T. )
 
    SELECT kalk_pripr
 

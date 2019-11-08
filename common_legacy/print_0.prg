@@ -50,7 +50,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
    cTekPrinter := gPrinter
 
-   cOutfTXT := 'N' //my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
+   cOutfTXT := 'N' // my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
 
    IF !( lUFajl )
       cDirekt := print_dialog_box( cDirekt )
@@ -282,18 +282,17 @@ FUNCTION EndPrint()
          cKom := my_home() + cFName
 
          IF gPrinter == "R"
-            IF gPDFprint == "X" .AND. programski_modul() == "FAKT"
-               IF Pitanje(, "Print u PDF/PTXT (D/N)?", "D" ) == "D"
-                  PDFView( cKom )
-               ELSE
-                  Ptxt( cKom )
-               ENDIF
-            ELSEIF gPDFprint == "D" .AND. ;
-                  programski_modul() == "FAKT"
-               PDFView( cKom )
-            ELSE
-               Ptxt( cKom )
-            ENDIF
+            // IF gPDFprint == "X" .AND. programski_modul() == "FAKT"
+            // IF Pitanje(, "Print u PDF/PTXT (D/N)?", "D" ) == "D"
+            // PDFView( cKom )
+            // ELSE
+            // Ptxt( cKom )
+            // ENDIF
+            // ELSEIF gPDFprint == "D" .AND. programski_modul() == "FAKT"
+            // PDFView( cKom )
+            // ELSE
+            Ptxt( cKom )
+            // ENDIF
          ENDIF
 
       ENDIF

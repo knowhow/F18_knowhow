@@ -45,8 +45,6 @@ FUNCTION sql_data_conn( oServer )
 
 
 
-
-
 FUNCTION sql_postgres_conn( oServer )
 
    IF oServer <> NIL
@@ -56,13 +54,9 @@ FUNCTION sql_postgres_conn( oServer )
    RETURN s_pgsqlServerPostgresDb
 
 
-
-
 FUNCTION server_postgres_db_close()
 
    RETURN my_server_close( 0 )
-
-
 
 
 FUNCTION my_server_close( nConnType )
@@ -283,26 +277,6 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
 
 
-
-
-
-/*
-STATIC FUNCTION show_sacekaj()
-
-   LOCAL _x, _y
---   LOCAL _txt
-
-   _x := ( f18_max_rows() / 2 ) -12
-   _y := f18_max_cols()
-
-   CLEAR SCREEN
-
-   --naslovni_ekran_splash_screen( "F18", f18_ver() )
-
-   RETURN .T.
-*/
-
-
 FUNCTION f18_promjena_sezone()
 
    LOCAL oLogin := my_login()
@@ -342,7 +316,6 @@ FUNCTION f18_curr_session()
 
 FUNCTION my_user()
    RETURN f18_user()
-
 
 
 INIT PROCEDURE init_my_sql_server()

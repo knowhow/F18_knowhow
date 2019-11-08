@@ -213,7 +213,7 @@
 
 
 // modul POS
-#xcommand O__POS      => SELECT (F__POS)  ; my_use("_pos")  ; set order to tag "1"
+
 #xcommand O__POS_PRIPR  => SELECT (F__PRIPR); my_use("_pos_pripr"); set order to tag "1"
 
 

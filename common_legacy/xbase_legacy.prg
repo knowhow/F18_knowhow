@@ -18,7 +18,6 @@ STATIC cPokPonovo := "Pokušati ponovo (D/N) ?"
 STATIC nPreuseLevel := 0
 
 
-
 FUNCTION Gather( cZn )
 
    LOCAL i, aStruct
@@ -333,10 +332,8 @@ FUNCTION AppFrom( cFDbf, fOtvori )
    RETURN .T.
 
 
-
 FUNCTION PrazanDbf()
    RETURN .F.
-
 
 
 
@@ -497,7 +494,6 @@ FUNCTION O_POMDB( nArea, cImeDBF )
    usex ( my_home() + cImeDBF )
 
    RETURN
-
 
 
 

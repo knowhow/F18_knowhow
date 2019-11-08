@@ -462,7 +462,7 @@ FUNCTION fakt_valid_roba( cIdFirma, cIdTipDok, cIdRoba, cTxt1, cIdPartner, lFakt
 
    fakt_unos_stavka_usluga( lFaktNoviRec, @cTxt1, nX, 25  )
    fakt_unos_provjera_dupla_stavka( lFaktNoviRec )
-   zadnji_izlazi_info( cIdPartner, cIdRoba, "F" )
+   fakt_zadnji_izlazi_info( cIdPartner, cIdRoba, "F" )
    fakt_trenutno_na_stanju_kalk( cIdfirma, cIdtipdok,  cIdroba )
 
    IF lPrikTar

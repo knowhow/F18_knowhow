@@ -13,7 +13,6 @@
 
 STATIC aPorezi := {}
 
-
 FUNCTION kalk_get_1_95()
 
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
@@ -26,8 +25,7 @@ FUNCTION kalk_get_1_95()
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
 
       @  box_x_koord() + 5, box_y_koord() + 2   SAY "Dokument Broj:" GET _BrFaktP VALID !Empty( _BrFaktP )
-      @  box_x_koord() + 5, Col() + 1 SAY "Datum:" GET _DatFaktP  VALID { ||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
-
+      @  box_x_koord() + 5, Col() + 1 SAY "Datum:" GET _DatFaktP  VALID {||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
 
       _IdZaduz := ""
       @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
@@ -47,12 +45,11 @@ FUNCTION kalk_get_1_95()
 
          @ box_x_koord() + 9, box_y_koord() + 2   SAY "Konto zaduzuje            " GET _IdKonto VALID  Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
-         //IF ( _idvd == "95" ) // .AND. IsVindija()
-        //    @ box_x_koord() + 9, box_y_koord() + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
+         // IF ( _idvd == "95" ) // .AND. IsVindija()
+         // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
 
          IF gMagacin == "1"
             @ box_x_koord() + 9, box_y_koord() + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
-
          ELSE
             IF _idvd == "96"
                @ box_x_koord() + 9, box_y_koord() + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
@@ -77,9 +74,9 @@ FUNCTION kalk_get_1_95()
 
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
 
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -100,9 +97,7 @@ FUNCTION kalk_get_1_95()
 
    _GKolicina := 0
    IF kalk_is_novi_dokument()
-
       select_o_roba( _IdRoba )
-
       IF koncij->naz == "P2"
          _VPC := PLC
       ELSE
@@ -112,17 +107,14 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. kalk_is_novi_dokument()
-
       kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto2, _idroba )
       SELECT kalk_pripr
    ENDIF
-
 
    nKolS := 0
    nKolZN := 0
    nc1 := nc2 := 0
    dDatNab := CToD( "" )
-
    lGenStavke := .F.
 
    IF _TBankTr <> "X"
@@ -132,8 +124,10 @@ FUNCTION kalk_get_1_95()
       @ box_x_koord() + 12, box_y_koord() + 30   SAY "Ukupno na stanju "; @ box_x_koord() + 12, Col() + 2 SAY nKols PICT pickol
       @ box_x_koord() + 13, box_y_koord() + 30   SAY "Srednja nc "; @ box_x_koord() + 13, Col() + 2 SAY nc2 PICT pickol
 
-
-      IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
+      IF dDatNab > _DatDok
+         Beep( 1 )
+         Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
+      ENDIF
 
       IF !( roba->tip $ "UT" )
 
@@ -162,8 +156,6 @@ FUNCTION kalk_get_1_95()
 
    READ
    _Marza := 0; _TMarza := "A"; _VPC := _NC
-
-
 
    nStrana := 2
    _marza := _vpc - _nc
@@ -204,12 +196,11 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    SET KEY K_ALT_K TO
+
    RETURN LastKey()
 
 
-
-
-FUNCTION RadNalOK()
+STATIC FUNCTION RadNalOK()
 
    LOCAL nArr
    LOCAL lOK

@@ -362,8 +362,6 @@ FUNCTION cre_all_pos( ver )
    RETURN .T.
 
 
-
-
 FUNCTION g_pos_pripr_fields()
 
    LOCAL aDbf

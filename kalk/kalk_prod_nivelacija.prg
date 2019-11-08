@@ -12,15 +12,13 @@
 
 #include "f18.ch"
 
-// ---------------------------------------------------------------------
-// automatsko formiranje nivelacije na osnovu ulaznog dokumenta
-// ---------------------------------------------------------------------
+
 FUNCTION kalk_nivelacija_11()
 
    LOCAL _sufix, hRec
 
   // o_tarifa()
-   o_koncij()
+   //o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
 
@@ -118,7 +116,7 @@ FUNCTION kalk_nivelacija_11()
          IF cPromCj == "D"
             select_o_koncij( hRec[ "idkonto" ] )
             SELECT roba
-            StaviMPCSif( hRec[ "fcj" ] + hRec[ "mpcsapp" ] )
+            roba_set_mcsapp_na_osnovu_koncij_pozicije( hRec[ "fcj" ] + hRec[ "mpcsapp" ] )
          ENDIF
 
          SELECT kalk_pripr2

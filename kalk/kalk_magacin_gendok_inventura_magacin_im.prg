@@ -48,7 +48,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
 
       Box(, 10, 70 )
       cIdFirma := self_organizacija_id()
-      cIdKonto := PadR( "1320", gDuzKonto )
+      cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
       dDatDok := Date()
       cArtikli := Space( 30 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
@@ -200,7 +200,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
 
    Box(, 8, 70 )
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "1320", gDuzKonto )
+   cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
    dDatDok := Date()
    cArtikli := Space( 30 )
    cPosition := "2"

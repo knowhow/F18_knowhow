@@ -35,7 +35,6 @@ STATIC gPIC_CIJ
 STATIC gUlPdvKp := "1"
 
 
-
 FUNCTION epdv_parametri()
 
    LOCAL _izbor := 1

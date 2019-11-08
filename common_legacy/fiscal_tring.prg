@@ -389,8 +389,8 @@ FUNCTION tring_per_rpt( dev_param )
    READ
    BoxC()
 
-   cDatumOd := _fix_date( dD_od )
-   cDatumDo := _fix_date( dD_do )
+   cDatumOd := fprint_formatiranje_datuma( dD_od )
+   cDatumDo := fprint_formatiranje_datuma( dD_do )
 
    cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_prep )
 
@@ -709,7 +709,7 @@ FUNCTION tring_delete_tmp( dev_param, cPodDir )
 // ---------------------------------------------
 // fiksiraj datum za xml
 // ---------------------------------------------
-STATIC FUNCTION _fix_date( dDate, cPattern )
+STATIC FUNCTION fprint_formatiranje_datuma( dDate, cPattern )
 
    LOCAL cRet := ""
    LOCAL nYear := Year( dDate )
@@ -861,7 +861,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
       // imamo racun
       // ali se krije na sljedecoj liniji
       // zato + 1
-      fisc_no := _g_fisc_no( _err_data[ _scan + 1 ] )
+      fisc_no := fisc_get_broj_fiskalnog_racuna( _err_data[ _scan + 1 ] )
    ENDIF
 
    RETURN _err
@@ -872,7 +872,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
 // ------------------------------------------------------
 // vraca broj fiskalnog racuna iz linije fajla
 // ------------------------------------------------------
-STATIC FUNCTION _g_fisc_no( row )
+STATIC FUNCTION fisc_get_broj_fiskalnog_racuna( row )
 
    LOCAL _fiscal_no := 0
 

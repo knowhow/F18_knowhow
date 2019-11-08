@@ -75,7 +75,7 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
 
    seek_pos_doks( cIdPos, "42", dDatum, cRacun )
 
-   IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
+   IF !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
       MsgBeep( "Račun nije napravljen na ovoj kasi!#" + "Ne možete napraviti promjenu!", 20 )
       RETURN ( .F. )
    ENDIF
@@ -84,14 +84,14 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
    cBroj := PadL( cBroj, 6 )
 
    AAdd( ImeKol, { _u( "Broj računa" ), {|| PadR( Trim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), 9 ) } } )
-   AAdd( ImeKol, { "Fisk.rn", {|| fisc_rn } } )
+   AAdd( ImeKol, { "Fisk.rn", {|| field->fisc_rn } } )
    AAdd( ImeKol, { "Iznos", {|| Str ( pos_iznos_racuna( field->idpos, field->idvd, field->datum, field->brdok ), 13, 2 ) } } )
-   AAdd( ImeKol, { "Smj", {||  smjena } } )
-   AAdd( ImeKol, { "Datum", {|| datum } } )
-   AAdd( ImeKol, { "Vr.Pl", {|| idvrstep } } )
-   AAdd( ImeKol, { "Partner", {|| idgost } } )
-   AAdd( ImeKol, { "Vrijeme", {|| vrijeme } } )
-   AAdd( ImeKol, { "Placen",     {|| iif ( Placen == PLAC_NIJE, "  NE", "  DA" ) } } )
+   AAdd( ImeKol, { "Smj", {||  field->smjena } } )
+   AAdd( ImeKol, { "Datum", {|| field->datum } } )
+   AAdd( ImeKol, { "Vr.Pl", {|| field->idvrstep } } )
+   AAdd( ImeKol, { "Partner", {|| field->idgost } } )
+   AAdd( ImeKol, { "Vrijeme", {|| field->vrijeme } } )
+   AAdd( ImeKol, { "Placen",     {|| iif ( field->Placen == PLAC_NIJE, "  NE", "  DA" ) } } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( kol, i )
@@ -107,13 +107,13 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
    // SET SCOPEBOTTOM TO "W"
    // ENDIF
 
-   IF gVrstaRS == "S" .OR. pos_admin()
-      AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
-      AAdd( Kol, Len( ImeKol ) )
+   //IF gVrstaRS == "S" .OR. pos_admin()
+    //  AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
+    //  AAdd( Kol, Len( ImeKol ) )
       //cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
-   ELSE
+   //ELSE
       cFilter += ".and. IdRadnik=" + dbf_quote( gIdRadnik ) + ".and. Idpos=" + dbf_quote( gIdPos )
-   ENDIF
+   //ENDIF
 
    // IF dDatum <> NIL
    // cFilter += '.and. Datum=' + dbf_quote( dDatum )

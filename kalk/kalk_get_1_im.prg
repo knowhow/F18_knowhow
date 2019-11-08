@@ -28,9 +28,9 @@ FUNCTION kalk_get_1_im()
 
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 10, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 10, box_y_koord() + 2, @aPorezi )
 
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -42,16 +42,20 @@ FUNCTION kalk_get_1_im()
    SELECT kalk_pripr
 
    // DuplRoba()
+<<<<<<< HEAD
    @ box_x_koord() + 13, box_y_koord() + 2   SAY8 "Knjižna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
    @ box_x_koord() + 13, Col() + 2 SAY8 "Popisana Količina" GET _Kolicina PICTURE PicKol
    @ box_x_koord() + 15, box_y_koord() + 2    SAY "CIJENA" GET _vpc PICT picdem
+=======
+   @ box_x_koord() + 13, box_y_koord() + 2  SAY8 "Knjižna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
+   @ box_x_koord() + 13, Col() + 2 SAY8 "Popisana Količina" GET _Kolicina PICTURE PicKol
+   @ box_x_koord() + 15, box_y_koord() + 2 SAY8 "CIJENA" GET _vpc PICT picdem
+>>>>>>> 3
 
    READ
    ESC_RETURN K_ESC
 
    _MKonto := _Idkonto
-
-
    _MU_I := "I" // inventura
 
    _PKonto := ""

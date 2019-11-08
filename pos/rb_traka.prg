@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC LEN_TRAKA  := 40
 
 STATIC LEN_RAZMAK :=  0
@@ -98,14 +97,14 @@ FUNCTION pos_racun_print( lStartPrint )
       BoxC()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 // ----------------------------------------------
 // varijable za stampu racuna
 // ----------------------------------------------
-FUNCTION get_rb_vars( nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije, lPrKupac )
+FUNCTION pos_get_racun_broj_varijable( nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije, lPrKupac )
 
    LOCAL cTmp
 
@@ -243,7 +242,7 @@ FUNCTION st_rb_traka( lStartPrint, lAzurDok )
    rb_traka_line( @cLine )
 
    // uzmi glavne varijable
-   get_rb_vars( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija, @lKupac )
+   pos_get_racun_broj_varijable( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija, @lKupac )
 
    hd_rb_traka( nRedukcija )
 

@@ -20,18 +20,12 @@ FUNCTION pos_kumulativ_prometa()
 
    START PRINT CRET
 
-   IF gVrstaRS == "S"
-      P_INI
-      P_10CPI
-   ELSE
-      nSir := 40
-      nRobaSir := 18
-      cLM := ""
-      cPicKol := "9999.999"
-   ENDIF
+   nSir := 40
+   nRobaSir := 18
+   cLM := ""
+   cPicKol := "9999.999"
 
-   //ZagFirma()
-
+   // ZagFirma()
    IF Empty( pos_doks->IdPos )
       ? PadC( "KUMULATIV PROMETA " + AllTrim( pos_doks->BrDok ), nSir )
    ELSE
@@ -43,22 +37,13 @@ FUNCTION pos_kumulativ_prometa()
    ?
    select_o_vrstep( pos_doks->IdVrsteP )
 
-   IF gVrstaRS == "S"
-      cPom := VRSTEP->Naz
-   ELSE
-      cPom := Left( VRSTEP->Naz, 23 )
-   ENDIF
+
+   cPom := Left( VRSTEP->Naz, 23 )
 
    ? cLM + "Vrsta placanja:", cPom
-
    select_o_partner( pos_doks->IdGost )
 
-   IF gVrstaRS == "S"
-      cPom := partn->Naz
-   ELSE
-      cPom := Left( partn->Naz, 23 )
-   ENDIF
-
+   cPom := Left( partn->Naz, 23 )
    ? cLM + "Gost / partner:", cPom
 
    IF pos_doks->Placen == PLAC_JEST .OR. pos_doks->IdVrsteP == gGotPlac
@@ -70,55 +55,31 @@ FUNCTION pos_kumulativ_prometa()
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    ? cLM
-   IF gVrstaRS == "S"
-      ?? "Sifra    Naziv                                    JMJ Cijena  Kolicina"
-      m := cLM + "-------- ---------------------------------------- --- ------- ----------"
-   ELSE
-      ?? "Sifra    Naziv              JMJ Kolicina"
-      m := cLM + "-------- ------------------ --- --------"
-   ENDIF
+
+   ?? "Sifra    Naziv              JMJ Kolicina"
+   m := cLM + "-------- ------------------ --- --------"
    ? m
 
    nFin := 0
    SELECT POS
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      IF gVrstaRS == "S" .AND. PRow() > 63 - dodatni_redovi_po_stranici()
-         FF
-      ENDIF
       ? cLM
       ?? IdRoba, ""
       select_o_roba( POS->IdRoba )
       ?? PadR( ROBA->Naz, nRobaSir ), ROBA->Jmj, ""
       SELECT POS
-      IF gVrstaRS == "S"
-         ?? TRANS( POS->Cijena, "9999.99" ), ""
-      ENDIF
       ?? TRANS( POS->Kolicina, cPicKol )
       nFin += POS->( Kolicina * Cijena )
       SKIP
    ENDDO
 
-   IF gVrstaRS == "S" .AND. PRow() > 63 - dodatni_redovi_po_stranici() - 7
-      FF
-   ENDIF
-
    ? m
    ? cLM
 
-   IF gVrstaRS == "S"
-      ?? PadL( "IZNOS DOKUMENTA (" + Trim( gDomValuta ) + ")", 13 + nRobaSir ), TRANS( nFin, "999,999,999,999.99" )
-   ELSE
-      ?? PadL( "IZNOS DOKUMENTA (" + Trim( gDomValuta ) + ")", 10 + nRobaSir ), TRANS( nFin, "9,999,999.99" )
-   ENDIF
-
+   ?? PadL( "IZNOS DOKUMENTA (" + Trim( gDomValuta ) + ")", 10 + nRobaSir ), TRANS( nFin, "9,999,999.99" )
    ? m
-
-   IF gVrstaRS == "S"
-      FF
-   ELSE
-      PaperFeed()
-   ENDIF
+   PaperFeed()
 
    ENDPRINT
    SELECT pos_doks

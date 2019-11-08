@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_stampa_zaduzenja( cIdVd, cBrDok )
 
    LOCAL nPrevRec
@@ -63,9 +62,7 @@ FUNCTION pos_stampa_zaduzenja( cIdVd, cBrDok )
          cPom += "REKLAMACIJA "
       ENDIF
 
-      IF gVrstaRS <> "S"
-         cPom += AllTrim( PRIPRZ->IdPos ) + "-" + AllTrim ( cBrDok )
-      ENDIF
+      cPom += AllTrim( PRIPRZ->IdPos ) + "-" + AllTrim ( cBrDok )
 
       IF fpred
          ? PadC( "PRENOS IZ ODJ: " + idodj + "  U ODJ:" + idvrstep, 38 )
@@ -153,15 +150,11 @@ FUNCTION PrepisZad( cNazDok )
 
    START PRINT CRET
 
-   IF gVrstaRS == "S"
-      P_INI
-      P_10CPI
-   ELSE
-      nSir := 40
-      nRobaSir := 18
-      cLM := ""
-      cPicKol := "9999.999"
-   ENDIF
+
+   nSir := 40
+   nRobaSir := 18
+   cLM := ""
+   cPicKol := "9999.999"
 
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
@@ -178,16 +171,16 @@ FUNCTION PrepisZad( cNazDok )
 
    select_o_pos_odj( POS->IdOdj )
 
-   //IF !Empty( POS->IdDio )
-    //  SELECT DIO
-  // --  HSEEK POS->IdDio
-   //ENDIF
+   // IF !Empty( POS->IdDio )
+   // SELECT DIO
+   // --  HSEEK POS->IdDio
+   // ENDIF
 
    SELECT POS
    IF fpred
       ? PadC( "PRENOS IZ ODJ: " + pos->idodj + "  U ODJ:" + pos_doks->idvrstep, nSir )
    ELSE
-      ? PadC ( AllTrim ( ODJ->Naz ) + iif ( !Empty ( POS->IdDio ), "-" + AllTrim ( DIO->Naz ), "" );
+      ? PadC ( iif ( !Empty ( POS->IdDio ), "-" + AllTrim ( DIO->Naz ), "" );
          , nSir )
    ENDIF
 
@@ -205,9 +198,7 @@ FUNCTION PrepisZad( cNazDok )
    nFinZad := 0
    SELECT POS
    DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
-         FF
-      ENDIF
+
       IF fPred  // predispozicija
          IF !Empty( IdDio )
             SKIP
@@ -225,9 +216,7 @@ FUNCTION PrepisZad( cNazDok )
       select_o_roba( POS->IdRoba )
       ?? PadR ( _field->Naz, nRobaSir ), _field->Jmj, ""
       SELECT POS
-      IF gVrstaRS == "S"
-         ?? TRANS ( POS->Cijena, "9999.99" ), ""
-      ENDIF
+
       ?? TRANS ( POS->Kolicina, cPicKol )
       nFinZad += POS->( Kolicina * Cijena )
 
@@ -235,23 +224,15 @@ FUNCTION PrepisZad( cNazDok )
       SKIP
    ENDDO
 
-   IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 7
-      FF
-   ENDIF
-
    ? cLine2
    ? cLM
 
 
-   ?? PadL( "IZNOS DOKUMENTA ", ;
-      iif ( gVrstaRS == "S", 13, 11 ) + nRobaSir ), ;
-      TRANS ( nFinZad, iif( gVrstaRS == "S", "999,999,999,999.99", ;
-      "9,999,999.99" ) )
+   ?? PadL( "IZNOS DOKUMENTA ", 11  + nRobaSir ), TRANS ( nFinZad, "9,999,999.99" )
    ? cLine2
    ?
 
    pos_rekapitulacija_tarifa( aTarife )
-
 
    ?? " Primio", PadL ( "Predao", nSir - 9 )
 
@@ -259,11 +240,7 @@ FUNCTION PrepisZad( cNazDok )
 
    ? PadL ( AllTrim ( OSOB->Naz ), nSir - 9 )
 
-   IF gVrstaRS == "S"
-      FF
-   ELSE
-      PaperFeed()
-   ENDIF
+   PaperFeed()
 
    ENDPRINT
 
@@ -280,23 +257,13 @@ STATIC FUNCTION _get_line( cLine, cLine2 )
    cLine := PadR( "Sifra", 10 ) + " "
    cLine2 := Replicate( "-", 10 ) + " "
 
-   IF gVrstaRS == "S"
-      cLine += PadR( "Naziv", 40 ) + " "
-      cLine2 += Replicate( "-", 40 ) + " "
-   ELSE
-      cLine += PadR( "Naziv", 18 ) + " "
-      cLine2 += Replicate( "-", 18 ) + " "
-   ENDIF
+   cLine += PadR( "Naziv", 18 ) + " "
+   cLine2 += Replicate( "-", 18 ) + " "
 
    cLine += PadR( "JMJ", 3 ) + " "
    cLine2 += Replicate( "-", 3 ) + " "
 
-   IF gVrstaRS == "S"
-      cLine += PadR( "Cijena", 7 ) + " "
-      cLine2 += Replicate( "-", 7 ) + " "
-   ENDIF
-
    cLine += PadR( "Kolicina", 8 )
    cLine2 += Replicate( "-", 8 )
 
-   RETURN
+   RETURN .T.

@@ -155,7 +155,6 @@ FUNCTION kalk_par_varijante_prikaza()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       set_metric( "kalk_magacin_po_nc", NIL, gMagacin )
       set_metric( "kalk_kolicina_kalo", NIL, gKalo )
       set_metric( "kalk_voditi_kalo", NIL, gVodiKalo )
@@ -179,7 +178,6 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_trosak_5_tip", NIL, gRobaTr5Tip )
       kalk_konverzija_valute_na_unosu( cKonverzijaValuteDn )
       param_fin_automatska_ravnoteza_kod_azuriranja( cFinAutoAzurDN )
-
    ENDIF
 
    RETURN NIL
@@ -268,8 +266,8 @@ FUNCTION kalk_par_razno()
 
    @ box_x_koord() + nX, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
-   ++nX
+   //@ box_x_koord() + nX, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
+   //++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
@@ -318,7 +316,7 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_potpis_na_kraju_naloga", NIL, gPotpis )
       set_metric( "kalk_tip_tabele", NIL, gTabela )
       set_metric( "kalk_novi_korisnicki_interfejs", NIL, gNW )
-      set_metric( "kalk_zabrana_promjene_tarifa", NIL, gPromTar )
+      //set_metric( "kalk_zabrana_promjene_tarifa", NIL, gPromTar )
       set_metric( "kalk_djoker_f1_kod_kontiranja", NIL, gFunKon1 )
       set_metric( "kalk_djoker_f2_kod_kontiranja", NIL, gFunKon2 )
       set_metric( "kalk_timeout_kod_azuriranja", NIL, gAzurTimeout )
@@ -339,9 +337,6 @@ FUNCTION kalk_par_razno()
    RETURN .T.
 
 
-
-
-
 /*
  *     Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
@@ -353,24 +348,17 @@ FUNCTION kalk_par_metoda_nc()
    PRIVATE  GetList := {}
 
    Box(, 4, 75, .F., "METODA NC, ISPRAVKA DOKUMENATA" )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Metoda nabavne cijene: bez kalk./zadnja/prosječna/prva ( /1/2/3)" GET cMetodaNc ;
-      VALID cMetodaNC $ " 123" .AND. metodanc_info()
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Program omogućava /ne omogućava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
-      VALID  gCijene $ "12"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
-      VALID  gDefNiv $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Metoda nabavne cijene: bez kalk./zadnja/prosječna/prva ( /1/2/3)" GET cMetodaNc VALID cMetodaNC $ " 123" .AND. metodanc_info()
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Program omogućava /ne omogućava ažuriranje sumnjivih dokumenata (1/2)" GET gCijene VALID  gCijene $ "12"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Tekući odgovor na pitanje o promjeni cijena ?" GET gDefNiv VALID  gDefNiv $ "DN" PICT "@!"
    READ
    BoxC()
 
-
-
    IF LastKey() <> K_ESC
-
       kalk_metoda_nc ( cMetodaNC )
       set_metric( "kalk_promjena_cijena_odgovor", NIL, gDefNiv )
       set_metric( "kalk_azuriranje_sumnjivih_dokumenata", NIL, gCijene )
       set_metric( "kalk_broj_decimala_za_kolicinu", NIL, gDecKol )
-
    ENDIF
 
    RETURN .F.
@@ -379,7 +367,6 @@ FUNCTION kalk_par_metoda_nc()
 FUNCTION nije_dozvoljeno_azuriranje_sumnjivih_stavki()
 
    RETURN ( gCijene == "2" )
-
 
 
 FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
@@ -430,12 +417,10 @@ FUNCTION kalk_par_cijene()
 
    Box(, 10, 60, .F., "PARAMETRI PRIKAZA" )
 
-
    @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Prikaz Cijene  " GET cCijena
    @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Prikaz procenta" GET gPicProc
    @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Prikaz iznosa  " GET cIznos
    @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Prikaz količine" GET cKolicina
-
 
    @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Ispravka NC    " GET gPicNC
    @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Decimale za količine" GET gDecKol PICT "9"
@@ -512,7 +497,6 @@ FUNCTION kalk_par_zavisni_dokumenti()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       set_metric( "kalk_kontiranje_fin", f18_user(), gAFin )
       set_metric( "kalk_kontiranje_mat", f18_user(), gAMat )
       set_metric( "kalk_kontiranje_fakt", f18_user(), gAFakt )
@@ -522,7 +506,6 @@ FUNCTION kalk_par_zavisni_dokumenti()
       kalk_destinacija_topska( cTopsDest )
       kalk_tops_generacija_kalk_11_na_osnovu_pos_42( cKalkTopsAutoRazduzenjeDN )
       kalk_fin_isti_broj( cKalkFinIstiBroj )
-
    ENDIF
 
    RETURN NIL
@@ -560,7 +543,6 @@ FUNCTION kalk_troskovi_10ka()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       set_metric( "kalk_dokument_10_trosak_1", NIL, c10T1 )
       set_metric( "kalk_dokument_10_trosak_2", NIL, c10T2 )
       set_metric( "kalk_dokument_10_trosak_3", NIL, c10T3 )

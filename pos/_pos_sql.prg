@@ -1,3 +1,13 @@
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
 
 #include "f18.ch"
 
@@ -104,10 +114,13 @@ CREATE INDEX pos_pos_id6
 
 CREATE TABLE fmk.pos_doks
 (
+kljuc:
+---
   idpos character varying(2) NOT NULL,
   idvd character varying(2) NOT NULL,
   brdok character varying(6) NOT NULL,
   datum date,
+---
   idgost character varying(8),
   idradnik character varying(4),
   idvrstep character(2),
@@ -123,8 +136,7 @@ CREATE TABLE fmk.pos_doks
   fisc_rn numeric(10,0),
   zak_br numeric(6,0),
   sto_br numeric(3,0),
-  funk numeric(3,0),
-  fisc_st character(10),
+  -- fisc_st character(10),
   rabat numeric(15,5),
   ukupno numeric(15,5),
   CONSTRAINT pos_doks_pkey PRIMARY KEY (idpos, idvd, brdok)
@@ -580,7 +592,7 @@ FUNCTION pos_get_mpc()
    LOCAL oData, cQry
 
    IF !pos_get_mpc_valid()
-      MsgBeep( "Set cijena nije podesen ispravno !" )
+      MsgBeep( "Set cijena nije podešen ispravno !" )
       RETURN 0
    ENDIF
 

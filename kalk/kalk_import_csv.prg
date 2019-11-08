@@ -908,3 +908,30 @@ STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
    o_kalk_edit()
 
    RETURN .T.
+
+
+FUNCTION fajl_get_broj_linija( cImeF )
+
+   LOCAL nOfset := 0
+   LOCAL nSlobMem := 0
+   LOCAL cPom := ""
+   LOCAL nVrati := 0
+
+   IF FileStr( cImeF, 2, VelFajla( cImeF ) - 2 ) != NRED_DOS
+      nVrati := 1
+   ENDIF
+   DO WHILE Len( cPom ) >= nSlobMem
+      nSlobMem := Memory( 1 ) * 1024 - 100
+      cPom := FileStr( cImeF, nSlobMem, nOfset )
+      nOfset = nOfset + nSlobMem - 1
+      nVrati = nVrati + NumAt( NRED_DOS, cPom )
+   ENDDO
+
+   RETURN nVrati
+
+
+FUNCTION VelFajla( cImeF, cAttr )
+
+   LOCAL aPom := Directory( cImeF, cAttr )
+
+   RETURN IF ( !Empty( aPom ), aPom[ 1, 2 ], 0 )

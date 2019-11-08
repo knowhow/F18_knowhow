@@ -9,3 +9,8 @@ CMD="create user admin with password '$1';"
 su postgres -c "psql -c \"$CMD\""
 
 CMD="GRANT xtrole TO admin GRANTED BY postgres;"
+su postgres -c "psql -c \"$CMD\""
+
+
+
+

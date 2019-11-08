@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    LOCAL cDokument := ""
@@ -25,7 +23,6 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    hParams[ "tran_name" ] := "pos_rn_azur"
 
   o_pos_tables()
-
    IF !racun_se_moze_azurirati( cIdPos, POS_VD_RACUN, gDatum, cBrojRacuna )
       RETURN lRet
    ENDIF
@@ -75,7 +72,6 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
          SELECT pos
          APPEND BLANK
-
          hRec := dbf_get_rec()
 
          hRec[ "idpos" ] := cIdPos
@@ -119,7 +115,6 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
       lRet := .T.
       hParams[ "unlock" ] := { "pos_pos", "pos_doks" }
       run_sql_query( "COMMIT", hParams )
-
       log_write( "F18_DOK_OPER, ažuriran računa " + cDokument, 2 )
    ELSE
       run_sql_query( "ROLLBACK", hParams )
@@ -149,7 +144,7 @@ STATIC FUNCTION priprema_set_order_to()
    SELECT _pos_pripr
    SET ORDER TO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
@@ -162,7 +157,6 @@ STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
    ENDIF
 
    SELECT _pos_pripr
-
    IF RecCount() == 0
       MsgBeep( "Priprema računa je prazna, ažuriranje nije moguće !" )
       RETURN lRet

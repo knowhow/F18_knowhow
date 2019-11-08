@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 CLASS TKalkMod FROM TAppMod
 
    METHOD NEW
@@ -30,17 +28,13 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-
 METHOD TKalkMod:mMenu()
 
    PRIVATE Izbor
 
    Izbor := 1
-   gDuzKonto := 7
 
    //gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
-
-
    ::programski_modul_osnovni_meni()
 
    RETURN NIL
@@ -122,7 +116,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gDirFakt := ""
    PUBLIC gDirFaKK := ""
    PUBLIC gBrojacKalkulacija := "D"
-   PUBLIC gRokTr := "N"
+   //PUBLIC gRokTr := "N"
    PUBLIC gVarVP := "1"
    PUBLIC gAFin := "D"
    PUBLIC gAMat := "0"
@@ -166,7 +160,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gKomKonto := "5611   "     // zakomision definisemo
    // konto i posebnu sifru firme u FAKT-u
    PUBLIC gVar13u11 := "1"     // varijanta za otpremu u prodavnicu
-   PUBLIC gPromTar := "N"
    PUBLIC gFunKon1 := PadR( "SUBSTR(FINMAT->IDKONTO,4,2)", 80 )
    PUBLIC gFunKon2 := PadR( "SUBSTR(FINMAT->IDKONTO2,4,2)", 80 )
    PUBLIC g11bezNC := "N"
@@ -200,10 +193,10 @@ METHOD TKalkMod:set_module_gvars()
    // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
    PUBLIC lPrikPRUC := .F.
-   PUBLIC gDuzKonto
+   //PUBLIC FIELD_LENGTH_IDKONTO
 
-   o_kalk_pripr()
-   gDuzKonto := Len( mkonto )
+   //o_kalk_pripr()
+   //FIELD_LENGTH_IDKONTO := Len( mkonto )
 
 
    PUBLIC glZabraniVisakIP
@@ -262,8 +255,6 @@ METHOD TKalkMod:set_module_gvars()
 
    gPicProc := fetch_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
 
-
-
    gPicNc := fetch_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
 
    //gFPicCDem := fetch_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
@@ -291,7 +282,7 @@ METHOD TKalkMod:set_module_gvars()
 
    gcMpcKalk10 := fetch_metric( "kalk_pomoc_sa_mpc", nil, gcMpcKalk10 )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
-   gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
+   //gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
    gFunKon1 := fetch_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )
    gFunKon2 := fetch_metric( "kalk_djoker_f2_kod_kontiranja", nil, gFunKon2 )
 

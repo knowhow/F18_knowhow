@@ -22,4 +22,3 @@ export F18_DEBUG=1
 
 echo "-------------- F18 envars ---------------------"
 set | grep ^F18_
-

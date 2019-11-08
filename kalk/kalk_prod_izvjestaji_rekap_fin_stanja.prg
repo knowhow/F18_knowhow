@@ -26,7 +26,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    PicCDEM := kalk_prosiri_pic_cjena_za_2()
 
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "132.", gDuzKonto )
+   cIdKonto := PadR( "132.", FIELD_LENGTH_IDKONTO )
 
   // o_sifk()
 //   o_sifv()

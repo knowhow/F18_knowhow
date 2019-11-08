@@ -15,7 +15,7 @@
 
 FUNCTION Otpis16SI()
 
-   o_koncij()
+   //o_koncij()
    o_kalk_pripr()
    o_kalk_pripr2()
    //o_kalk()

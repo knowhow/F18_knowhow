@@ -242,7 +242,7 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( cIdFirma, cIdTipDok, cBrDok, 
 
    fprint_delete_answer( hFiskalniDevParams )
 
-   fprint_polog( hFiskalniDevParams, nDepozit, .T. )
+   fprint_unos_pologa( hFiskalniDevParams, nDepozit, .T. )
 
    nErr := fprint_read_error( hFiskalniDevParams, 0 )
 

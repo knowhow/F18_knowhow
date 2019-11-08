@@ -151,7 +151,7 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   sif_ispisi_naziv( nWa, nDeltaX, nDeltaY )
+   sifra_ispis_naziva( nWa, nDeltaX, nDeltaY )
 
    SELECT ( nWa )
    IF Used()
@@ -803,7 +803,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          ENDIF
       NEXT
 
-
       nI := 1
       FOR nForJg := 1 TO 3
 
@@ -818,7 +817,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          PRIVATE Getlist := {}
 
          nGet := 1
-
          nNestampati := 0
 
          nTekRed := 1
@@ -867,7 +865,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
          READ
 
-
          SET KEY K_F8 TO
          SET KEY K_F9 TO
          SET KEY K_F5 TO
@@ -879,7 +876,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
       NEXT
 
       BoxC()
-
 
       IF nCh != K_CTRL_A
          EXIT
@@ -1627,14 +1623,18 @@ FUNCTION validacija_postoji_sifra( wId, cTag )
 
 
 
-FUNCTION valid_sifarnik_id_postoji( wId )
+FUNCTION valid_sifarnik_id_postoji( cId )
 
    LOCAL hRec
 
+   __mvPublic( "wId" )
+   Eval( MemVarBlock( "wId" ), cId ) // wId <-- cId
+
    IF ( Ch == K_CTRL_N .OR. Ch == K_F4 )
       hRec := get_hash_record_from_global_vars( "w", .F., .F. ) // uvijek napraviti cp852 enkodiran string
+      altd()
       IF is_sifra_postoji_u_sifarniku( hRec )
-         MsgBeep( "Šifarnik: " + Alias() + ", ID vec postoji: " + Trim( ToStr( wId ) ) + " !" )
+         MsgBeep( "Šifarnik: " + Alias() + ", ID već postoji: " + Trim( ToStr( cId ) ) + " !" )
          RETURN .F.
       ENDIF
    ENDIF

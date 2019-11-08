@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION kalk_get_1_12()
 
    LOCAL lRet
@@ -32,24 +31,21 @@ FUNCTION kalk_get_1_12()
       // @ box_x_koord() + 8, box_y_koord() + 40  SAY "Razduzuje "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ENDIF
 
-      @ box_x_koord() + 9, box_y_koord() + 2   SAY8 "Magacinski konto zadužuje   "  GET _IdKonto2 ;
-         VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 24 )
+      @ box_x_koord() + 9, box_y_koord() + 2   SAY8 "Magacinski konto zadužuje   "  GET _IdKonto2 VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 24 )
       // IF gNW <> "X"
       // @ box_x_koord() + 9, box_y_koord() + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 21, 5 )
       // ENDIF
-      read
+      READ
       ESC_RETURN K_ESC
    ELSE
       @ box_x_koord() + 6, box_y_koord() + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
       @ box_x_koord() + 6, Col() + 2 SAY "Datum: "; ??  _DatFaktP
-
       @ box_x_koord() + 8, box_y_koord() + 2   SAY8 "Prodavnicki konto razdužuje "; ?? _IdKonto
-
       @ box_x_koord() + 9, box_y_koord() + 2   SAY8 "Magacinski konto zadužuje   "; ?? _IdKonto2
    ENDIF
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
    /*
    IF roba_barkod_pri_unosu()
     --  @ box_x_koord() + 11, box_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
@@ -58,8 +54,7 @@ FUNCTION kalk_get_1_12()
    ENDIF
    */
 
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
    @ box_x_koord() + 12, box_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
@@ -86,7 +81,6 @@ FUNCTION kalk_get_1_12()
 
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo()
 
-
       _FCJ := NC
       _VPC := NC
 
@@ -101,9 +95,12 @@ FUNCTION kalk_get_1_12()
    ENDIF
 
    set_pdv_public_vars()
-
-   nKolS := 0;nKolZN := 0;nc1 := nc2 := 0;dDatNab := CToD( "" )
+   nKolS := 0
+   nKolZN := 0
+   nc1 := nc2 := 0
+   dDatNab := CToD( "" )
    lGenStavke := .F.
+
    IF _TBankTr <> "X"
       IF !Empty( kalk_metoda_nc() )
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
@@ -116,7 +113,6 @@ FUNCTION kalk_get_1_12()
    ENDIF
 
    @ box_x_koord() + 12, box_y_koord() + 30   SAY "Ukupno na stanju "; @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
-
    @ box_x_koord() + 14, box_y_koord() + 2    SAY "NABAVNA CIJENA (NC)         :"
    @ box_x_koord() + 14, box_y_koord() + 50   GET _FCJ    PICTURE PicDEM VALID {|| lRet := kalk_valid_kolicina_prod(), _vpc := _fcj, lRet }
 
@@ -125,18 +121,13 @@ FUNCTION kalk_get_1_12()
 
    @ box_x_koord() + 16, box_y_koord() + 2  SAY8 "MP marža:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ box_x_koord() + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
-      valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", ;                // VP marza
-      _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }       // VP marza
-
+      VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
    @ box_x_koord() + 17, box_y_koord() + 2  SAY "MALOPROD. CJENA (MPC):"
    @ box_x_koord() + 17, box_y_koord() + 50 GET _MPC PICT PicDEM WHEN WMpc() VALID VMpc()
 
-   SayPorezi( 19 )
-
+   kalk_say_pdv_a_porezi_var( 19 )
 
    @ box_x_koord() + 19, box_y_koord() + 2 SAY "MPC SA PDV    :"
-
-
    @ box_x_koord() + 19, box_y_koord() + 50 GET _MPCSaPP PICT PicDEM VALID VMpcSaPP()
 
    READ
@@ -145,8 +136,10 @@ FUNCTION kalk_get_1_12()
 
    nStrana := 2
 
-   _MKonto := _Idkonto2;_MU_I := "1"
-   _PKonto := _Idkonto; _PU_I := "5"
+   _MKonto := _Idkonto2
+   _MU_I := "1"
+   _PKonto := _Idkonto
+   _PU_I := "5"
 
    kalk_puni_polja_za_izgenerisane_stavke( pIzgSt )
 

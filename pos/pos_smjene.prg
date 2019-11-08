@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_odredi_smjenu( lOdredi )
 
    LOCAL cOK := " "
@@ -20,19 +19,19 @@ FUNCTION pos_odredi_smjenu( lOdredi )
    PRIVATE d_Pos := d_Doks := CToD( "" )
    PRIVATE s_Pos := s_Doks := " "
 
-   IF gVSmjene == "N"
-      cSmjena := "1"
-      gSmjena := cSmjena
-      gDatum := dDatum
-      pos_status_traka()
-      CLOSERET
-   ENDIF
+   // IF gVSmjene == "N"
+   cSmjena := "1"
+   gSmjena := cSmjena
+   gDatum := dDatum
+   pos_status_traka()
+   CLOSERET
+   // ENDIF
 
    IF lOdredi == nil
       lOdredi := .T.
    ENDIF
 
-   O__POS
+   o_pos__pos()
    // o_pos_doks()
    // SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
    seek_pos_doks( NIL, POS_VD_RACUN, NIL, NIL, "2" ) // + Chr ( 254 )
@@ -74,7 +73,7 @@ FUNCTION pos_odredi_smjenu( lOdredi )
 
 
    Box(, 8, 50 )
-   @ box_x_koord(), box_y_koord() + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR f18_color_invert()
+   @ box_x_koord(), box_y_koord() + 1 SAY " DEFINISANJE DATUMA " COLOR f18_color_invert()
 
    DO WHILE !( cOK $ "Dd" )
       BoxCLS()
@@ -102,10 +101,6 @@ FUNCTION pos_odredi_smjenu( lOdredi )
    RETURN .T.
 
 
-
-/* DatumOK()
- *
- */
 
 STATIC FUNCTION DatumOK()
 
@@ -189,19 +184,20 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
          CLOSE ALL
          RETURN ( .F. )
       ENDIF
-      IF gVsmjene == "D"
-         MsgBeep ( "POTREBNO JE UNIJETI RACUNE KOJE STE IZDAVALI#" + "BEZ UNOSA U KASU", 20 )
-      ENDIF
+      // IF gVsmjene == "D"
+      // MsgBeep ( "POTREBNO JE UNIJETI RACUNE KOJE STE IZDAVALI#" + "BEZ UNOSA U KASU", 20 )
+      // ENDIF
       CLOSE ALL
       RETURN ( .T. )
    ENDIF
 
-   IF gVsmjene == "N"
-      SELECT _POS
-      my_dbf_zap()
-      RETURN .T.
-   ENDIF
+   // IF gVsmjene == "N"
+   SELECT _POS
+   my_dbf_zap()
+   // RETURN .T.
+   // ENDIF
 
+/*
    IF Pitanje(, "Izvrsiti vanredno zakljucenje kase?", "N" ) == "N"
       MsgBeep ( "Vracate se na definisanje datuma i smjene...", 30 )
       RETURN .F.
@@ -310,16 +306,14 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
 
    my_close_all_dbf()
 
+   */
+
    RETURN .T.
 
 
-
-/* ZakljRadnik()
- *     Zakljucenje radnika
- */
+/*
 
 FUNCTION ZakljRadnik( Ch )
-
 
    LOCAL cIdSave
 
@@ -349,7 +343,7 @@ FUNCTION ZakljRadnik( Ch )
          SELECT ZAKSM
          RETURN ( DE_CONT )
       ENDIF
-      UkloniRadne( ZAKSM->IdRadnik )
+      pos_ukloni_radne_racune( ZAKSM->IdRadnik )
       gIdRadnik := cIdSave
       SELECT ZAKSM
       my_delete_with_pack()
@@ -357,25 +351,25 @@ FUNCTION ZakljRadnik( Ch )
    ENDIF
 
    RETURN ( DE_CONT )
-
+*/
 
 
 /*
  *  brief Otvaranje smjene
- */
+
 
 FUNCTION OtvoriSmjenu()
 
    LOCAL fImaNezak := .F.
 
-   IF gVSmjene == "N"
+   //IF gVSmjene == "N"
       MsgBeep( "Promet kase se ne vodi po smjenama!" )
-      RETURN
-   ENDIF
+      RETURN .F.
+   //ENDIF
 
    // potrazi ima li nezakljucenih radnika i obavjesti
 
-   O__POS
+   o_pos__pos()
    SEEK gIdPos + POS_VD_RACUN
 
    IF Found()
@@ -404,3 +398,5 @@ FUNCTION OtvoriSmjenu()
    my_close_all_dbf()
 
    RETURN .T.
+
+*/

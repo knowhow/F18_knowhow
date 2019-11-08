@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 /* Zaduzenje(cIdVd)
  *     Dokument zaduzenja
  *
@@ -26,8 +25,6 @@
  *       lForsSir .T. - radi se o forsiranom zaduzenju odjeljenja
  *                           sirovinama
  */
-
-
 FUNCTION Zaduzenje
 
    PARAMETERS cIdVd
@@ -79,19 +76,14 @@ FUNCTION Zaduzenje
 
    SET CURSOR ON
 
-   IF gVrstaRS == "S"
-      @ box_x_koord() + 1, box_y_koord() + 3 SAY "Prodajno mjesto:" GET cIdPos PICT "@!" VALID cIdPos <= "X " .AND. !Empty( cIdPos )
-   ENDIF
-
-   IF gvodiodj == "D"
-      @ box_x_koord() + 3, box_y_koord() + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj ( @cIdOdj, 3, 28 )
-      IF cIdVD == "PD"
-         @ box_x_koord() + 4, box_y_koord() + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj ( @cIdOdj2, 4, 28 )
-      ENDIF
-   ENDIF
+   // IF gVodiOdj == "D"
+   // @ box_x_koord() + 3, box_y_koord() + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj ( @cIdOdj, 3, 28 )
+   // IF cIdVD == "PD"
+   // @ box_x_koord() + 4, box_y_koord() + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj ( @cIdOdj2, 4, 28 )
+   // ENDIF
+   // ENDIF
 
    @ box_x_koord() + 6, box_y_koord() + 3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada <= Date()
-
    READ
    ESC_BCR
 
@@ -132,7 +124,7 @@ FUNCTION Zaduzenje
                pos_stampa_zaduzenja_inventure()
             ENDIF
 
-            //o_pos_tables()
+            // o_pos_tables()
             IF Pitanje(, "Ako je sve u redu, želite li staviti dokument na stanje (D/N) ?", " " ) == "D"
                fSadAz := .T.
             ENDIF
@@ -168,9 +160,8 @@ FUNCTION Zaduzenje
       SET ORDER TO
       GO  TOP
 
-      BOX (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
-      @ box_x_koord(), box_y_koord() + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
-         AllTrim( ODJ->Naz ), 60 ) COLOR f18_color_invert()
+      BOX (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna količina" } )
+      @ box_x_koord(), box_y_koord() + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) ) COLOR f18_color_invert()
 
       oBrowse := pos_form_browse( box_x_koord() + 6, box_y_koord() + 1, box_x_koord() + 19, box_y_koord() + 77, ImeKol, Kol, ;
          { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), hb_UTF8ToStrBox( BROWSE_PODVUCI ), hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
@@ -249,7 +240,7 @@ FUNCTION Zaduzenje
             _robanaz := roba->naz
             _jmj := roba->jmj
             _idtarifa := roba->idtarifa
-            _cijena := IIF( Empty( _cijena ), pos_get_mpc(), _cijena )
+            _cijena := iif( Empty( _cijena ), pos_get_mpc(), _cijena )
             _barkod := roba->barkod
             _n1 := roba->n1
             _n2 := roba->n2
@@ -280,8 +271,8 @@ FUNCTION Zaduzenje
 
    IF RecCount2() > 0
 
-      //SELECT pos_doks
-      //SET ORDER TO TAG "1"
+      // SELECT pos_doks
+      // SET ORDER TO TAG "1"
 
       IF !_from_kalk
          cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
@@ -432,7 +423,7 @@ FUNCTION IspraviZaduzenje()
 
    pos_set_key_handler_ispravka_zaduzenja()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -504,4 +495,4 @@ FUNCTION NaslovDok( cIdVd )
       RETURN "????"
    ENDCASE
 
-   RETURN
+   RETURN .T.

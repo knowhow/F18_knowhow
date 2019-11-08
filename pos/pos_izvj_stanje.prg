@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -22,7 +21,6 @@ FUNCTION pos_stanje_artikala
    LOCAL nVrijednost
    LOCAL nCijena := 0
    LOCAL cRSdbf
-   LOCAL cVrstaRs
 
    // PRIVATE cIdDio := Space ( 2 )
    PRIVATE cIdOdj := Space ( 2 )
@@ -38,19 +36,12 @@ FUNCTION pos_stanje_artikala
       PRIVATE cDat := gDatum, cSmjena := " "
    ENDIF
 
-   cVrstaRs := gVrstaRs
-
-   // ovo je zakrpa .... ali da proradi
-   IF ( gModul == "POS" .AND. cVrstaRs == "S" )
-      cVrstaRs := "A"
-   ENDIF
-
    // o_pos_kase()
-   //o_pos_odj()
+   // o_pos_odj()
    // o_sifk()
    // o_sifv()
    // o_roba()
-   //o_pos_pos()
+   // o_pos_pos()
 
    cIdPos := gIdPos
 
@@ -60,20 +51,20 @@ FUNCTION pos_stanje_artikala
    ELSE
 
       aNiz := {}
-      IF cVrstaRs <> "K"
-         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
-      ENDIF
+      // IF cVrstaRs <> "K"
+      AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
+      // ENDIF
 
-      IF gVodiodj == "D"
-         AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
-      ENDIF
+      // IF gVodiodj == "D"
+      // AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
+      // ENDIF
 
       AAdd ( aNiz, { "Artikli  (prazno-svi)", "cRoba",, "@!S30", } )
       AAdd ( aNiz, { "Izvjestaj se pravi za datum", "cDat",,, } )
 
-      IF gVSmjene == "D"
-         AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
-      ENDIF
+      //IF gVSmjene == "D"
+      //   AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
+      //ENDIF
 
       AAdd ( aNiz, { "Stampati artikle sa stanjem 0", "cNule", "cNule$'DN'", "@!", } )
       DO WHILE .T.
@@ -90,29 +81,18 @@ FUNCTION pos_stanje_artikala
 
    ENDIF
 
-   PRIVATE cZaduzuje := "R"
-
    IF !Empty ( cIdOdj )
       select_o_pos_odj( cIdOdj )
       IF Zaduzuje == "S"
          cU := S_U
          cI := S_I
          cRSdbf := "SIROV"
-         cZaduzuje := "S"
       ELSE
          cU := R_U
          cI := R_I
          cRSdbf := "ROBA"
-         cZaduzuje := "R"
       ENDIF
    ENDIF
-
-   IF cVrstaRs == "S"
-      cLM := Space ( 5 )
-      nSir := 80
-      nRob := 40
-   ENDIF
-
 
    // SELECT POS
    // SET ORDER TO TAG "2"
@@ -135,12 +115,12 @@ FUNCTION pos_stanje_artikala
    // pravljenje izvjestaja
    IF !fZaklj
       START PRINT CRET
-      Zagl( cIdOdj, cDat, cVrstaRs )
+      Zagl( cIdOdj, cDat )
    ENDIF
 
 
    IF !Empty( cIdOdj )
-      Podvuci( cVrstaRs )
+      Podvuci()
    ENDIF
 
    DO WHILE !Eof()
@@ -157,10 +137,10 @@ FUNCTION pos_stanje_artikala
       IF Empty( cIdOdj ) .AND. _IdOdj <> xIdOdj
 
          IF fZaklj
-            Zagl( _IdOdj, NIL, cVrstaRs )
+            Zagl( _IdOdj, NIL )
          ENDIF
 
-         Podvuci( cVrstaRs )
+         Podvuci()
 
          xIdOdj := _IdOdj
 
@@ -168,9 +148,8 @@ FUNCTION pos_stanje_artikala
 
          ? cLM + Id + "-" + Naz
 
-         Podvuci( cVrstaRs )
+         Podvuci()
 
-         cZaduzuje := "R"
          cU := R_U
          cI := R_I
          cRSdbf := "ROBA"
@@ -203,7 +182,7 @@ FUNCTION pos_stanje_artikala
                LOOP
             ENDIF
 
-            IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
+            IF ( pos->idvd == "96" )
                SKIP
                LOOP
                // preskoci
@@ -249,11 +228,7 @@ FUNCTION pos_stanje_artikala
             ENDIF
             //
 
-            IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
-               SKIP
-               LOOP  // racuni za sirovine - zdravo
-            ENDIF
-            IF cZaduzuje == "R" .AND. pos->idvd == "96"
+            IF pos->idvd == "96"
                SKIP
                LOOP   // otpremnice za robu - zdravo
             ENDIF
@@ -294,10 +269,7 @@ FUNCTION pos_stanje_artikala
             //
             SELECT POS
 
-            IF cVrstaRs <> "S"
-               ?
-            ENDIF
-
+            ?
             ?? Str ( nPstanje, 9, 3 )
 
             IF Round ( nUlaz, 4 ) <> 0
@@ -332,9 +304,7 @@ FUNCTION pos_stanje_artikala
    ENDDO
 
    IF !fZaklj
-      IF cVrstaRs <> "S"
-         PaperFeed ()
-      ENDIF
+      PaperFeed ()
       ENDPRINT
    ENDIF
 
@@ -345,7 +315,7 @@ FUNCTION pos_stanje_artikala
 
 
 
-STATIC FUNCTION Podvuci( cVrstaRs )
+STATIC FUNCTION Podvuci()
 
    ?
    ?? REPL( "-", 5 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 10 ), REPL( "-", 10 ), REPL( "-", 10 )
@@ -354,7 +324,7 @@ STATIC FUNCTION Podvuci( cVrstaRs )
 
 
 
-STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
+STATIC FUNCTION Zagl( cIdOdj, dDat )
 
    IF ( dDat == NIL )
       dDat := gDatum
@@ -369,9 +339,9 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
 
    ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", find_pos_kasa_naz( cIdPos ) )
 
-   IF gvodiodj == "D"
-      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
-   ENDIF
+   //IF gvodiodj == "D"
+    //  ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
+   //ENDIF
 
    ? cLM + "Artikal    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )
    ?
@@ -380,4 +350,4 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ?? "R.broj", "P.stanje ", PadC ( "Ulaz", 9 ), PadC ( "Izlaz", 9 ), PadC ( "Stanje", 10 ), PadC( "Cijena", 10 ), PadC( "Total", 10 )
    ? cLM
 
-   RETURN
+   RETURN .T.

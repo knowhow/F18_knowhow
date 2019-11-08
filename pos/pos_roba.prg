@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC __tezinski_barkod := NIL
 
 
@@ -113,7 +112,6 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    // SELECT roba
    // SET ORDER TO TAG "ID"
-
    // SELECT ( _area )
 
    RETURN lSveJeOk

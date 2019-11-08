@@ -40,7 +40,7 @@ FUNCTION kalk_lager_lista_prodavnica()
 
 
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "1320", gDuzKonto )
+   cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
 
 //   o_sifk()
 //   o_sifv()

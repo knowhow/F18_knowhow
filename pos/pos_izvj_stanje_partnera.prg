@@ -26,7 +26,7 @@ FUNCTION pos_rpt_stanje_partnera()
    PRIVATE cGotZir := Space( 1 )
    PRIVATE cSifraDob := Space( 8 )
 
-   //o_partner()
+   // o_partner()
 
    DO WHILE .T.
       IF !VarEdit( { ;
@@ -44,30 +44,30 @@ FUNCTION pos_rpt_stanje_partnera()
       ENDIF
    ENDDO
 
-   //o_roba()
+   // o_roba()
    o_pos_kumulativne_tabele()
-   //o_partner()
+   // o_partner()
 
    START PRINT CRET
    ?? gP12cpi
 
-  // ZagFirma()
+   // ZagFirma()
 
    ? PadC( "STANJE RACUNA PARTNERA NA DAN " + FormDat1( dDat ), 80 )
    ? PadC( "----------------------------------------", 80 )
    ?
    ? PadR( "Partner", 39 ) + " "
 
-   IF gVrstaRS == "K"
-      ? Space( 4 )
-   ENDIF
+   // IF gVrstaRS == "K"
+   // ? Space( 4 )
+   // ENDIF
 
    ?? PadR( "Dugovanje", 12 ), PadR( "Placeno", 12 ), "   STANJE    "
    ? Replicate( "-", 39 ) + " "
 
-   IF gVrstaRS == "K"
-      ? Space( 4 )
-   ENDIF
+   // IF gVrstaRS == "K"
+   // ? Space( 4 )
+   // ENDIF
 
    ?? REPL( "-", 12 ), REPL( "-", 12 ), REPL( "-", 14 )
 
@@ -153,15 +153,15 @@ FUNCTION pos_rpt_stanje_partnera()
 
             SELECT pos
             IF pos_doks->IdVrsteP == "01"
-               nPom := pos->kolicina * pos->cijena * iif( pos->idvd == "00", -1, 1 )
+               nPom := pos->kolicina * pos->cijena * iif( pos->idvd == "00", - 1, 1 )
                // placanje gotovinom povecava promet na obje strane
                nPlacJest += nPom
                nPlacNije += nPom
             ELSEIF ( Left( idroba, 5 ) == 'PLDUG' )
-               nPlacJest += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', -1, 1 )
+               nPlacJest += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', - 1, 1 )
             ELSE
-               nIznos += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', -1, 1 )
-               nPlacNije += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', -1, 1 )
+               nIznos += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', - 1, 1 )
+               nPlacNije += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', - 1, 1 )
             ENDIF
             SKIP
          ENDDO
@@ -176,15 +176,15 @@ FUNCTION pos_rpt_stanje_partnera()
          select_o_partner( cIdGost )
          ? REPL( "-", 80 )
          ? AllTrim( Str( nBrojacPartnera ) ) + ") " + PadR( AllTrim( cIdGost ) + " " + partn->Naz, 35 ) + " "
-         IF gVrstaRS == "K"
-            ? Space( 4 )
-         ENDIF
+         // IF gVrstaRS == "K"
+         // ? Space( 4 )
+         // ENDIF
          ?? Str( nPlacNije, 12, 2 ), Str( nPlacJest, 12, 2 ) + " "
          ?? Str( nStanje, 12, 2 )
          nSumaSt += nStanje
          fPisi := .T.
          ? REPL( "-", 80 )
-         ++ nBrojacPartnera
+         ++nBrojacPartnera
       ENDIF
       nSumaNije += nPlacNije
       nSumaJest += nPlacJest
@@ -206,8 +206,8 @@ FUNCTION pos_rpt_stanje_partnera()
                ENDIF
             ENDIF
 
-            //SELECT POS
-            //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+            // SELECT POS
+            // SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
             seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
             nDuguje := 0
             nPotrazuje := 0
@@ -215,25 +215,25 @@ FUNCTION pos_rpt_stanje_partnera()
 
                IF pos_doks->IdVrsteP == "01"
 
-                  nPom := pos->kolicina * pos->cijena * iif( pos->idvd == "00", -1, 1 )
+                  nPom := pos->kolicina * pos->cijena * iif( pos->idvd == "00", - 1, 1 )
                   // placanje gotovinom povecava promet na obje strane
                   nDuguje += nPom
                   nPotrazuje += nPom
                ELSEIF ( Left( idroba, 5 ) == 'PLDUG' )
                   // ako je placanje, dug je negativan
                   // za poc stanje promjeni znak ????
-                  nPotrazuje += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', -1, 1 )
+                  nPotrazuje += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', - 1, 1 )
 
                ELSE
                   // veresija
-                  nDuguje += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', -1, 1 )
+                  nDuguje += POS->Kolicina * POS->Cijena * iif( pos->idvd = '00', - 1, 1 )
                ENDIF
                SKIP
             ENDDO
 
             SELECT pos_doks
             ? AllTrim( Str( nBrojacStavki ) ) + " " + PadL( pos_doks->idvd, 4 ) + " " + PadR( AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), 9 ), FormDat1( pos_doks->Datum )
-            ++ nBrojacStavki
+            ++nBrojacStavki
             ?? " " + pos_doks->IdVrsteP + "       "
             ?? Str( nDuguje, 12, 2 ), Str( nPotrazuje, 12, 2 )
             SKIP
@@ -246,11 +246,11 @@ FUNCTION pos_rpt_stanje_partnera()
    ENDDO
 
    IF Empty( cGost )
-      IF gVrstaRS == "K"
-         nDuz := 25
-      ELSE
-         nDuz := 35 + 1 + 10 + 1 + 10
-      ENDIF
+      // IF gVrstaRS == "K"
+      // nDuz := 25
+      // ELSE
+      nDuz := 35 + 1 + 10 + 1 + 10
+      // ENDIF
       ? REPL( "=", nDuz ), REPL( "=", 14 )
       ? PadL( "Ukupno placeno:", nDuz ), Str( nSumaJest, 14, 2 )
       ? PadL( "UKUPNO NEPLACENO:", nDuz ), Str( nSumaNije, 14, 2 )
@@ -258,9 +258,9 @@ FUNCTION pos_rpt_stanje_partnera()
       ? REPL( "=", nDuz ), REPL( "=", 14 )
    ENDIF
 
-   IF gVrstaRS <> "S"
-      PaperFeed()
-   ENDIF
+   // IF gVrstaRS <> "S"
+   PaperFeed()
+   // ENDIF
 
    ENDPRINT
 

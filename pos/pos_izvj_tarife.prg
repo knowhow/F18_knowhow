@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_rekapitulacija_tarifa( aTarife )
 
    LOCAL nArr

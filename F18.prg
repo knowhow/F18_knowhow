@@ -12,6 +12,8 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
+REQUEST ARRAYRDD
+
 STATIC __relogin_opt := .F.
 
 

@@ -21,4 +21,5 @@ libs=sddpg
 {mingw}libpaths=c:/msys32/mingw32/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
+{win}libpaths=c:\dev\conan\deploy\x64\zlib\lib
 mt=yes

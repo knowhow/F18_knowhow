@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC dDatOd
 STATIC dDatDo
 STATIC cFinPath

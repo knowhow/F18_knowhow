@@ -1,8 +1,9 @@
 #10.8 macosc/darvin ne treba ovo
-{mingw|mingwce|(gcc&(linux))}libs=supc++
+#{mingw|mingwce|(gcc&(linux))}libs=supc++
 
 libs=hbct
-libs=hbmzip minizip
+libs=hbmzip minizip charset iconv icudt icuin icuio icutu icuuc
+
 libs=hbtip
 
 {F18_GT_CONSOLE&unix}gt=gtnul
@@ -13,13 +14,20 @@ libs=hbtip
 {F18_GT_CONSOLE&allwin}gt=gtwin
 {!F18_GT_CONSOLE&allwin}gt=gtwvt
 
-libs=hbpgsql
-{unix}libs=pq
-{win}libs=libpq
-libs=sddpg
+#libs=hbpgsql
+#{unix}libs=pq
+#{win}libs=libpq
+#libs=sddpg
 
-{mingw}libpaths=c:/msys32/mingw32/lib
-{darwin}libpaths=/Library/PostgreSQL/9.1/lib
+#{mingw}libpaths=c:/msys32/mingw32/lib
+#{darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
-{win}libpaths=c:\dev\conan\deploy\x64\zlib\lib
+{msvc64}libpaths=c:\dev\conan\deploy\x64\zlib\lib
+
+{msvc}libpaths=c:\dev\conan\deploy\x86\zlib\lib
+{msvc}libpaths=c:\dev\conan\deploy\x86\libiconv\lib
+{msvc}libpaths=c:\dev\conan\deploy\x86\icu\lib
+
+{msvc}libs=secur32
+
 mt=yes

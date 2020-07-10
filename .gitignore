@@ -30,19 +30,16 @@ linux_32
 linux_64
 darwin
 *.dll
-include/f18_ver.ch
+#include/f18_ver.ch
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
 /test_secret.txt
 F18_util
-<<<<<<< HEAD
 docker/postgresql_data
-=======
 *.retry
 docker/tds_fdw/
 *.conv.txt
 CHANGELOG_MERGE.md
 template/
 docker/
->>>>>>> 3

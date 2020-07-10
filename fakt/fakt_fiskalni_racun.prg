@@ -564,11 +564,23 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
       nCijena := roba->mpc
       cIdTarifa := AllTrim( roba->idtarifa )
 
-      _arr := {}
-      AAdd( _arr, { cIdTarifa, field->cijena } )
-      _data_item := fakt_izracunaj_total( _arr, _partn_id, cIdTipDok )
+      //_arr := {}
+      //AAdd( _arr, { cIdTarifa, field->cijena } )
+      //_data_item := fakt_izracunaj_total( _arr, _partn_id, cIdTipDok )
+      //nCijena := _data_item[ "ukupno" ]
 
-      nCijena := _data_item[ "ukupno" ]
+      
+      altd()
+      IF field->dindem != Left( ValBazna(), 3 )
+           /////////// FIX BUG zaokr na 2 DEC /////////////////
+           nCijena :=  field->cijena
+      ELSE
+           _arr := {}
+           AAdd( _arr, { cIdTarifa, field->cijena } )
+           _data_item := fakt_izracunaj_total( _arr, _partn_id, cIdTipDok )
+           nCijena := _data_item[ "ukupno" ]
+      ENDIF    
+
 
       IF cIdTipDok == "10"
          _vr_plac := "3"

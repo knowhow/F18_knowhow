@@ -1,6 +1,10 @@
 @echo off
 
-set VERSION=3.1.128
+
+IF [%VERSION%]==[] (
+   echo ENVAR VERSION nije definisana. STOP!
+   goto end
+)
 
 IF [%1]==[] (
    ECHO download host nije definisan?!

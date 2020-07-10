@@ -1,12 +1,14 @@
 # F18
 
-## build
+## build, deploy
 
 
-windows (32-bit): 
+Windows (32-bit): 
 
+    set VERSION=3.1.328
     build_release.cmd
-
+    push_release_to_server.cmd <download_host.bring.out.ba>
+    echo %VERSION% > VERSION_E
 
 
 ## F18 log promjena

@@ -2,21 +2,10 @@
 
 ## build
 
-[![Build status](https://ci.appveyor.com/api/projects/status/eg8qsklygduukk87?svg=true)](https://ci.appveyor.com/project/hernad/f18-knowhow)
 
+windows (32-bit): 
 
-## instalacija klijenata
-
-
-### linux (ubuntu, centos)
-
-    # bash
-    curl https://raw.githubusercontent.com/knowhow/F18_knowhow/3/bin/F18_install.sh | bash
-
-### windows
-
-     # u powershell konzoli zadati:
-     iex (new-object net.webclient).downloadstring('https://raw.githubusercontent.com/knowhow/F18_knowhow/3/bin/F18_install.ps1')
+    build_release.cmd
 
 
 

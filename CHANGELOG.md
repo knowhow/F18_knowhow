@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.328-std, 2020-07-10
+
+- Fiskalni FIX EUR faktura
+
 ## 3.1.327-std, 2019-11-08
 
 - fin preknjizenje fix: order_by

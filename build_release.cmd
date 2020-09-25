@@ -3,6 +3,7 @@
 set HB_ARCHITECTURE=win
 set HB_COMPILER=msvc
 
+set F18_DEBUG=
 set F18_POS=1
 set DATE=25.09.2020
 

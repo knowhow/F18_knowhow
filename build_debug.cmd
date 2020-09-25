@@ -23,11 +23,6 @@ type include\f18_ver.ch
 
 hbmk2 F18 -workdir=.bdebug -ldflag+=/NODEFAULTLIB:LIBCMT
 
-copy F18.exe F18_Windows_%VERSION%
-echo pravim F18_Windows_%VERSION%.gz ...
-c:\cygwin64\bin\gzip --force F18_Windows_%VERSION%
-
-dir F18_Windows_%VERSION%.gz
 
 :end
 echo -- end --

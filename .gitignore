@@ -43,3 +43,5 @@ docker/tds_fdw/
 CHANGELOG_MERGE.md
 template/
 docker/
+.b32
+.bdebug

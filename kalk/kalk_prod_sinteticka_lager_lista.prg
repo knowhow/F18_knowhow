@@ -20,7 +20,7 @@ FUNCTION sint_lager_lista_prodavnice()
    PicDEM := kalk_prosiri_pic_iznos_za_2()
 
    cIdFirma := self_organizacija_id()
-   qqKonto := PadR( "132;", 60 )
+   qqKonto := PadR( "133;", 60 )
 
 
    dDatOd := CToD( "" )
@@ -71,6 +71,7 @@ FUNCTION sint_lager_lista_prodavnice()
    ENDDO
    BoxC()
 
+   altd()
    o_koncij()
   
    MsgO( "Preuzimanje podataka sa SQL servera ..." )

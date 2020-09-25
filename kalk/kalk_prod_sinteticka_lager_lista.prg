@@ -14,16 +14,14 @@
 
 FUNCTION sint_lager_lista_prodavnice()
 
+   LOCAL GetList := {}
+
    PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PicDEM := kalk_prosiri_pic_iznos_za_2()
 
    cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
-   // o_sifk()
-// o_sifv()
-// o_roba()
-   // o_konto()
-   // o_partner()
+
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -39,17 +37,15 @@ FUNCTION sint_lager_lista_prodavnice()
    Box(, 12, 66 )
    cGrupacija := Space( 4 )
    DO WHILE .T.
-      IF gNW $ "DX"
-         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ELSE
-         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma  " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodavnice" GET qqKonto  PICT "@!S50"
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Artikli   " GET qqRoba PICT "@!S50"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tarife    " GET qqTarifa PICT "@!S50"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cPnab $ "DN" PICT "@!"
       @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz ERR D/N" GET cERR  VALID cERR $ "DN" PICT "@!"
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Datum od " GET dDatOd
@@ -59,36 +55,37 @@ FUNCTION sint_lager_lista_prodavnice()
       READ
       ESC_BCR
 
-      PRIVATE aUsl1 := Parsiraj( qqRoba, "IdRoba" )
-      PRIVATE aUsl2 := Parsiraj( qqTarifa, "IdTarifa" )
-      PRIVATE aUsl3 := Parsiraj( qqIDVD, "idvd" )
-      PRIVATE aUsl4 := Parsiraj( qqkonto, "pkonto" )
-      IF aUsl1 <> NIL
+      PRIVATE cFilterRoba := Parsiraj( qqRoba, "IdRoba" )
+      PRIVATE cFilterTarifa := Parsiraj( qqTarifa, "IdTarifa" )
+      PRIVATE cFilterIdVD := Parsiraj( qqIDVD, "idvd" )
+      PRIVATE cFilterPKonto := Parsiraj( qqkonto, "pkonto" )
+      IF cFilterRoba <> NIL
          EXIT
       ENDIF
-      IF aUsl2 <> NIL
+      IF cFilterTarifa <> NIL
          EXIT
       ENDIF
-      IF aUsl3 <> NIL
+      IF cFilterIdVD <> NIL
          EXIT
       ENDIF
    ENDDO
    BoxC()
 
    o_koncij()
-   o_kalk()
+  
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+     find_kalk_by_pkonto_idroba_idvd( cIdFirma, NIL, NIL, NIL, "idFirma,IdTarifa,idroba" )
+   MsgC()
 
-   PRIVATE cFilt1 := ""
-   cFilt1 := "!EMPTY(pu_i).and." + aUsl1 + ".and." + aUsl4
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
-   IF !( cFilt1 == ".t." )
-      SET FILTER TO &cFilt1
+    
+   PRIVATE cFilterKalk := ""
+   cFilterKalk := "!EMPTY(pu_i).and." + cFilterRoba + ".and." + cFilterPKonto
+   cFilterKalk := StrTran( cFilterKalk, ".t..and.", "" )
+   IF !( cFilterKalk == ".t." )
+      SET FILTER TO &cFilterKalk
    ENDIF
 
-   SELECT kalk
-   SET ORDER TO TAG "6"
-   // CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
-   HSEEK cidfirma
+   GO TOP
    EOF CRET
 
    nLen := 1
@@ -147,8 +144,8 @@ FUNCTION sint_lager_lista_prodavnice()
          LOOP
       ENDIF
 
-      IF Len( aUsl2 ) <> 0
-         IF !Tacno( aUsl2 )
+      IF Len( cFilterTarifa ) <> 0
+         IF !Tacno( cFilterTarifa )
             SKIP
             LOOP
          ENDIF
@@ -174,10 +171,12 @@ FUNCTION sint_lager_lista_prodavnice()
             ENDIF
          ENDIF
 
+         /*
          IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
             SKIP
             LOOP
          ENDIF
+         */
 
          IF datdok < dDatOd .OR. datdok > dDatDo
             SKIP
@@ -189,8 +188,8 @@ FUNCTION sint_lager_lista_prodavnice()
             LOOP
          ENDIF
 
-         IF Len( aUsl3 ) <> 0
-            IF !Tacno( aUsl3 )
+         IF Len( cFilterIdVD ) <> 0
+            IF !Tacno( cFilterIdVD )
                SKIP
                LOOP
             ENDIF
@@ -220,6 +219,7 @@ FUNCTION sint_lager_lista_prodavnice()
             nNVI += nc * gkolicin2
          ENDIF
          SKIP
+
       ENDDO
 
       NovaStrana( bZagl )

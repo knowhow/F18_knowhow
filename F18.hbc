@@ -24,10 +24,9 @@ libs=hbtip
 
 {msvc64}libpaths=c:\dev\conan\deploy\x64\zlib\lib
 
-{msvc}libpaths=c:\dev\conan\deploy\x86\zlib\lib
-{msvc}libpaths=c:\dev\conan\deploy\x86\libiconv\lib
-{msvc}libpaths=c:\dev\conan\deploy\x86\icu\lib
-
+{msvc}libpaths=conan\deploy\x86\zlib\lib
+{msvc}libpaths=conan\deploy\x86\libiconv\lib
+{msvc}libpaths=conan\deploy\x86\icu\lib
 {msvc}libs=secur32
 
 mt=yes

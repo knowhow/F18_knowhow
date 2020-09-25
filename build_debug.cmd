@@ -4,7 +4,9 @@ set HB_ARCHITECTURE=win
 set HB_COMPILER=msvc
 
 set F18_POS=1
+set F18_DEBUG=1
 set DATE=25.09.2020
+set VERSION=3.2.0
 
 IF [%VERSION%]==[] (
    echo ENVAR VERSION nije definisana. STOP!
@@ -19,8 +21,7 @@ echo #define F18_VER_DATE  "%DATE%" >> include\f18_ver.ch
 type include\f18_ver.ch
 
 
-hbmk2 F18 -clean -workdir=.b32
-hbmk2 F18 -trace- -ldflag+=/NODEFAULTLIB:LIBCMT -workdir=.b32
+hbmk2 F18 -workdir=.bdebug -ldflag+=/NODEFAULTLIB:LIBCMT
 
 copy F18.exe F18_Windows_%VERSION%
 echo pravim F18_Windows_%VERSION%.gz ...

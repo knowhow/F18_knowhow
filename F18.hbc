@@ -2,7 +2,7 @@
 #{mingw|mingwce|(gcc&(linux))}libs=supc++
 
 libs=hbct
-libs=hbmzip minizip charset iconv icudt icuin icuio icutu icuuc
+{!unix}libs=hbmzip minizip charset iconv icudt icuin icuio icutu icuuc
 
 libs=hbtip
 

@@ -70,7 +70,8 @@ FUNCTION f18_email_send( mail_params, attach )
       _files := attach
    ENDIF
 
-   IF hb_SendMail( _server, ;
+
+   IF tip_MailSend( _server, ;
          _port, ;
          _from, ;
          _to, ;

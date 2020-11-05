@@ -13,6 +13,15 @@ Windows (32-bit):
     echo %VERSION% > VERSION_E
 
 
+update VERSION_E, VERSION_X na github.com/knowhow:
+
+    git remote add knowhow git@github.com:knowhow/F18_knowhow.git
+    git checkout knowhow/3-std -b knowhow-3-std
+    git checkout knowhow-3-std
+    git merge 3-std
+    git push knowhow 3-std
+    
+
 ## F18 log promjena
 
 [F18 CHANGELOG.md](CHANGELOG.md)

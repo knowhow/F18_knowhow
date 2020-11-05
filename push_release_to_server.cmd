@@ -22,6 +22,7 @@ echo scp  F18_Windows_%VERSION%.gz root@%HOST%:/data/download.bring.out.ba/www/f
 
 scp -i %USERPROFILE%\.ssh\id_rsa F18_Windows_%VERSION%.gz root@%HOST%:/data/download.bring.out.ba/www/files/
 
+ssh -i %USERPROFILE%\.ssh\id_rsa  root@%HOST% chmod +r /data/download.bring.out.ba/www/files/F18_Windows_%VERSION%.gz
 
 :end
 echo ---- kraj ----

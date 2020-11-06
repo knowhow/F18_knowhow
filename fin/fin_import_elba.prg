@@ -411,7 +411,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
 
    hFinItem[ "opis" ] := PadR( hFinItem[ "opis" ], 100 )
-   hFinItem[ "brdok" ] := PadR( hFinItem[ "brdok" ], 10 )
+   hFinItem[ "brdok" ] := PadR( hFinItem[ "brdok" ], 20 )
 
    IF cImpView == "D"
 

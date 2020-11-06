@@ -255,7 +255,7 @@ FUNCTION fin_anal_kartica()
             SELECT ANAL
             @ PRow(), 31 + IF( cBrza == "S", 8, 0 ) SAY IF( lPom, SUBAN->idtipdok, "??"      )
             @ PRow(), PCol() + 1 SAY IF( lPom, TDOK->naz, Space( 13 ) )
-            @ PRow(), PCol() + 1 SAY IF( lPom, SUBAN->brdok, Space( 10 ) )
+            @ PRow(), PCol() + 1 SAY IF( lPom, LEFT(SUBAN->brdok, 10), Space( 10 ) )
             nCOpis := PCol() + 1
             @ PRow(), PCol() + 1 SAY IF( lPom, PadR( cOpis := AllTrim( SUBAN->opis ), 20 ), Space( 20 ) )
          ENDIF

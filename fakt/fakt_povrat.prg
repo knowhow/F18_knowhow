@@ -325,7 +325,7 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
 
       fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
 
-      MsgO( "Brišem dokumente iz kumulativa: " + cIdFirmaTekuci + "-" + cIdTipDokTekuci + "-" + PadR( cBrDokTekuci, 10 ) )
+      MsgO( "Brišem dokumente iz kumulativa: " + cIdFirmaTekuci + "-" + cIdTipDokTekuci + "-" + PadR( cBrDokTekuci, 20 ) )
 
 
       SELECT fakt_doks

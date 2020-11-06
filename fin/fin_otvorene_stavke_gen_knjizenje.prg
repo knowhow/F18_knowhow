@@ -253,7 +253,7 @@ FUNCTION fin_unos_asistent_gen_otvorene_stavke()
 
    ?? "  IZNOS Koji zatvaramo: " + iif( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
 
-   PRIVATE cPomBrDok := Space( 10 )
+   PRIVATE cPomBrDok := Space( 20 )
 
    SELECT ostav
    GO TOP
@@ -683,7 +683,7 @@ STATIC FUNCTION fin_cre_open_dbf_ostav()
    AAdd( aDbf, { 'DATDOK', 'D',   8,  0 } )
    AAdd( aDbf, { 'DATVAL', 'D',   8,  0 } )
    AAdd( aDbf, { 'DATZPR', 'D',   8,  0 } )
-   AAdd( aDbf, { 'BRDOK', 'C',   10,  0 } )
+   AAdd( aDbf, { 'BRDOK', 'C',   20,  0 } )
    AAdd( aDbf, { 'D_P', 'C',   1,  0 } )
    AAdd( aDbf, { 'IZNOSBHD', 'N',  21,  2 } )
    AAdd( aDbf, { 'UPLACENO', 'N',  21,  2 } )

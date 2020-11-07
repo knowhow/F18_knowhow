@@ -104,7 +104,7 @@ FUNCTION check_eNabavke()
     LOCAL cIdKontoPDVUslugeStranaLica := PadR( fetch_metric( "fin_enab_idkonto_pdv_ust", NIL, "273" ), 7 )
     LOCAL cIdKontoPDVPolj := PadR( fetch_metric( "fin_enab_idkonto_pdv_p", NIL, "274" ), 7 )
     LOCAL cIdKontoPDVNP := PadR( fetch_metric( "fin_enab_idkonto_pdv_np", NIL, "5559" ), 7 )
-    LOCAL cNabExcludeIdvn := TRIM( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,PD" ) )
+    LOCAL cNabExcludeIdvn := TRIM( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IM,IB,B1,B2,PD" ) )
     LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
     LOCAL cTmps
 
@@ -426,6 +426,154 @@ STATIC FUNCTION gen_enabavke_stavke(dDatOd, dDatDo, cPorezniPeriod, cTipDokument
 
 
 
+/*
+
+ -- 4321 - dobavljaci nepdv obveznici, ili fakture PDV0  4320 - ali u opisu ima PDV0 (isporukka dobrara i usluge na koje se ne obracunava pdv)
+   select get_sifk('PARTN', 'PDVB', idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', idpartner) as jib,  
+        (case when d_p='2' then 1 else -1 end) * iznosbhd as iznos,
+        fin_suban.idkonto, partn.id, partn.naz, idkonto, fin_suban.* from fmk.fin_suban 
+   left join fmk.partn on fin_suban.idpartner=partn.id
+   where (trim(fin_suban.idkonto) = '4321' or (trim(fin_suban.idkonto) = '4320' and opis like '%PDV0%' )) and 
+         fin_suban.datdok >= '2020-10-01' and fin_suban.datdok <= '2020-10-31' 
+        and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
+
+
+Ovaj upit je bolji:
+
+ -- 4321 - dobavljaci nepdv obveznici, ili fakture PDV0  4320 - ali u opisu ima PDV0 (isporukka dobrara i usluge na koje se ne obracunava pdv)
+select get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib,  
+        (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos,
+        fin_suban.idkonto, partn.id, partn.naz, fin_suban.idkonto, sub2.idkonto as idkonto2
+   from fmk.fin_suban 
+   left join fmk.partn on fin_suban.idpartner=partn.id
+   left join fmk.fin_suban sub2 on fin_suban.brdok=sub2.brdok and fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal and (sub2.idkonto like '27%' or sub2.idkonto like '5559%')
+   where trim(fin_suban.idkonto) like '432%' and 
+         fin_suban.datdok >= '2020-10-01' and fin_suban.datdok <= '2020-10-31'
+         and sub2.idkonto is null
+        and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
+
+*/
+STATIC FUNCTION gen_enabavke_stavke_pdv0(dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cPDVNPExclude, cNabExcludeIdvn, lPDVNule, hUkupno )
+
+    LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
+    LOCAL cQuery, cTmps
+    LOCAL cCSV := ";"
+    LOCAL n32, n33, n34
+    LOCAL cPDVBroj
+    LOCAL nPDVNP, nPDVPosl
+
+    
+    cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
+
+    cSelectFields := "SELECT get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib,"
+    cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos,"
+    cSelectFields += "fin_suban.idkonto as idkonto, partn.id, partn.naz, partn.adresa, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal,"
+    cSelectFields += "fin_suban.brdok, fin_suban.opis, fin_suban.d_p, fin_suban.datdok, fin_suban.datval,"
+    cSelectFields += "partn.id as partn_id, partn.naz as partn_naz, partn.adresa as partn_adresa, partn.ptt as partn_ptt, partn.mjesto as partn_mjesto, partn.rejon partn_rejon"
+    
+    cBrDokFinFin2 := "fin_suban.brdok=sub2.brdok"
+    cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
+    // ovdje fin_suban 43% konto povezujemo sa sub2.idkonto 27%/5559% i ocekujemo DA NEMA VEZE - da ne postoji uparen konto PDV-a ! 
+    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 
+    cLeftJoinFin2 += "  and (sub2.idkonto like '27%' or sub2.idkonto like '" + trim( cPDVNPExclude) + "%')"
+
+    cQuery := cSelectFields
+    cQuery += " from fmk.fin_suban "
+    cQuery += " left join fmk.partn on fin_suban.idpartner=partn.id"
+    cQuery += cLeftJoinFin2
+    cQuery += " where fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
+    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += " and sub2.idkonto is null"
+    cQuery += " and trim(fin_suban.idkonto) like '432%'"
+    // or (trim(fin_suban.idkonto) = '4320' and opis like '%PDV0%' )) and 
+ 
+    altd()
+    IF !use_sql( "ENAB",  cQuery + " order by fin_suban.datdok, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr")
+        RETURN .F.
+    ENDIF
+        
+    DO WHILE !EOF()
+
+        // Vrsta sloga 2 = slogovi nabavki
+        ? "2" + cCSV
+        ?? cPorezniPeriod + cCSV
+        ?? PADL(AllTrim(STR(1)), 10, "0") + cCSV
+        ?? cTipDokumenta + cCSV
+        // 5. broj fakture ili dokumenta
+        ?? say_string(enab->brdok, 100) + cCSV
+        // 6. datum fakture ili dokumenta
+        ?? STRTRAN(sql_quote(enab->datdok),"'","") + cCSV
+        // 7. datum prijema
+        ?? STRTRAN(sql_quote(enab->datdok),"'","") + cCSV
+        // 8. naziv dobavljaca
+        ?? say_string(enab->partn_naz, 100) + cCSV
+        // Sjediste dobavljaca
+        ?? say_string(trim(enab->partn_ptt) + " " + trim(enab->partn_mjesto) + " " + trim(enab->partn_adresa), 100) + cCSV
+
+        cPDVBroj := enab->pdv_broj 
+        // uvoz
+        IF cTipDokumenta == "04" .OR. lPDVNule
+            cPDVBroj := REPLICATE("0",12)
+        ENDIF
+
+        // 10. PDV dobav
+        ??  cPDVBroj + cCSV
+        // 11. JIB dobav
+        ?? enab->jib + cCSV
+        // 12. bez PDV
+        ?? say_number(enab->iznos) + cCSV
+        hUkupno["bez"] += enab->iznos
+
+        // 13. sa PDV
+        ?? say_number(enab->iznos) + cCSV
+        hUkupno["sa_pdv"] += enab->iznos
+
+        // 14. pausalna naknada
+        ?? say_number(0) + cCSV
+        hUkupno["paus"] += 0
+
+
+        nPDVNP := 0
+        nPDVPosl := 0
+        
+        hUkupno["np"] += nPDVNP
+        hUkupno["posl"] += nPDVPosl
+
+        // 15. ulazni pdv 
+        ?? say_number(nPDVPosl + nPDVNP) + cCSV
+        
+        // 16. ulazni PDV koji se moze odbiti
+        ?? say_number(nPDVPosl) + cCSV
+ 
+        // 17. ulazni PDV koji se ne moze odbiti
+        ?? say_number(nPDVNP) + cCSV
+
+        n32 := 0
+        n33 := 0
+        n34 := 0
+        
+        hUkupno["np_32"] += n32
+        hUkupno["np_33"] += n33
+        hUkupno["np_34"] += n34
+
+        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 32 PDV FBiH
+        ?? say_number(n32) + cCSV
+        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 33 PDV RS
+        ?? say_number(n33) + cCSV
+        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 34 PDV Brcko
+        ?? say_number(n34)
+
+        hUkupno["redova"] += 1
+
+        SKIP
+    ENDDO
+
+    USE
+
+    RETURN .T.
+
+
+
 FUNCTION gen_eNabavke()
     
      
@@ -435,7 +583,7 @@ FUNCTION gen_eNabavke()
     LOCAL cIdKontoPDVUslugeStranaLica := PadR( fetch_metric( "fin_enab_idkonto_pdv_ust", NIL, "273" ), 7 )
     LOCAL cIdKontoPDVPolj := PadR( fetch_metric( "fin_enab_idkonto_pdv_p", NIL, "274" ), 7 )
     LOCAL cIdKontoPDVNP := PadR( fetch_metric( "fin_enab_idkonto_pdv_np", NIL, "5559" ), 7 )
-    LOCAL cNabExcludeIdvn := TRIM( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,PD" ) )
+    LOCAL cNabExcludeIdvn := TRIM( fetch_metric( "fin_enab_idvn_exclude", NIL, "IM,I1,I2,IB,B1,B2,PD" ) )
 
     LOCAL cPDV  := fetch_metric( "fin_enab_my_pdv", NIL, PadR( "<POPUNI>", 12 ) )
     LOCAL dDatOd := fetch_metric( "fin_enab_dat_od", my_user(), DATE()-1 )
@@ -463,7 +611,6 @@ FUNCTION gen_eNabavke()
     set_metric( "fin_enab_dat_do", my_user(), dDatDo )
 
 
-   
     IF DirChange( cLokacijaExport ) != 0
            nCreate := MakeDir ( cLokacijaExport )
            IF nCreate != 0
@@ -523,11 +670,13 @@ FUNCTION gen_eNabavke()
     // 02 vanposlovne
     gen_enabavke_stavke(dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
 
+    // NEPDV obveznici i fakture koje ne sadrze PDV (npr postanske usluge)
+    gen_enabavke_stavke_pdv0(dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
+
     // 05 ostale
     gen_enabavke_stavke(dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., @hUkupno)
 
   
-    
     // 1. 3 - prateći slog
     ? "3" + cCSV
     // 2. ukupan iznos faktura bez PDV

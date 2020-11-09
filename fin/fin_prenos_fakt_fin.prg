@@ -294,6 +294,9 @@ FUNCTION fakt_porez_11( nFV, nRabat )
 FUNCTION fin_kontiranje_naloga( dDatNal )
 
    LOCAL cidfirma, cidvd, cbrdok, lafin, lafin2
+   LOCAL cPdvBroj, cJiB
+   LOCAL GetList := {}
+   LOCAL cIdPartner, cIdKonto
 
    // o_roba()
    O_FINMAT
@@ -409,7 +412,22 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   cIdpartner := PadR( cPartner2, 7 )
                ELSEIF trfp2->Partner == "C"   // stavi  Lice koje se zaduz2
                   cIdpartner := PadR( cPartner3, 7 )
+
+               ELSEIF trfp2->Partner == "K"   // krajnja potrosnja
+                   
+                  cPdvBroj := get_partn_pdvb( FINMAT->IdPartner )
+                  cJIB := get_partn_idbr( FINMAT->IdPartner )
+                  IF LEN(Trim(cPdvBroj)) < 12 // krajnja potrosnja
+                     // 4700 -> 4730
+                     // 4701 -> 4731
+                     cIdKonto := LEFT(cIdKonto, 2) + "3" + SUBSTR(cIdKonto, 4)
+                  ENDIF
+
                ENDIF
+
+
+               
+
 
                cBrDok := Space( 8 )
                dDatDok := FINMAT->datdok

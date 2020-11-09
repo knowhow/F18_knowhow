@@ -1,31 +1,5 @@
 #include "f18.ch"
 
-FUNCTION fin_eIsporukeNabavkeMenu()
-
-    LOCAL aOpc := {}
-    LOCAL aOpcexe := {}
-    LOCAL nIzbor := 1
-
-    AAdd( aOpc, "1. parametri enabavke             " )
-    AAdd( aOpcexe, {|| parametri_eNabavke() } )
-
-    AAdd( aOpc, "2. provjera knjiženja enabavke    " )
-    AAdd( aOpcexe, {|| check_eNabavke() } )
-
-    AAdd( aOpc, "3. generacija enabavke            " )
-    AAdd( aOpcexe, {|| gen_eNabavke() } )
-
-    AAdd( aOpc, "4. eksport enabavke               " )
-    AAdd( aOpcexe, {|| export_eNabavke() } )
-
-    AAdd( aOpc, "5. parametri eisporuke            " )
-    AAdd( aOpcexe, {|| parametri_eIsporuke() } )
-
- 
-    f18_menu( "fin_eispn", .F., nIzbor, aOpc, aOpcexe )
- 
-    RETURN .T.
-
 
 FUNCTION parametri_eNabavke
 
@@ -78,7 +52,7 @@ FUNCTION parametri_eNabavke
     RETURN .T.
 
 
-STATIC FUNCTION get_sql_expression_exclude_idvns(cNabExcludeIdvn)
+FUNCTION get_sql_expression_exclude_idvns(cNabExcludeIdvn)
     
     LOCAL nI, nNumTokens
     LOCAL cTmp, cTmps
@@ -780,6 +754,7 @@ FUNCTION gen_eNabavke()
         SELECT F_TMP
         IF !use_sql( "ENAB", "select max(enabavke_id) as max from public.enabavke where porezni_period<>" + sql_quote(cPorezniPeriod))
             MsgBeep("enabavke sql tabela nedostupna?!")
+            BoxC()
             RETURN .F.
         ENDIF
         nRbr := enab->max + 1
@@ -787,6 +762,7 @@ FUNCTION gen_eNabavke()
         SELECT F_TMP
         IF !use_sql( "ENAB", "select max(g_r_br) as max from fmk.epdv_kuf")
             MsgBeep("fmk.epdv_kuf sql tabela nedostupna?!")
+            BoxC()
             RETURN .F.
         ENDIF
         nRbr2 := enab->max + 1
@@ -922,8 +898,3 @@ FUNCTION export_eNabavke()
     RETURN .T.
 
 
-
-FUNCTION parametri_eIsporuke()
-
-
-    RETURN .T.

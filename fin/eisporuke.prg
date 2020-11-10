@@ -460,7 +460,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
 
         ENDIF
 
-        hRec["fakt_iznos_sa_pdv"] := nDaPDVObveznikSaPDV
+        hRec["fakt_iznos_sa_pdv"] := nDaPDVObveznikSaPDV + nNePDVObveznikSaPDV
         hRec["fakt_iznos_sa_pdv_interna"] := nOsnovicaInterna
         hRec["fakt_iznos_sa_pdv0_izvoz"] := nOsnovicaIzvoz
         hRec["fakt_iznos_sa_pdv0_ostalo"] := nOsnovicaPDV0Oostalo
@@ -505,7 +505,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         // 11. iznos sa PDV
         // nije interna vanposlovno NITI izvoz NITI PDV0 po ostalim osnovama
         ?? say_number(nDaPDVObveznikSaPDV) + cCSV
-        hUkupno["sa_pdv"] += nDaPDVObveznikSaPDV
+        hUkupno["sa_pdv"] += nDaPDVObveznikSaPDV + nNePDVObveznikSaPDV
 
         // 12. iznos interne fakture vanposlovne svrhe
         ?? say_number(nInternaSaPDV) + cCSV

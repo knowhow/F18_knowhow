@@ -852,11 +852,13 @@ FUNCTION gen_eIsporuke()
     ?? cPDV + cCSV
     // 3. YYMM
     ?? cPorezniPeriod + cCSV
-    // 4. tip datoteke - 1 isporuke
+    // 4. tip datoteke - 2 isporuke
     ?? "2" + cCSV
-    // datum kreiranja YYY-MM-YY
+    // 5. redni broj datoteke
+    ?? PADL( AllTrim(STR(nFileNo, 2)), 2, "0") + cCSV
+    // 6. datum kreiranja YYY-MM-YY
     ?? STRTRAN(sql_quote(date()),"'","") + cCSV
-    // vrijeme
+    // 7. vrijeme
     ?? Time()
 
 

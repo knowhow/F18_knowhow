@@ -827,9 +827,11 @@ FUNCTION gen_eNabavke()
     ?? cPorezniPeriod + cCSV
     // 4. tip datoteke - 1 Nabavke
     ?? "1" + cCSV
-    // datum kreiranja YYY-MM-YY
+    // 5. redni broj datoteke
+    ?? PADL( AllTrim(STR(nFileNo, 2)), 2, "0") + cCSV
+    // 6. datum kreiranja YYY-MM-YY
     ?? STRTRAN(sql_quote(date()),"'","") + cCSV
-    // vrijeme
+    // 7. vrijeme
     ?? Time()
 
     hUkupno["bez"] := 0

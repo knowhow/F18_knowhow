@@ -504,7 +504,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
 
         // 11. iznos sa PDV
         // nije interna vanposlovno NITI izvoz NITI PDV0 po ostalim osnovama
-        ?? say_number(nDaPDVObveznikSaPDV) + cCSV
+        ?? say_number(nDaPDVObveznikSaPDV + nNePDVObveznikSaPDV) + cCSV
         hUkupno["sa_pdv"] += nDaPDVObveznikSaPDV + nNePDVObveznikSaPDV
 
         // 12. iznos interne fakture vanposlovne svrhe
@@ -876,7 +876,7 @@ FUNCTION gen_eIsporuke()
     hUkupno["np_32"] := 0
     hUkupno["np_33"] := 0
     hUkupno["np_34"] := 0
-    hUkupno["redova"] := 2
+    hUkupno["redova"] := 0
 
     // 01 standardne isporuke 4700
     gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., .F., @hUkupno)

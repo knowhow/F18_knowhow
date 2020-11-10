@@ -842,7 +842,7 @@ FUNCTION gen_eNabavke()
     hUkupno["np_32"] := 0
     hUkupno["np_33"] := 0
     hUkupno["np_34"] := 0
-    hUkupno["redova"] := 2
+    hUkupno["redova"] := 0
 
     // 01 standardne nabavke
     gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., @hUkupno)

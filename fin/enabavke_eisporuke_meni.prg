@@ -15,17 +15,23 @@ FUNCTION fin_eIsporukeNabavkeMenu()
     AAdd( aOpc, "3. generacija enabavke                                  " )
     AAdd( aOpcexe, {|| gen_eNabavke() } )
 
-   // AAdd( aOpc, "4. eksport enabavke               " )
-   // AAdd( aOpcexe, {|| export_eNabavke() } )
+    AAdd( aOpc, "4. eksport enabavke xlsx                                " )
+    AAdd( aOpcexe, {|| export_eNabavke() } )
 
     AAdd( aOpc, "5. parametri eisporuke                                   " )
     AAdd( aOpcexe, {|| parametri_eIsporuke() } )
 
     AAdd( aOpc, "6. generacija eisporuke                                  " )
     AAdd( aOpcexe, {|| gen_eIsporuke() } )
+
+    AAdd( aOpc, "7. eksport eisporuke xlsx                                " )
+    AAdd( aOpcexe, {|| export_eIsporuke() } )
  
     AAdd( aOpc, "9. obračun PDV na osnovu izgenerisanih enabavki/eisporuka" )
     AAdd( aOpcexe, {|| eNab_eIsp_PDV() } )
+
+  
+
 
     f18_menu( "fin_eispn", .F., nIzbor, aOpc, aOpcexe )
  
@@ -217,9 +223,9 @@ FUNCTION eNab_eIsp_PDV()
     @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 REPLICATE("-", 78)
     @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "III. Podaci o krajnjoj potrošnji"
     nX++
-    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(32)-FBiH: ", nWidth) + Transform(hPDV[ "32" ], cPict)
-    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(33)-RS: ", nWidth) + Transform(hPDV[ "33" ], cPict)
-    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(34)-BD: ", nWidth) + Transform(hPDV[ "34" ], cPict)
+    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(32) FBiH: ", nWidth) + Transform(hPDV[ "32" ], cPict)
+    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(33) RS: ", nWidth) + Transform(hPDV[ "33" ], cPict)
+    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 Padr("(34) BD: ", nWidth) + Transform(hPDV[ "34" ], cPict)
 
     inkey(0)
     BoxC()

@@ -1,5 +1,8 @@
 #include "f18.ch"
 
+STATIC s_cXlsxName := NIL
+STATIC s_pWorkBook, s_pWorkSheet, s_nWorkSheetRow
+STATIC s_pMoneyFormat, s_pDateFormat
 
 FUNCTION parametri_eNabavke
 
@@ -893,10 +896,132 @@ FUNCTION gen_eNabavke()
        
     
 
+STATIC FUNCTION xlsx_export_fill_row()
+
+        LOCAL nI
+        LOCAL aKolona
+
+      
+        aKolona := {}
+        AADD(aKolona, { "N", "Rbr. nabavke", 10, enab->enabavke_id })
+        AADD(aKolona, { "C", "Tip", 3, enab->tip })
+
+     
+        AADD(aKolona, { "C", "Por.Per", 8, enab->porezni_period })
+        AADD(aKolona, { "C", "Br.Fakt", 20, enab->br_fakt })
+        AADD(aKolona, { "D", "Dat.fakt", 12, enab->dat_fakt })
+        AADD(aKolona, { "D", "Dat.f.prij", 12, enab->dat_fakt_prijem })
+
+        AADD(aKolona, { "C", "Dobavljac naziv", 60, enab->dob_naz })
+        AADD(aKolona, { "C", "Dobavljac sjediste", 100, enab->dob_sjediste })
+        AADD(aKolona, { "C", "Dob. PDV", 12, enab->dob_pdv })
+        AADD(aKolona, { "C", "Dob. JIB", 13, enab->dob_jib })
+
+        AADD(aKolona, { "M", "Fakt.Bez PDV", 15, enab->fakt_iznos_bez_pdv })  
+        AADD(aKolona, { "M", "Fakt.SA PDV", 15, enab->fakt_iznos_sa_pdv })
+        AADD(aKolona, { "M", "poljop. pausal", 15, enab->fakt_iznos_poljo_pausal })
+        AADD(aKolona, { "M", "Ulazni PDV sve", 15, enab->fakt_iznos_pdv + enab->fakt_iznos_pdv_np })
+        AADD(aKolona, { "M", "Ulazni PDV posl", 15, enab->fakt_iznos_pdv })
+        AADD(aKolona, { "M", "Ulazni PDV neposl", 15, enab->fakt_iznos_pdv_np })
+        AADD(aKolona, { "M", "PDV neposl 32", 15, enab->fakt_iznos_pdv_np_32 })
+        AADD(aKolona, { "M", "PDV neposl 33", 15, enab->fakt_iznos_pdv_np_33 })
+        AADD(aKolona, { "M", "PDV neposl 34", 15, enab->fakt_iznos_pdv_np_34 })
+        AADD(aKolona, { "C", "Opis", 200, enab->opis })
+        AADD(aKolona, { "C", "FIN nalog", 20, enab->fin_idfirma + "-" + enab->fin_idvn + "-" + enab->fin_brnal + "/" + Alltrim(Str(enab->fin_rbr)) })
+
+        
+        IF s_pWorkSheet == NIL
+           
+           s_pWorkBook := workbook_new( s_cXlsxName )
+           s_pWorkSheet := workbook_add_worksheet(s_pWorkBook, NIL)
+     
+           s_pMoneyFormat := workbook_add_format(s_pWorkBook)
+           format_set_num_format(s_pMoneyFormat, /*"#,##0"*/ "#0.00" )
+     
+           s_pDateFormat := workbook_add_format(s_pWorkBook)
+           format_set_num_format(s_pDateFormat, "d.mm.yy")
+         
+           
+           /* Set the column width. */
+            for nI := 1 TO LEN(aKolona)
+              // worksheet_set_column(lxw_worksheet *self, lxw_col_t firstcol, lxw_col_t lastcol, double width, lxw_format *format)
+              worksheet_set_column(s_pWorkSheet, nI - 1, nI - 1, aKolona[ nI, 3], NIL)
+            next
+     
+     
+           //nema smisla header kada imamo vise konta ili vise partnera
+           //worksheet_write_string( s_pWorkSheet, 0, 0,  "Konto:", NIL)
+           //worksheet_write_string( s_pWorkSheet, 0, 1,  hb_StrToUtf8(cIdKonto + " - " + Trim( cKontoNaziv)), NIL)
+           //worksheet_write_string( s_pWorkSheet, 1, 0,  "Partner:", NIL)
+           //worksheet_write_string( s_pWorkSheet, 1, 1,  hb_StrToUtf8(cIdPartner + " - " + Trim(cPartnerNaziv)), NIL)
+         
+            /* Set header */
+            s_nWorkSheetRow := 0
+            for nI := 1 TO LEN(aKolona)
+              worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 2], NIL)
+            next
+            
+        ENDIF
+     
+     
+        s_nWorkSheetRow++
+     
+        FOR nI := 1 TO LEN(aKolona)
+               IF aKolona[ nI, 1 ] == "C"
+                  worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  hb_StrToUtf8(aKolona[nI, 4]), NIL)
+               ELSEIF aKolona[ nI, 1 ] == "M"
+                  worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pMoneyFormat)
+               ELSEIF aKolona[ nI, 1 ] == "N"
+                 worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], NIL)
+              ELSEIF aKolona[ nI, 1 ] == "D"
+                 worksheet_write_datetime( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pDateFormat)
+              ENDIF
+        NEXT
+             
+        RETURN .T.
+     
+
+        
 
 FUNCTION export_eNabavke()
 
-    MsgBeep("export eNabavke")
+
+    LOCAL dDatOd := fetch_metric( "fin_enab_dat_od", my_user(), DATE()-1 )
+    LOCAL dDatDo := fetch_metric( "fin_enab_dat_do", my_user(), DATE() )
+    LOCAL nX
+    LOCAL GetList := {}
+    LOCAL cQuery
+ 
+    nX := 1
+    Box(, 6, 70 )
+        @ box_x_koord() + nX, box_y_koord() + 2 SAY "Za period od:" GET dDatOd
+        @ box_x_koord() + nX++, col() + 2 SAY "Za period od:" GET dDatDo
+        READ   
+    BoxC()
+
+    IF Lastkey() == K_ESC
+       RETURN .F.
+    ENDIF
+    s_cXlsxName := my_home_root() + "enabavke_" + dtos(dDatOd) + "_" + dtos(dDatDo) + ".xlsx"
+
+    cQuery := "select * from public.enabavke where dat_fakt >=" + sql_quote(dDatOd) + " AND dat_fakt <=" + sql_quote(dDatDo)
+    cQuery += " ORDER BY enabavke_id"
+
+    SELECT F_TMP
+    altd()
+    use_sql("ENAB", cQuery)
+    DO WHILE !EOF()
+      xlsx_export_fill_row()
+      SKIP
+    ENDDO
+    USE
+
+    my_close_all_dbf()
+    workbook_close( s_pWorkBook )
+    s_pWorkBook := NIL
+    s_pWorkSheet := NIL
+    f18_open_mime_document( s_cXlsxName )
+    
     RETURN .T.
 
 

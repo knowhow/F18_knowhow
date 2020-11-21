@@ -212,7 +212,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
       @ box_x_koord() + 8, Col() + 2 SAY "Valuta: " GET _DatVal
    ENDIF
 
-   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| opis_enabavka(_Idkonto, @_Opis) } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
 
    IF hFinParams[ "fin_k1" ]
       @ box_x_koord() + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"

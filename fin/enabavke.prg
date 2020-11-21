@@ -264,6 +264,10 @@ alter table enabavke add column fin_idvn varchar(2) not null;
 alter table enabavke add column fin_brnal varchar(8) not null;
 alter table enabavke add column fin_rbr int not null;
 alter table enabavke add column opis varchar(500);
+alter table enabavke add column jci varchar(20);
+alter table enabavke add column osn_pdv0 numeric(24,2);
+alter table enabavke add column osn_pdv17 numeric(24,2);
+alter table enabavke add column osn_pdv17np numeric(24,2);
 
 DROP INDEX if exists enabavke_fin_nalog;
 CREATE unique INDEX enabavke_fin_nalog ON public.enabavke USING btree (fin_idfirma, fin_idvn, fin_brnal, fin_rbr);
@@ -277,15 +281,16 @@ STATIC FUNCTION db_insert_enab( hRec )
 
     LOCAL cQuery := "INSERT INTO public.enabavke", oRet
     
-    cQuery += "(enabavke_id, tip, porezni_period, br_fakt, dat_fakt, dat_fakt_prijem,"
+    cQuery += "(enabavke_id, tip, porezni_period, br_fakt, jci, dat_fakt, dat_fakt_prijem,"
     cQuery += "dob_naz,dob_sjediste, dob_pdv, dob_jib,"
-    cQuery += "fakt_iznos_bez_pdv, fakt_iznos_sa_pdv, fakt_iznos_poljo_pausal, fakt_iznos_pdv, fakt_iznos_pdv_np, fakt_iznos_pdv_np_32, fakt_iznos_pdv_np_33, fakt_iznos_pdv_np_34,"
+    cQuery += "fakt_iznos_bez_pdv, osn_pdv0, osn_pdv17, osn_pdv17np, fakt_iznos_sa_pdv, fakt_iznos_poljo_pausal, fakt_iznos_pdv, fakt_iznos_pdv_np, fakt_iznos_pdv_np_32, fakt_iznos_pdv_np_33, fakt_iznos_pdv_np_34,"
     cQuery += "opis, fin_idfirma, fin_idvn,fin_brnal,fin_rbr) "
     cQuery += "VALUES("
     cQuery += sql_quote(hRec["enabavke_id"]) + ","
     cQuery += sql_quote(hRec["tip"]) + ","
     cQuery += sql_quote(hRec["porezni_period"]) + ","
     cQuery += sql_quote(hRec["br_fakt"]) + ","
+    cQuery += sql_quote(hRec["jci"]) + ","
     cQuery += sql_quote(hRec["dat_fakt"]) + ","
     cQuery += sql_quote(hRec["dat_fakt_prijem"]) + ","
     cQuery += sql_quote(hRec["dob_naz"]) + ","
@@ -293,6 +298,9 @@ STATIC FUNCTION db_insert_enab( hRec )
     cQuery += sql_quote(hRec["dob_pdv"]) + ","
     cQuery += sql_quote(hRec["dob_jib"]) + ","
     cQuery += sql_quote(ROUND(hRec["fakt_iznos_bez_pdv"],2)) + ","
+    cQuery += sql_quote(ROUND(hRec["osn_pdv0"],2)) + ","
+    cQuery += sql_quote(ROUND(hRec["osn_pdv17"],2)) + ","
+    cQuery += sql_quote(ROUND(hRec["osn_pdv17np"],2)) + ","
     cQuery += sql_quote(ROUND(hRec["fakt_iznos_sa_pdv"],2)) + ","
     cQuery += sql_quote(ROUND(hRec["fakt_iznos_poljo_pausal"],2)) + ","
     cQuery += sql_quote(ROUND(hRec["fakt_iznos_pdv"],2)) + ","
@@ -341,6 +349,7 @@ STATIC FUNCTION say_string( cString, nLen, lToUTF)
 
 
 /*
+v1:
 
  select get_sifk('PARTN', 'PDVB', sub2.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', sub2.idpartner) as jib, 
         ((case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd - (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd) * -1 as bez_pdv,
@@ -356,53 +365,136 @@ STATIC FUNCTION say_string( cString, nLen, lToUTF)
            and not fin_suban.idvn in ('PD','IB');
 
 
-*/
-STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cIdKonto, cNabExcludeIdvn, lPDVNule, hUkupno )
+v2:
 
-    LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
+ovdje je primarni konto 43%
+
+select (case when s1.from_opis_osn_pdv17 is not null then s1.from_opis_osn_pdv17 else round(iznos_pdv/0.17,2) end)  as osn_pdv, * from  (
+select get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib, fin_suban.brdok,
+        (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos_fakture,
+        (case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd as iznos_pdv,
+        (case when sub3.d_p='1' then 1 else -1 end) * sub3.iznosbhd as iznos_pdv_np,
+        substring(fin_suban.opis from 'JCI:\s+(\d+)') as JCI,
+        substring(fin_suban.opis from 'OSN-PDV0:\s+([\d.]+)')::DECIMAL as from_opis_osn_pdv,
+        substring(fin_suban.opis from 'OSN-PDV17:\s+([\d.]+)')::DECIMAL as from_opis_osn_pdv17,
+        substring(fin_suban.opis from 'OSN-PDV17NP:\s+([\d.]+)')::DECIMAL as from_opis_osn_pdv17np,
+        fin_suban.idkonto, partn.id, partn.naz, sub2.idkonto, sub3.idkonto, fin_suban.* from fmk.fin_suban
+     left join fmk.fin_suban sub2 on fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal and fin_suban.brdok=sub2.brdok and sub2.idkonto like '27%'
+     left join fmk.fin_suban sub3 on fin_suban.idfirma=sub3.idfirma and fin_suban.idvn=sub3.idvn and fin_suban.brnal=sub3.brnal and fin_suban.brdok=sub3.brdok and sub3.idkonto like '5559%'
+     left join fmk.partn on sub2.idpartner=partn.id
+     where fin_suban.idkonto like  '43%' and fin_suban.datdok >= '2020-11-01' and fin_suban.datdok <= '2020-11-30'
+           and not fin_suban.idvn in ('PD','IB')
+) as s1
+
+*/
+STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cIdKonto, cIdKontoNP, cNabExcludeIdvn, lPDVNule, hUkupno )
+
+    LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2, cBrDokFinFin3, cFinNalogNalog3, cLeftJoinFin3 
     LOCAL cQuery, cTmps
     LOCAL cCSV := ";"
     LOCAL n32, n33, n34
     LOCAL cPDVBroj, cJib
     LOCAL nPDVNP, nPDVPosl
+    LOCAL cIdKontoDobav
     LOCAL hRec := hb_hash()
+    LOCAL cTipDokumenta2
+    LOCAL nUndefined := -9999999.99
+    LOCAL cBrDok
+
 
     
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
-    cSelectFields := "SELECT get_sifk('PARTN', 'PDVB', sub2.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', sub2.idpartner) as jib,"
-    cSelectFields += "((case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd - (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd) * -1 as bez_pdv,"
-    cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd * -1 as pdv,"
-    cSelectFields += "(case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd * -1 as iznos_sa_pdv,"
-    cSelectFields += "fin_suban.idkonto as idkonto, partn.id, partn.naz, partn.adresa, sub2.idkonto as idkonto2, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
+    cSelectFields := "SELECT get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib,"
+    
+    cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos_sa_pdv,"
+    cSelectFields += "(case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd as iznos_pdv,"
+    cSelectFields += "(case when sub3.d_p='1' then 1 else -1 end) * sub3.iznosbhd as iznos_pdv_np,"
+
+    // iz opisa ako ima ekstraktovati JCI, PDV0 osnovicu, PDV17 osnovicu, PDV17 neposlovnu osnovicu
+    cSelectFields += "substring(fin_suban.opis from 'JCI:\s+(\d+)') as JCI,"
+    cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV0:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv0,"
+    cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
+    cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17NP:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17np,"
+
+    //cSelectFields += "((case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd - (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd) * -1 as bez_pdv,"
+    //cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd * -1 as pdv,"
+    //cSelectFields += "(case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd * -1 as iznos_sa_pdv,"
+    
+    cSelectFields += "fin_suban.idkonto as idkonto, partn.id, partn.naz, partn.adresa, sub2.idkonto as idkonto2, sub3.idkonto as idkonto3, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
     cSelectFields += "fin_suban.brdok, fin_suban.opis, fin_suban.d_p, fin_suban.datdok, fin_suban.datval,"
     cSelectFields += "partn.id as partn_id, partn.naz as partn_naz, partn.adresa as partn_adresa, partn.ptt as partn_ptt, partn.mjesto as partn_mjesto, partn.rejon partn_rejon"
     
     cBrDokFinFin2 := "fin_suban.brdok=sub2.brdok"
     cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
-    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '43%'"
+    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '" + Trim(cIdKonto) + "%'"
+
+    cBrDokFinFin3 := "fin_suban.brdok=sub3.brdok"
+    cFinNalogNalog3 := "fin_suban.idfirma=sub3.idfirma and fin_suban.idvn=sub3.idvn and fin_suban.brnal=sub3.brnal"
+    cLeftJoinFin3 := " left join fmk.fin_suban sub3 on " + cFinNalogNalog3 + " and " + cBrDokFinFin3 + " and sub3.idkonto like '" + Trim(cIdKontoNP) + "%'"
 
     cQuery := cSelectFields
     cQuery += " from fmk.fin_suban "
     cQuery += cLeftJoinFin2
-    cQuery += " left join fmk.partn on sub2.idpartner=partn.id"
-    cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKonto) + "%'"
+    cQuery += cLeftJoinFin3
+    cQuery += " left join fmk.partn on fin_suban.idpartner=partn.id"
+
+    cIdKontoDobav := "43"
+ 
+    cQuery += " where fin_suban.idkonto like  '" + cIdKontoDobav + "%'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
     cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
-    cQuery += "  and NOT (sub2.idpartner is null or trim(sub2.idpartner) ='')"
+
+    //cQuery += "  and NOT (sub2.idpartner is null or trim(sub2.idpartner) ='')"
  
     IF !use_sql( "ENAB",  cQuery + " order by fin_suban.datdok, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr")
         RETURN .F.
     ENDIF
 
+    altd()
     
-    
+
     DO WHILE !EOF()
 
+    
+        // ako je uvoz, mora biti definisan jci
+        IF cTipDokumenta == "04" .AND. empty( enab->jci )
+            SKIP
+            LOOP
+        ENDIF
+
+
+        // tip dokumenta nije uvoz, a ima JCI - preskoci
+        IF cTipDokumenta != "04" .AND. !empty( enab->jci )
+            SKIP    
+            LOOP
+        ENDIF
+
+
+        cTipDokumenta2 := cTipDokumenta
+        // iznos PDVNP > PDV
+        IF cTipDokumenta == "01"
+            IF (ABS(enab->iznos_pdv_np) > ABS(enab->iznos_pdv))
+               // vanposlovna potrosnja
+               cTipDokumenta2 := "02"
+            ELSE
+               cTipDokumenta2 := "01"
+            ENDIF
+        ENDIF
+        hRec["tip"] := cTipDokumenta2
+
         hRec["enabavke_id"] := nRbr
-        hRec["tip"] := cTipDokumenta
+        
         hRec["porezni_period"] := cPorezniPeriod
         hRec["br_fakt"] := enab->brdok
+        hRec["jci"] := enab->jci
+
+        IF cTipDokumenta == "04"
+           cBrDok := enab->jci
+        else   
+           cBrDok := enab->brdok
+        ENDIF
+
         hRec["dat_fakt"] := enab->datdok
         hRec["dat_fakt_prijem"] := enab->datdok
         hRec["dob_naz"] := say_string(enab->partn_naz, 100, .F.)
@@ -411,7 +503,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         cPDVBroj := enab->pdv_broj 
         // uvoz
         IF cTipDokumenta == "04" .OR. lPDVNule
-            cPDVBroj := REPLICATE("0",12)
+            cPDVBroj := REPLICATE("0", 12)
         ENDIF
         hRec["dob_pdv"] := cPDVBroj
         cJib := enab->jib
@@ -420,36 +512,72 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         ENDIF
         hRec["dob_jib"] := cJib
 
-
-        IF cTipDokumenta == "02"
-            nPDVNP := enab->pdv
-            nPDVPosl := 0
-        
-        ELSE
-            nPDVNP := 0
-            nPDVPosl := enab->pdv
+        IF cTipDokumenta == "04" .AND. !Empty(cJib)
+            // ovo su zavisni troskovi - domaci dobavljaci, preskoci
+            //MsgBeep( "ERR-SKIP: Domaći dobavljač " + enab->partn_id + "vrši uvoz ?!")
+            SKIP
+            LOOP
         ENDIF
+
+
+        //IF cTipDokumenta == "02"
+        nPDVNP := enab->iznos_pdv_np
+        //    nPDVPosl := 0
+        
+        //ELSE
+        //    nPDVNP := 0
+        nPDVPosl := enab->iznos_pdv
+        //ENDIF
 
         n32 := 0
         n33 := 0
         n34 := 0
-        IF cTipDokumenta == "02" // vanposlovno
+        //IF cTipDokumenta == "02" // vanposlovno
             SWITCH enab->partn_rejon
                     CASE "2" // RS
-                       n34 := enab->pdv
+                       n34 := nPDVNP
                        EXIT
                     CASE "3" // BD
-                       n33 := enab->pdv
+                       n33 := nPDVNP
                        EXIT
                     OTHERWISE
                        // FBiH
-                       n32 :=  enab->pdv
+                       n32 :=  nPDVNP
                        EXIT     
             ENDSWITCH
 
+        //ENDIF
+
+        hRec["osn_pdv0"] := nUndefined
+        hRec["osn_pdv17"] := nUndefined
+        hRec["osn_pdv17np"] := nUndefined
+
+        // osnovica PDV
+        IF enab->from_opis_osn_pdv17 <> nUndefined
+            hRec["osn_pdv17"] := enab->from_opis_osn_pdv17
+        ELSE
+            hRec["osn_pdv17"] := ROUND(enab->iznos_pdv / 0.17, 2)
+        ENDIF
+        IF enab->from_opis_osn_pdv17np <> nUndefined
+            hRec["osn_pdv17np"] := enab->from_opis_osn_pdv17np
+        ELSE
+            hRec["osn_pdv17np"] := ROUND(enab->iznos_pdv_np / 0.17, 2)
         ENDIF
 
-        hRec["fakt_iznos_bez_pdv"] := enab->bez_pdv
+        IF enab->from_opis_osn_pdv0 <> nUndefined
+            hRec["osn_pdv0"] := enab->from_opis_osn_pdv0
+        ELSE
+            IF !Empty(hRec["jci"]) 
+                // domaca faktura, ali se odnosi na zavisni trosak uvoza - ima JCI
+                hRec["osn_pdv0"] := 0
+            ELSE
+                // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
+                hRec["osn_pdv0"] := enab->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17
+            ENDIF
+        ENDIF
+
+        hRec["fakt_iznos_bez_pdv"] := hRec["osn_pdv17"] + hRec["osn_pdv17np"] + hRec["osn_pdv0"]
+     
         hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
         hRec["fakt_iznos_poljo_pausal"] := 0
 
@@ -470,9 +598,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         ? "2" + cCSV
         ?? cPorezniPeriod + cCSV
         ?? PADL(AllTrim(STR(nRbr,10,0)), 10, "0") + cCSV
-        ?? cTipDokumenta + cCSV
-        // 5. broj fakture ili dokumenta
-        ?? say_string(enab->brdok, 100) + cCSV
+        ?? cTipDokumenta2 + cCSV
+        // 5. broj fakture ili dokumenta ili JCI ako je tip dokumenta = "04" - uvoz
+        ?? say_string(cBrDok, 100) + cCSV
         // 6. datum fakture ili dokumenta
         ?? STRTRAN(sql_quote(enab->datdok),"'","") + cCSV
         // 7. datum prijema
@@ -488,12 +616,12 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         // 11. JIB dobav
         ?? cJib + cCSV
         // 12. bez PDV
-        ?? say_number(enab->bez_pdv) + cCSV
-        hUkupno["bez"] += enab->bez_pdv
+        ?? say_number(hRec["fakt_iznos_bez_pdv"]) + cCSV
+        hUkupno["bez"] += hRec["fakt_iznos_bez_pdv"]
 
         // 13. sa PDV
-        ?? say_number(enab->iznos_sa_pdv) + cCSV
-        hUkupno["sa_pdv"] += enab->iznos_sa_pdv
+        ?? say_number(hRec["fakt_iznos_sa_pdv"]) + cCSV
+        hUkupno["sa_pdv"] += hRec["fakt_iznos_sa_pdv"]
 
         // 14. pausalna naknada
         ?? say_number(0) + cCSV
@@ -560,7 +688,7 @@ select get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PAR
          fin_suban.datdok >= '2020-10-01' and fin_suban.datdok <= '2020-10-31'
          and sub2.idkonto is null
         and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
-
+    
 */
 STATIC FUNCTION gen_enabavke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cPDVNPExclude, cNabExcludeIdvn, lPDVNule, hUkupno )
 
@@ -609,6 +737,7 @@ STATIC FUNCTION gen_enabavke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, c
         hRec["tip"] := cTipDokumenta
         hRec["porezni_period"] := cPorezniPeriod
         hRec["br_fakt"] := enab->brdok
+        hRec["jci"] := ""
         hRec["dat_fakt"] := enab->datdok
         hRec["dat_fakt_prijem"] := enab->datdok
         hRec["dob_naz"] := say_string(enab->partn_naz, 100, .F.)
@@ -633,6 +762,12 @@ STATIC FUNCTION gen_enabavke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, c
         n34 := 0
 
         hRec["fakt_iznos_bez_pdv"] := enab->iznos
+
+        // osnovica PDV
+        hRec["osn_pdv0"] := 0
+        hRec["osn_pdv17"] := 0
+        hRec["osn_pdv17np"] := 0
+
         hRec["fakt_iznos_sa_pdv"] := enab->iznos
         hRec["fakt_iznos_poljo_pausal"] := 0
 
@@ -848,16 +983,20 @@ FUNCTION gen_eNabavke()
     hUkupno["redova"] := 0
 
     // 01 standardne nabavke
-    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., @hUkupno)
+    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
     
     // 02 vanposlovne
-    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
+    //gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
+
+    // 04 uvoz
+    altd()
+    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "04", cIdKontoPDVUvoz, cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
 
     // NEPDV obveznici i fakture koje ne sadrze PDV (npr postanske usluge)
-    gen_enabavke_stavke_pdv0(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
+    // gen_enabavke_stavke_pdv0(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
 
     // 05 ostale
-    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., @hUkupno)
+    //gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., @hUkupno)
 
   
     // 1. 3 - prateći slog
@@ -1023,5 +1162,91 @@ FUNCTION export_eNabavke()
     f18_open_mime_document( s_cXlsxName )
     
     RETURN .T.
+
+
+FUNCTION opis_enabavka(cIdKonto, cOpis)
+
+    LOCAL pRegexJCI := hb_regexComp( "JCI:\s+([\d]+)" )
+    LOCAL pRegexOsnPDV17 := hb_regexComp( "OSN-PDV17:\s*([\d.]+)" )
+    LOCAL pRegexOsnPDV17NP := hb_regexComp( "OSN-PDV17NP:\s*([\d.]+)" )
+    LOCAL pRegexOsnPDV0 := hb_regexComp( "OSN-PDV0:\s*([\d.]+)" )
+    LOCAL aMatch
+    LOCAL hRez := hb_hash()
+
+    
+    IF LEFT(cIdKonto, 3) == "431"
+
+        hRez[ "jci" ] := "UNDEF"
+        hRez[ "osn_pdv17" ] := "UNDEF"
+        hRez[ "osn_pdv17np" ] := "UNDEF"
+
+        aMatch := hb_regex( pRegexJCI, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "jci" ] := aMatch[ 2 ]
+        ENDIF
+
+        aMatch := hb_regex( pRegexOsnPDV17, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "osn_pdv17" ] := aMatch[ 2 ]
+        ENDIF
+
+        aMatch := hb_regex( pRegexOsnPDV17NP, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "osn_pdv17np" ] := aMatch[ 2 ]
+        ENDIF
+
+        Box(, 6, 60)
+        @ box_x_koord() + 1, box_y_koord() + 2 SAY "Carinski dokument    : " + hRez["jci"]
+        @ box_x_koord() + 2, box_y_koord() + 2 SAY "[JCI]             ->   " + hRez["jci"]
+
+
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "osnovica PDV17-posl  : " + hRez["osn_pdv17"]
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY "[OSN-PDV17]       ->   " + Str(val(hRez["osn_pdv17"]), 12, 2)
+
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "osnovica PDV17-neposl: " + hRez["osn_pdv17np"]
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "[OSN-PDV17NP]     ->   " + Str(val(hRez["osn_pdv17np"]), 12, 2)
+         inkey(0)
+         BoxC()
+      
+    ENDIF
+
+
+    hRez[ "osn_pdv0" ] := "UNDEF"
+    hRez[ "osn_pdv17" ] := "UNDEF"
+    hRez[ "osn_pdv17np" ] := "UNDEF"
+
+    IF LEFT(cIdKonto, 3) == "432"
+
+        aMatch := hb_regex( pRegexOsnPDV0, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "osn_pdv0" ] := aMatch[ 2 ]
+        ENDIF
+
+        aMatch := hb_regex( pRegexOsnPDV17, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "osn_pdv17" ] := aMatch[ 2 ]
+        ENDIF
+
+        aMatch := hb_regex( pRegexOsnPDV17NP, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "osn_pdv17np" ] := aMatch[ 2 ]
+        ENDIF
+
+        Box(, 6, 60)
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "osnovica PDV0        : " + hRez["osn_pdv0"]
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "[OSN-PDV0]        ->   " + Str(val(hRez["osn_pdv0"]), 12, 2)
+
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "osnovica PDV17-posl  : " + hRez["osn_pdv17"]
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY "[OSN-PDV17]       ->   " + Str(val(hRez["osn_pdv17"]), 12, 2)
+
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "osnovica PDV17-neposl: " + hRez["osn_pdv17np"]
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "[OSN-PDV17NP]     ->   " + Str(val(hRez["osn_pdv17np"]), 12, 2)
+         inkey(0) 
+        BoxC()
+
+    ENDIF
+
+    RETURN .T.
+
 
 

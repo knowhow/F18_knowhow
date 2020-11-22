@@ -400,6 +400,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL cTipDokumenta2
     LOCAL nUndefined := -9999999.99
     LOCAL cBrDok
+    LOCAL dDatFakt, dDatFaktPrij
 
 
     
@@ -416,6 +417,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV0:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv0,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17NP:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17np,"
+    cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-FAKT:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_fakt,"
 
     //cSelectFields += "((case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd - (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd) * -1 as bez_pdv,"
     //cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd * -1 as pdv,"
@@ -495,8 +497,16 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
            cBrDok := enab->brdok
         ENDIF
 
-        hRec["dat_fakt"] := enab->datdok
-        hRec["dat_fakt_prijem"] := enab->datdok
+        IF enab->from_opis_dat_fakt <> "UNDEF"
+            dDatFakt := CTOD(enab->from_opis_dat_fakt)
+            dDatFaktPrij := enab->datdok
+        ELSE
+            dDatFakt := enab->datdok
+            dDatFaktPrij := enab->datdok
+        ENDIF
+
+        hRec["dat_fakt"] := dDatFakt
+        hRec["dat_fakt_prijem"] := dDatFaktPrij
         hRec["dob_naz"] := say_string(enab->partn_naz, 100, .F.)
         hRec["dob_sjediste"] := say_string(trim(enab->partn_ptt) + " " + trim(enab->partn_mjesto) + " " + trim(enab->partn_adresa), 100, .F.)
 
@@ -552,6 +562,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         hRec["osn_pdv17"] := nUndefined
         hRec["osn_pdv17np"] := nUndefined
 
+
         // osnovica PDV
         IF enab->from_opis_osn_pdv17 <> nUndefined
             hRec["osn_pdv17"] := enab->from_opis_osn_pdv17
@@ -602,9 +613,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         // 5. broj fakture ili dokumenta ili JCI ako je tip dokumenta = "04" - uvoz
         ?? say_string(cBrDok, 100) + cCSV
         // 6. datum fakture ili dokumenta
-        ?? STRTRAN(sql_quote(enab->datdok),"'","") + cCSV
+        ?? STRTRAN(sql_quote(dDatFakt),"'","") + cCSV
         // 7. datum prijema
-        ?? STRTRAN(sql_quote(enab->datdok),"'","") + cCSV
+        ?? STRTRAN(sql_quote(dDatFaktPrij),"'","") + cCSV
         // 8. naziv dobavljaca
         ?? say_string(enab->partn_naz, 100) + cCSV
         // Sjediste dobavljaca
@@ -690,6 +701,7 @@ select get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PAR
         and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
     
 */
+/*
 STATIC FUNCTION gen_enabavke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cPDVNPExclude, cNabExcludeIdvn, lPDVNule, hUkupno )
 
     LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
@@ -850,7 +862,7 @@ STATIC FUNCTION gen_enabavke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, c
 
     RETURN .T.
 
-
+*/
 
 FUNCTION gen_eNabavke()
     
@@ -1170,11 +1182,13 @@ FUNCTION opis_enabavka(cIdKonto, cOpis)
     LOCAL pRegexOsnPDV17 := hb_regexComp( "OSN-PDV17:\s*([\d.]+)" )
     LOCAL pRegexOsnPDV17NP := hb_regexComp( "OSN-PDV17NP:\s*([\d.]+)" )
     LOCAL pRegexOsnPDV0 := hb_regexComp( "OSN-PDV0:\s*([\d.]+)" )
+    LOCAL pRegexDatFakt := hb_regexComp( "DAT-FAKT:\s*([\d.]+)" )
     LOCAL aMatch
     LOCAL hRez := hb_hash()
+    LOCAL nX
 
     
-    IF LEFT(cIdKonto, 3) == "431"
+    IF LEFT(cIdKonto, 3) $ "431#433"
 
         hRez[ "jci" ] := "UNDEF"
         hRez[ "osn_pdv17" ] := "UNDEF"
@@ -1211,11 +1225,17 @@ FUNCTION opis_enabavka(cIdKonto, cOpis)
     ENDIF
 
 
+    hRez[ "dat_fakt" ] := "UNDEF"
     hRez[ "osn_pdv0" ] := "UNDEF"
     hRez[ "osn_pdv17" ] := "UNDEF"
     hRez[ "osn_pdv17np" ] := "UNDEF"
 
     IF LEFT(cIdKonto, 3) == "432"
+
+        aMatch := hb_regex( pRegexDatFakt, cOpis )
+        IF Len( aMatch ) > 0
+           hRez[ "dat_fakt" ] := aMatch[ 2 ]
+        ENDIF
 
         aMatch := hb_regex( pRegexOsnPDV0, cOpis )
         IF Len( aMatch ) > 0
@@ -1232,15 +1252,21 @@ FUNCTION opis_enabavka(cIdKonto, cOpis)
            hRez[ "osn_pdv17np" ] := aMatch[ 2 ]
         ENDIF
 
-        Box(, 6, 60)
-         @ box_x_koord() + 1, box_y_koord() + 2 SAY "osnovica PDV0        : " + hRez["osn_pdv0"]
-         @ box_x_koord() + 2, box_y_koord() + 2 SAY "[OSN-PDV0]        ->   " + Str(val(hRez["osn_pdv0"]), 12, 2)
+        nX := 1
+        Box(, 7, 60)
 
-         @ box_x_koord() + 3, box_y_koord() + 2 SAY "osnovica PDV17-posl  : " + hRez["osn_pdv17"]
-         @ box_x_koord() + 4, box_y_koord() + 2 SAY "[OSN-PDV17]       ->   " + Str(val(hRez["osn_pdv17"]), 12, 2)
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY "Datum fakture        : " + hRez["dat_fakt"]
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "[DAT-FAKT]        ->   " + DToC(CtoD(hRez["dat_fakt"]))
 
-         @ box_x_koord() + 5, box_y_koord() + 2 SAY "osnovica PDV17-neposl: " + hRez["osn_pdv17np"]
-         @ box_x_koord() + 6, box_y_koord() + 2 SAY "[OSN-PDV17NP]     ->   " + Str(val(hRez["osn_pdv17np"]), 12, 2)
+
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY "osnovica PDV0        : " + hRez["osn_pdv0"]
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "[OSN-PDV0]        ->   " + Str(val(hRez["osn_pdv0"]), 12, 2)
+
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY "osnovica PDV17-posl  : " + hRez["osn_pdv17"]
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "[OSN-PDV17]       ->   " + Str(val(hRez["osn_pdv17"]), 12, 2)
+
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY "osnovica PDV17-neposl: " + hRez["osn_pdv17np"]
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "[OSN-PDV17NP]     ->   " + Str(val(hRez["osn_pdv17np"]), 12, 2)
          inkey(0) 
         BoxC()
 

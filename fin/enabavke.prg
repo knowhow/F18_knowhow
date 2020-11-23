@@ -401,6 +401,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL nUndefined := -9999999.99
     LOCAL cBrDok
     LOCAL dDatFakt, dDatFaktPrij
+    LOCAL lUslugeStranogLica
 
 
     
@@ -425,8 +426,11 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     
     cSelectFields += "fin_suban.idkonto as idkonto, partn.id, partn.naz, partn.adresa, sub2.idkonto as idkonto2, sub3.idkonto as idkonto3, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
     cSelectFields += "fin_suban.brdok, fin_suban.opis, fin_suban.d_p, fin_suban.datdok, fin_suban.datval,"
-    cSelectFields += "partn.id as partn_id, partn.naz as partn_naz, partn.adresa as partn_adresa, partn.ptt as partn_ptt, partn.mjesto as partn_mjesto, partn.rejon partn_rejon"
-    
+    cSelectFields += "partn.id as partn_id, partn.naz as partn_naz, partn.adresa as partn_adresa, partn.ptt as partn_ptt, partn.mjesto as partn_mjesto, partn.rejon partn_rejon,"
+
+    // postoji li vec enabavke stavka
+    cSelectFields += "COALESCE(enabavke.fin_rbr,-99999) enab_rbr"
+
     cBrDokFinFin2 := "fin_suban.brdok=sub2.brdok"
     cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
     cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '" + Trim(cIdKonto) + "%'"
@@ -441,6 +445,8 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cQuery += cLeftJoinFin3
     cQuery += " left join fmk.partn on fin_suban.idpartner=partn.id"
 
+    cQuery += " left join public.enabavke on fin_suban.idfirma=enabavke.fin_idfirma and fin_suban.idvn=enabavke.fin_idvn and fin_suban.brnal=enabavke.fin_brnal and fin_suban.rbr=enabavke.fin_rbr"
+
     cIdKontoDobav := "43"
  
     cQuery += " where fin_suban.idkonto like  '" + cIdKontoDobav + "%'"
@@ -453,12 +459,42 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         RETURN .F.
     ENDIF
 
-    altd()
-    
-
+ 
     DO WHILE !EOF()
 
-    
+        lUslugeStranogLica := .F.
+
+        hRec["jci"] := enab->jci
+        cPDVBroj := enab->pdv_broj 
+        // uvoz
+        IF cTipDokumenta == "04" .OR. lPDVNule
+            cPDVBroj := REPLICATE("0", 12)
+        ENDIF
+        hRec["dob_pdv"] := cPDVBroj
+        cJib := enab->jib
+        IF LEN(TRIM(cJib)) < 13
+            cJib := ""
+        ENDIF
+        hRec["dob_jib"] := cJib
+
+        IF enab->enab_rbr <> -99999
+            // vec postoji stavka 43% u tabeli enabavke
+            SKIP
+            LOOP
+        ENDIF
+
+        IF cTipDokumenta == "05" 
+            IF !Empty(cJib) 
+                // dobaci dobavljac
+                // trenutno 05 - ostale nabavke se odnose samo na usluge stranih lica
+                // preskoci domace dobavljace
+                skip
+                loop
+            ELSE
+                lUslugeStranogLica := .T.
+            ENDIF
+        ENDIF
+
         // ako je uvoz, mora biti definisan jci
         IF cTipDokumenta == "04" .AND. empty( enab->jci )
             SKIP
@@ -489,7 +525,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         
         hRec["porezni_period"] := cPorezniPeriod
         hRec["br_fakt"] := enab->brdok
-        hRec["jci"] := enab->jci
+        
 
         IF cTipDokumenta == "04"
            cBrDok := enab->jci
@@ -510,17 +546,6 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         hRec["dob_naz"] := say_string(enab->partn_naz, 100, .F.)
         hRec["dob_sjediste"] := say_string(trim(enab->partn_ptt) + " " + trim(enab->partn_mjesto) + " " + trim(enab->partn_adresa), 100, .F.)
 
-        cPDVBroj := enab->pdv_broj 
-        // uvoz
-        IF cTipDokumenta == "04" .OR. lPDVNule
-            cPDVBroj := REPLICATE("0", 12)
-        ENDIF
-        hRec["dob_pdv"] := cPDVBroj
-        cJib := enab->jib
-        IF LEN(TRIM(cJib)) < 13
-            cJib := ""
-        ENDIF
-        hRec["dob_jib"] := cJib
 
         IF cTipDokumenta == "04" .AND. !Empty(cJib)
             // ovo su zavisni troskovi - domaci dobavljaci, preskoci
@@ -582,8 +607,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                 // domaca faktura, ali se odnosi na zavisni trosak uvoza - ima JCI
                 hRec["osn_pdv0"] := 0
             ELSE
-                // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
-                hRec["osn_pdv0"] := enab->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17
+                if lUslugeStranogLica
+                   // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
+                   hRec["osn_pdv0"] := enab->iznos_sa_pdv - hRec["osn_pdv17"] - hRec["osn_pdv17np"]
+                ELSE
+                   // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
+                   hRec["osn_pdv0"] := enab->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17
+                ENDIF
             ENDIF
         ENDIF
 
@@ -994,6 +1024,10 @@ FUNCTION gen_eNabavke()
     hUkupno["np_34"] := 0
     hUkupno["redova"] := 0
 
+    // 05 ostale
+    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cIdKontoPDVNP, cNabExcludeIdvn, .T., @hUkupno)
+
+
     // 01 standardne nabavke
     gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
     
@@ -1001,14 +1035,10 @@ FUNCTION gen_eNabavke()
     //gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
 
     // 04 uvoz
-    altd()
     gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "04", cIdKontoPDVUvoz, cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
 
     // NEPDV obveznici i fakture koje ne sadrze PDV (npr postanske usluge)
     // gen_enabavke_stavke_pdv0(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVNP, cNabExcludeIdvn, .F., @hUkupno)
-
-    // 05 ostale
-    //gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., @hUkupno)
 
   
     // 1. 3 - prateći slog

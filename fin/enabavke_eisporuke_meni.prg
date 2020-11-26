@@ -30,6 +30,9 @@ FUNCTION fin_eIsporukeNabavkeMenu()
     AAdd( aOpc, "9. obračun PDV na osnovu izgenerisanih enabavki/eisporuka" )
     AAdd( aOpcexe, {|| eNab_eIsp_PDV() } )
 
+
+    AAdd( aOpc, "X. fin generacija uvoz" )
+    AAdd( aOpcexe, {|| fin_gen_uvoz() } )
   
 
 

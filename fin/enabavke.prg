@@ -449,11 +449,11 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
 
     cBrDokFinFin2 := "fin_suban.brdok=sub2.brdok"
     cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
-    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '" + Trim(cIdKonto) + "%'"
+    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '" + Trim(cIdKonto) + "%' and sub2.d_p='1'"
 
     cBrDokFinFin3 := "fin_suban.brdok=sub3.brdok"
     cFinNalogNalog3 := "fin_suban.idfirma=sub3.idfirma and fin_suban.idvn=sub3.idvn and fin_suban.brnal=sub3.brnal"
-    cLeftJoinFin3 := " left join fmk.fin_suban sub3 on " + cFinNalogNalog3 + " and " + cBrDokFinFin3 + " and sub3.idkonto like '" + Trim(cIdKontoNP) + "%'"
+    cLeftJoinFin3 := " left join fmk.fin_suban sub3 on " + cFinNalogNalog3 + " and " + cBrDokFinFin3 + " and sub3.idkonto like '" + Trim(cIdKontoNP) + "%' and sub3.d_p='1'"
 
     cQuery := cSelectFields
     cQuery += " from fmk.fin_suban "
@@ -463,7 +463,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
 
     cQuery += " left join public.enabavke on fin_suban.idfirma=enabavke.fin_idfirma and fin_suban.idvn=enabavke.fin_idvn and fin_suban.brnal=enabavke.fin_brnal and fin_suban.rbr=enabavke.fin_rbr"
  
-    cQuery += " where fin_suban.idkonto like  '" + cIdKontoDobav + "%'"
+    cQuery += " where fin_suban.idkonto like  '" + Trim(cIdKontoDobav) + "%'" 
+    // dobavljac potrazuje, sub2.d_p, sub3.d_p duguje
+    cQuery += " and fin_suban.d_p='2'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
     cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
 
@@ -1343,7 +1345,7 @@ FUNCTION fin_gen_uvoz()
     hParams["fin_uvoz_jci_datprij"]:= fetch_metric( "fin_uvoz_jci_datprij", my_user(), CTOD("") )
 
     hParams["fin_uvoz_jci_pdv_kto"]:= PADR(fetch_metric( "fin_uvoz_jci_pdv_kto", my_user(), "2710" ), 7)
-    hParams["fin_uvoz_jci_pdv_np_kto"]:= PADR(fetch_metric( "fin_uvoz_jci_pdv_np_kto", my_user(), "2789" ), 7)
+    hParams["fin_uvoz_jci_pdv_np_kto"]:= PADR(fetch_metric( "fin_uvoz_jci_pdv_np_kto", my_user(), "27891" ), 7)
     hParams["fin_uvoz_jci_pdv_iznos"]:= fetch_metric( "fin_uvoz_jci_pdv_iznos", my_user(), 0 )
     hParams["fin_uvoz_jci_pdv_np_iznos"]:= fetch_metric( "fin_uvoz_jci_pdv_np_iznos", my_user(), 0 )
     hParams["fin_uvoz_jci_kto_potraz"]:= PADR(fetch_metric( "fin_uvoz_jci_kto_potraz", my_user(), "4840" ), 7)
@@ -1378,10 +1380,10 @@ FUNCTION fin_gen_uvoz()
     hParams["fin_uvoz_prev_pdv_np_iznos"]:= fetch_metric( "fin_uvoz_prev_pdv_np_iznos", my_user(), 0 )
 
 
-    hParams["fin_uvoz_kto_prevalm_potraz"]:= PADR(fetch_metric( "fin_uvoz_kto_prevalm_potraz", my_user(), "4840" ), 7)
+    hParams["fin_uvoz_kto_prevalm_potraz"]:= PADR(fetch_metric( "fin_uvoz_kto_prevalm_potraz", my_user(), "4800" ), 7)
     hParams["fin_uvoz_prevalm_iznos"]:= fetch_metric( "fin_uvoz_prevalm_iznos", my_user(), 0.0 )
 
-    hParams["fin_uvoz_kto_car_potraz"]:= PADR(fetch_metric( "fin_uvoz_kto_car_potraz", my_user(), "4840" ), 7)
+    hParams["fin_uvoz_kto_car_potraz"]:= PADR(fetch_metric( "fin_uvoz_kto_car_potraz", my_user(), "4820" ), 7)
     hParams["fin_uvoz_car_iznos"]:= fetch_metric( "fin_uvoz_car_iznos", my_user(), 0.0 )
 
     hParams["fin_uvoz_van_jci_pdv"]:= PADR(fetch_metric( "fin_uvoz_van_jci_pdv", my_user(), "2700" ), 7)
@@ -1501,6 +1503,7 @@ FUNCTION fin_gen_uvoz()
     hRec["idpartner"] := hParams["fin_uvoz_dob_partn"]
     hRec["d_p"] := "2"
     hRec["iznosbhd"] := hParams["fin_uvoz_dob_iznos"]
+    hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
     dbf_update_rec( hRec )
 
 
@@ -1511,35 +1514,41 @@ FUNCTION fin_gen_uvoz()
       hRec["opis"] := ""
       hRec["brdok"] := hParams["fin_uvoz_dob_brdok"]
       hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+      hRec["datval"] := CTOD("")
       hRec["idkonto"] := hParams["fin_uvoz_jci_pdv_kto"] 
       hRec["idpartner"] := ""
       hRec["d_p"] := "1"
       hRec["iznosbhd"] := hParams["fin_uvoz_jci_pdv_iznos"]
+      hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
       dbf_update_rec( hRec )
     ENDIF
 
-    // PDV NP JCI duguje
+    // PDV uvoz NP JCI duguje
     IF hParams["fin_uvoz_jci_pdv_np_iznos"] > 0
         APPEND BLANK
         hRec["rbr"] := nRbr++
-        hRec["opis"] := "PDV neposlovna potrosnja"
+        hRec["opis"] := "PDV uvoz neposlovna potrosnja"
         hRec["brdok"] := hParams["fin_uvoz_dob_brdok"]
         hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+        hRec["datval"] := CTOD("")
         hRec["idkonto"] := hParams["fin_uvoz_jci_pdv_np_kto"] 
         hRec["idpartner"] := ""
         hRec["d_p"] := "1"
         hRec["iznosbhd"] := hParams["fin_uvoz_jci_pdv_np_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
         dbf_update_rec( hRec )
 
         APPEND BLANK
         hRec["rbr"] := nRbr++
-        hRec["opis"] := "protustav PDV neposlovna potrosnja"
+        hRec["opis"] := "protustav PDV uvoz neposlovna potrosnja"
         hRec["brdok"] := ""
         hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+        hRec["datval"] := CTOD("")
         hRec["idkonto"] := hParams["fin_uvoz_jci_pdv_np_kto"] 
         hRec["idpartner"] := ""
         hRec["d_p"] := "2"
         hRec["iznosbhd"] := hParams["fin_uvoz_jci_pdv_np_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
         dbf_update_rec( hRec )
     ENDIF
 
@@ -1549,11 +1558,45 @@ FUNCTION fin_gen_uvoz()
     hRec["opis"] := ""
     hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
     hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+    hRec["datval"] := CTOD("")
     hRec["idkonto"] := hParams["fin_uvoz_jci_kto_potraz"]
     hRec["idpartner"] := ""
     hRec["d_p"] := "2"
     hRec["iznosbhd"] := hParams["fin_uvoz_jci_pdv_iznos"] + hParams["fin_uvoz_jci_pdv_np_iznos"]
+    hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
     dbf_update_rec( hRec )
+
+    IF ROUND(hParams["fin_uvoz_prevalm_iznos"], 2) > 0
+        // prevalmani potrazuje
+        APPEND BLANK
+        hRec["rbr"] := nRbr++
+        hRec["opis"] := "obaveze prevalmani"
+        hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+        hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+        hRec["datval"] := CTOD("")
+        hRec["idkonto"] := hParams["fin_uvoz_kto_prevalm_potraz"]
+        hRec["idpartner"] := ""
+        hRec["d_p"] := "2"
+        hRec["iznosbhd"] := hParams["fin_uvoz_prevalm_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
+        dbf_update_rec( hRec )
+    ENDIF
+
+    IF ROUND(hParams["fin_uvoz_car_iznos"], 2) > 0
+        // carine potrazuje
+        APPEND BLANK
+        hRec["rbr"] := nRbr++
+        hRec["opis"] := "obaveze carine"
+        hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+        hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
+        hRec["datval"] := CTOD("")
+        hRec["idkonto"] := hParams["fin_uvoz_kto_car_potraz"]
+        hRec["idpartner"] := ""
+        hRec["d_p"] := "2"
+        hRec["iznosbhd"] := hParams["fin_uvoz_car_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
+        dbf_update_rec( hRec )
+    ENDIF
 
     IF !Empty(hParams["fin_uvoz_sped_partn"])
         // spediter
@@ -1568,6 +1611,7 @@ FUNCTION fin_gen_uvoz()
         hRec["idpartner"] := hParams["fin_uvoz_sped_partn"]
         hRec["d_p"] := "2"
         hRec["iznosbhd"] := hParams["fin_uvoz_sped_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
         dbf_update_rec( hRec )
 
         IF hParams["fin_uvoz_sped_pdv_iznos"] <> 0
@@ -1577,11 +1621,12 @@ FUNCTION fin_gen_uvoz()
             hRec["opis"] := "spediter van JCI PDV poslovni"
             hRec["brdok"] := hParams["fin_uvoz_sped_brdok"]
             hRec["datdok"] := hParams["fin_uvoz_sped_datdok"]
-            hRec["datval"] := hParams["fin_uvoz_sped_datval"]
+            hRec["datval"] := CTOD("")
             hRec["idkonto"] := hParams["fin_uvoz_van_jci_pdv"]
             hRec["idpartner"] := ""
             hRec["d_p"] := "1"
             hRec["iznosbhd"] := hParams["fin_uvoz_sped_pdv_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec( hRec )
         ENDIF
 
@@ -1598,6 +1643,7 @@ FUNCTION fin_gen_uvoz()
             hRec["idpartner"] := ""
             hRec["d_p"] := "1"
             hRec["iznosbhd"] := hParams["fin_uvoz_sped_pdv_np_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec( hRec )
 
             APPEND BLANK
@@ -1611,6 +1657,7 @@ FUNCTION fin_gen_uvoz()
             hRec["idpartner"] := ""
             hRec["d_p"] := "2"
             hRec["iznosbhd"] := hParams["fin_uvoz_sped_pdv_np_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec( hRec )
 
         ENDIF
@@ -1629,6 +1676,7 @@ FUNCTION fin_gen_uvoz()
         hRec["idpartner"] := hParams["fin_uvoz_prev_partn"]
         hRec["d_p"] := "2"
         hRec["iznosbhd"] := hParams["fin_uvoz_prev_iznos"]
+        hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
         dbf_update_rec( hRec )
 
         IF hParams["fin_uvoz_prev_pdv_iznos"] <> 0
@@ -1637,12 +1685,13 @@ FUNCTION fin_gen_uvoz()
             hRec["rbr"] := nRbr++
             hRec["opis"] := "prevoz van JCI PDV poslovni"
             hRec["datdok"] := hParams["fin_uvoz_prev_datdok"]
-            hRec["datval"] := hParams["fin_uvoz_prev_datval"]
+            hRec["datval"] := CTOD("")
             hRec["brdok"] := hParams["fin_uvoz_prev_brdok"]
             hRec["idkonto"] := hParams["fin_uvoz_van_jci_pdv"]
             hRec["idpartner"] := ""
             hRec["d_p"] := "1"
             hRec["iznosbhd"] := hParams["fin_uvoz_prev_pdv_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec(hRec)  
         ENDIF
 
@@ -1659,6 +1708,7 @@ FUNCTION fin_gen_uvoz()
             hRec["idpartner"] := ""
             hRec["d_p"] := "1"
             hRec["iznosbhd"] := hParams["fin_uvoz_prev_pdv_np_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec(hRec )
 
             // prevoz PDV vanposlovni protustav
@@ -1672,6 +1722,7 @@ FUNCTION fin_gen_uvoz()
             hRec["idpartner"] := ""
             hRec["d_p"] := "2"
             hRec["iznosbhd"] := hParams["fin_uvoz_prev_pdv_np_iznos"]
+            hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
             dbf_update_rec(hRec )
         ENDIF
     ENDIF
@@ -1689,7 +1740,9 @@ FUNCTION fin_gen_uvoz()
     hRec["d_p"] := "1"
     hRec["iznosbhd"] :=  hParams["fin_uvoz_dob_iznos"]  +;
        (hParams["fin_uvoz_sped_iznos"] - hParams["fin_uvoz_sped_pdv_iznos"] ) +;
-       (hParams["fin_uvoz_prev_iznos"] - hParams["fin_uvoz_prev_pdv_iznos"] ) 
+       (hParams["fin_uvoz_prev_iznos"] - hParams["fin_uvoz_prev_pdv_iznos"] ) +;
+       hParams["fin_uvoz_prevalm_iznos"] + hParams["fin_uvoz_car_iznos"]
+    hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
     dbf_update_rec( hRec )
 
 
@@ -1698,13 +1751,14 @@ FUNCTION fin_gen_uvoz()
     IF Round(nTmp, 2) <> 0
        APPEND BLANK
        hRec["rbr"] := nRbr++
-       hRec["opis"] := "trosak"
+       hRec["opis"] := "uvoz vanposlovno"
        hRec["idkonto"] := hParams["fin_uvoz_kto_np"]
        hRec["idpartner"] := ""
        hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
        hRec["datval"] := CTOD("")
        hRec["d_p"] := "1"
        hRec["iznosbhd"] :=  nTmp
+       hRec["iznosdem"] := fin_km_to_eur(hRec["iznosbhd"], hParams["fin_uvoz_jci_datprij"])
        dbf_update_rec( hRec )
     ENDIF
    
@@ -1728,3 +1782,18 @@ FUNCTION fin_gen_uvoz()
 
 
     RETURN .T.
+
+
+ STATIC FUNCTION fin_km_to_eur( nKM, dDatDok )
+
+    LOCAL dKurs
+   
+    dKurs := Kurs( dDatDok )
+     
+    IF Round( dKurs, 4 ) == 0
+        RETURN 0
+    ELSE
+        RETURN  nKM / dKurs
+    ENDIF
+        
+    RETURN 0

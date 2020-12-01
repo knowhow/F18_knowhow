@@ -85,7 +85,6 @@ METHOD programski_modul_osnovni_meni()
    AAdd( _opcexe, {|| fin_eIsporukeNabavkeMenu() } )
 
 
-   AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "X. parametri" )
    AAdd( _opcexe, {|| mnu_fin_params() } )
 

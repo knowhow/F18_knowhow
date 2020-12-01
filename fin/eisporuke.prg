@@ -9,23 +9,31 @@ FUNCTION parametri_eIsporuke
     LOCAL nX := 1
     LOCAL GetList := {}
 
+    LOCAL cIdKontoKupac := PadR( fetch_metric( "fin_eisp_idkonto_kup", NIL, "21" ), 7 )
     LOCAL cIdKontoPDV := PadR( fetch_metric( "fin_eisp_idkonto_pdv", NIL, "470" ), 7 )
     LOCAL cIdKontoPDVAvansi := PadR( fetch_metric( "fin_eisp_idkonto_pdv_a", NIL, "471" ), 7 )
     LOCAL cIdKontoPDVInterne := PadR( fetch_metric( "fin_eisp_idkonto_pdv_int", NIL, "472" ), 7 )
     LOCAL cIdKontoPDVNePDVObveznici := PadR( fetch_metric( "fin_eisp_idkonto_pdv_nepdvo", NIL, "473" ), 7 )
     LOCAL cIdKontoPDVUslugeStranaLica := PadR( fetch_metric( "fin_eisp_idkonto_pdv_ust", NIL, "474" ), 7 )
+    LOCAL cIdKontoPDVSchema := PadR( fetch_metric( "fin_eisp_idkonto_pdv_schema", NIL, "475" ), 7 )
     LOCAL cIdKontoPDVOstalo := PadR( fetch_metric( "fin_eisp_idkonto_pdv_ostalo", NIL, "478" ), 7 )
     LOCAL cNabExcludeIdvn := PadR( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,B3,PD" ), 100 )
 
-    Box(, 12, 80 )
+    Box(, 14, 80 )
 
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY "***** eIsporuke PARAMETRI *****"
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV pdv obveznici                 " GET cIdKontoPDV VALID P_Konto(cIdKontoPDV)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV primljeni avansi              " GET cIdKontoPDVAvansi VALID P_Konto(cIdKontoPDVAvansi)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV interne fakture neposl. svrhe " GET cIdKontoPDVInterne VALID P_Konto(cIdKontoPDVInterne)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici               " GET cIdKontoPDVNePDVObveznici VALID P_Konto(cIdKontoPDVNePDVObveznici)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica            " GET cIdKontoPDVUslugeStranaLica VALID P_Konto(cIdKontoPDVUslugeStranaLica)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV ostalo                        " GET cIdKontoPDVOstalo VALID P_Konto(cIdKontoPDVOstalo)
+
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto kupac                             " GET cIdKontoKupac
+
+       nX++
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV pdv obveznici                 " GET cIdKontoPDV VALID P_Konto(@cIdKontoPDV)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV primljeni avansi              " GET cIdKontoPDVAvansi VALID P_Konto(@cIdKontoPDVAvansi)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV interne fakture neposl. svrhe " GET cIdKontoPDVInterne VALID P_Konto(@cIdKontoPDVInterne)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici               " GET cIdKontoPDVNePDVObveznici VALID P_Konto(@cIdKontoPDVNePDVObveznici)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica            " GET cIdKontoPDVUslugeStranaLica VALID P_Konto(@cIdKontoPDVUslugeStranaLica)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV posebna schema                " GET cIdKontoPDVSchema VALID P_Konto(@cIdKontoPDVSchema)
+       
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV ostalo                        " GET cIdKontoPDVOstalo VALID P_Konto(@cIdKontoPDVOstalo)
 
 
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji su isključuju iz generacije e-nabavki/isporuka"
@@ -38,11 +46,13 @@ FUNCTION parametri_eIsporuke
        RETURN .F.
     ENDIF
 
+    set_metric( "fin_eisp_idkonto_kup", NIL, cIdKontoKupac)
     set_metric( "fin_eisp_idkonto_pdv", NIL, cIdKontoPDV)
     set_metric( "fin_eisp_idkonto_pdv_a", NIL, cIdKontoPDVAvansi)
     set_metric( "fin_eisp_idkonto_pdv_int", NIL, cIdKontoPDVInterne)
     set_metric( "fin_eisp_idkonto_pdv_nepdvo", NIL, cIdKontoPDVNePDVObveznici)
     set_metric( "fin_eisp_idkonto_pdv_ust", NIL, cIdKontoPDVUslugeStranaLica)
+    set_metric( "fin_eisp_idkonto_pdv_schema", NIL, cIdKontoPDVSchema)
     set_metric( "fin_eisp_idkonto_pdv_ostalo", NIL, cIdKontoPDVOstalo)
     set_metric( "fin_enab_idvn_exclude", NIL, Trim(cNabExcludeIdvn))
 
@@ -54,6 +64,7 @@ FUNCTION parametri_eIsporuke
 
 FUNCTION check_eIsporuke()
 
+    LOCAL cIdKontoKupac := PadR( fetch_metric( "fin_eisp_idkonto_kup", NIL, "21" ), 7 )
     LOCAL cIdKontoPDV := PadR( fetch_metric( "fin_eisp_idkonto_pdv", NIL, "470" ), 7 )
     LOCAL cIdKontoPDVAvansi := PadR( fetch_metric( "fin_eisp_idkonto_pdv_a", NIL, "272" ), 7 )
     LOCAL cIdKontoPDVNP := PadR( fetch_metric( "fin_eisp_idkonto_pdv_np", NIL, "473" ), 7 )
@@ -329,7 +340,7 @@ STATIC FUNCTION say_string( cString, nLen, lToUTF)
 
 
 */
-STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cIdKonto, cNabExcludeIdvn, lPDVNule, lOsnovaNula, hUkupno )
+STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cIdKonto, cNabExcludeIdvn, lPDVNule, lOsnovaNula, lSchema, hUkupno )
 
     LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
     LOCAL cQuery, cTmps
@@ -341,8 +352,12 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     LOCAL nOsnovicaNePdvObveznik, nOsnovicaDaPDVObveznik      
     LOCAL nOsnovicaInterna, nOsnovicaIzvoz, nOsnovicaPDV0Oostalo
     LOCAL hRec := hb_hash()
+    LOCAL cKto
 
 
+    LOCAL cIdKontoKupac := trim(fetch_metric( "fin_eisp_idkonto_kup", NIL, '21'))
+    LOCAL cIdKontoDobavljac := trim(fetch_metric( "fin_enab_idkonto_dob", NIL, '43'))
+    
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
     cSelectFields := "SELECT get_sifk('PARTN', 'PDVB', sub2.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', sub2.idpartner) as jib,"
@@ -361,7 +376,13 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     IF lOsnovaNula == NIL
         lOsnovaNula := .F.
     ENDIF
-    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like " + IIF( lOsnovaNula, "'43%'", "'21%'" )
+    IF lOsnovaNula
+        cKto := trim(cIdKontoDobavljac)
+    ELSE
+        cKto := trim(cIdKontoKupac)
+    ENDIF
+
+    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 + " and sub2.idkonto like '" + cKto + "%'"
 
     cQuery := cSelectFields
     cQuery += " from fmk.fin_suban "
@@ -415,7 +436,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         nDaPDVObveznikSaPDV := 0
 
         IF lOsnovaNula
-            // 4740 
+            // 4740 - usluge strana lica
             nOsnovicaDaPdvObveznik := 0
             nPDVDaPDVObveznik := eisp->pdv
             nDaPDVObveznikSaPDV := eisp->pdv
@@ -440,10 +461,19 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             nOsnovicaNePdvObveznik := eisp->bez_pdv
             nNePDVObveznikSaPDV := eisp->iznos_sa_pdv
         ELSE
+            // PDV obveznik
             nPDVDaPDVObveznik := eisp->pdv
-            nOsnovicaDaPdvObveznik := eisp->bez_pdv
-            nDaPDVObveznikSaPDV := eisp->iznos_sa_pdv
+
+            IF lSchema
+                nDaPDVObveznikSaPDV := eisp->pdv + eisp->iznos_sa_pdv
+                nOsnovicaDaPdvObveznik := eisp->iznos_sa_pdv
+            ELSE
+                nDaPDVObveznikSaPDV := eisp->iznos_sa_pdv
+                nOsnovicaDaPdvObveznik := eisp->bez_pdv
+            ENDIF
+            
         ENDIF
+
 
         n32 := 0
         n33 := 0
@@ -465,6 +495,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         ENDIF
 
         hRec["fakt_iznos_sa_pdv"] := nDaPDVObveznikSaPDV + nNePDVObveznikSaPDV
+
         hRec["fakt_iznos_sa_pdv_interna"] := nOsnovicaInterna
         hRec["fakt_iznos_sa_pdv0_izvoz"] := nOsnovicaIzvoz
         hRec["fakt_iznos_sa_pdv0_ostalo"] := nOsnovicaPDV0Oostalo
@@ -752,6 +783,7 @@ FUNCTION gen_eIsporuke()
     LOCAL cIdKontoPDVInterne := PadR( fetch_metric( "fin_eisp_idkonto_pdv_int", NIL, "472" ), 7 )
     LOCAL cIdKontoPDVNePDVObveznici := PadR( fetch_metric( "fin_eisp_idkonto_pdv_nepdvo", NIL, "473" ), 7 )
     LOCAL cIdKontoPDVUslugeStranaLica := PadR( fetch_metric( "fin_eisp_idkonto_pdv_ust", NIL, "474" ), 7 )
+    LOCAL cIdKontoPDVSchema := PadR( fetch_metric( "fin_eisp_idkonto_pdv_schema", NIL, "475" ), 7 )
     LOCAL cIdKontoPDVOstalo := PadR( fetch_metric( "fin_eisp_idkonto_pdv_ostalo", NIL, "478" ), 7 )
     LOCAL cNabExcludeIdvn := PadR( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,B3,PD" ), 100 )
 
@@ -883,14 +915,17 @@ FUNCTION gen_eIsporuke()
     hUkupno["redova"] := 0
 
     // 01 standardne isporuke 4700
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., .F., @hUkupno)
-  
-    // 01 standardne isporuke 4730
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNePDVObveznici, cNabExcludeIdvn, .F., .F., @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., .F., .F., @hUkupno)
+
+
+    // 01 standardne isporuke 4730 - neobveznici PDV krajnja potrosnja
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNePDVObveznici, cNabExcludeIdvn, .F., .F., .F., @hUkupno)
 
     // 05 ostale isporuke - usloge stranih lica 4740
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., .T., @hUkupno)
-
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., .T., .F., @hUkupno)
+  
+    // 01 standardne isporuke 4750 - po posebnoj shemi
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVSchema, cNabExcludeIdvn, .F., .F., .T., @hUkupno)
 
     // 1. 3 - prateći slog
     ? "3" + cCSV

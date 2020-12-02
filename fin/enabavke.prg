@@ -546,7 +546,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17NP:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17np,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-FAKT:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_fakt,"
-    cSelectFields += "COALESCE(substring(fin_suban.opis from 'MJ-KP:\s*(\d)'), '9') as from_opis_mj_kp,"
+    cSelectFields += "COALESCE(substring(fin_suban.opis from 'MJ-KP:\s*(\d)'), 'X') as from_opis_mj_kp,"
 
     //cSelectFields += "((case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd - (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd) * -1 as bez_pdv,"
     //cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd * -1 as pdv,"
@@ -710,7 +710,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         // MJ-KP: 2 - RS
         // MJ-KP: 3 - BD
 
-        IF enab->from_opis_mj_kp <> '9'
+        IF enab->from_opis_mj_kp <> 'X'
             //IF cTipDokumenta == "02" // vanposlovno
             SWITCH enab->from_opis_mj_kp
                      CASE "2" // RS
@@ -726,7 +726,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             ENDSWITCH
             //ENDIF
         ELSE
-            // nije navedeno MJ-KP
+            // nije navedeno MJ-KP, po defaultu mjesto kranje potrosnje FBiH
             n32 := nPDVNP
         ENDIF
 
@@ -779,20 +779,24 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         // iznos fakture dobavljaca
         hRec["fakt_iznos_dob"] := enab->iznos_sa_pdv
 
-        if lUslugeStranogLica
-            // iznos sa PDV u ovom slucaju ne odgovara iznosu fakture dobavljaca nego je uvecan za PDV
-            hRec["fakt_iznos_sa_pdv"] := hRec["osn_pdv0"] + hRec["osn_pdv17"] * 1.17 + hRec["osn_pdv17np"] * 1.17
-        ELSE
-            hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
-        ENDIF
-
         hRec["fakt_iznos_poljo_pausal"] := 0
-
         hRec["fakt_iznos_pdv"] := nPDVPosl
         hRec["fakt_iznos_pdv_np"] := nPDVNP
         hRec["fakt_iznos_pdv_np_32"] := n32 
         hRec["fakt_iznos_pdv_np_33"] := n33
         hRec["fakt_iznos_pdv_np_34"] := n34
+
+        if lUslugeStranogLica
+            // iznos sa PDV u ovom slucaju ne odgovara iznosu fakture dobavljaca nego je uvecan za PDV
+            hRec["fakt_iznos_sa_pdv"] := hRec["osn_pdv0"] + hRec["osn_pdv17"] * 1.17 + hRec["osn_pdv17np"] * 1.17
+        ELSE
+            IF cTipDokumenta == "04"
+               hRec["fakt_iznos_sa_pdv"] := hRec["fakt_iznos_bez_pdv"] + nPDVPosl + nPDVNP
+            ELSE
+               hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
+            ENDIF
+        ENDIF
+
         hRec["fin_idfirma"] := enab->idfirma
         hRec["fin_idvn"] := enab->idvn
         hRec["fin_brnal"] := enab->brnal

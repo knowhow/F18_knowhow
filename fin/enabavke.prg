@@ -1289,16 +1289,21 @@ STATIC FUNCTION xlsx_export_fill_row()
      
         AADD(aKolona, { "C", "Por.Per", 8, enab->porezni_period })
         AADD(aKolona, { "C", "Br.Fakt", 20, enab->br_fakt })
+        AADD(aKolona, { "C", "JCI", 20, enab->jci })
         AADD(aKolona, { "D", "Dat.fakt", 12, enab->dat_fakt })
         AADD(aKolona, { "D", "Dat.f.prij", 12, enab->dat_fakt_prijem })
 
+        AADD(aKolona, { "M", "Fakt dob.izn", 15, enab->fakt_iznos_dob })
+
         AADD(aKolona, { "C", "Dobavljac naziv", 60, enab->dob_naz })
         AADD(aKolona, { "C", "Dobavljac sjediste", 100, enab->dob_sjediste })
+
         AADD(aKolona, { "C", "Dob. PDV", 12, enab->dob_pdv })
         AADD(aKolona, { "C", "Dob. JIB", 13, enab->dob_jib })
 
         AADD(aKolona, { "M", "Fakt.Bez PDV", 15, enab->fakt_iznos_bez_pdv })  
         AADD(aKolona, { "M", "Fakt.SA PDV", 15, enab->fakt_iznos_sa_pdv })
+
         AADD(aKolona, { "M", "poljop. pausal", 15, enab->fakt_iznos_poljo_pausal })
         AADD(aKolona, { "M", "Ulazni PDV sve", 15, enab->fakt_iznos_pdv + enab->fakt_iznos_pdv_np })
         AADD(aKolona, { "M", "Ulazni PDV posl", 15, enab->fakt_iznos_pdv })

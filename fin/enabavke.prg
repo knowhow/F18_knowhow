@@ -596,7 +596,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     DO WHILE !EOF()
 
   
-        hRec["jci"] := enab->jci
+        IF cTipDokumenta == "04"
+           hRec["jci"] := enab->jci
+        ELSE
+           hRec["jci"] := ""
+        ENDIF
+
+
         cPDVBroj := enab->pdv_broj 
         cJib := enab->jib
 
@@ -758,8 +764,8 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         IF enab->from_opis_osn_pdv0 <> nUndefined
             hRec["osn_pdv0"] := enab->from_opis_osn_pdv0
         ELSE
-            IF !Empty(hRec["jci"]) 
-                // domaca faktura, ali se odnosi na zavisni trosak uvoza - ima JCI
+            IF cTipDokumenta == "04"
+                // stavka uvoza ne sadrzi PDV 0% osnovicu 
                 hRec["osn_pdv0"] := 0
             ELSE
                 if lUslugeStranogLica

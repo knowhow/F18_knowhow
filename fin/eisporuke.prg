@@ -520,8 +520,15 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                    EXIT     
             ENDSWITCH
             
+            IF cTipDokumenta == "02"
+               cPDVBroj  := fetch_metric( "fin_enab_my_pdv", NIL, PadR( "<POPUNI>", 12 ) )
+               hRec["kup_naz"] := say_string("INTERNA FAKTURA", 100, .F.)
+               hRec["kup_sjediste"] := say_string("INTERNA FAKTURA", 100, .F.)
+            ELSE
+               cPDVBroj := ""  
+            ENDIF
+
             cJib := REPLICATE("9", 13)
-            cPDVBroj := ""
             hRec["kup_pdv"] := cPDVBroj
             hRec["kup_jib"] := cJib
 
@@ -544,7 +551,19 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         ENDIF
 
         IF cMjestoKrajnjePotrosnje == NIL
-            cMjestoKrajnjePotrosnje := eisp->partn_rejon
+            // nije definsano mjesto kranje potrosnje
+
+            IF (Empty(cPDVBroj) .AND. Len(cJib) == 13)
+               // samo ako je NEPDV obveznik 
+               cMjestoKrajnjePotrosnje := eisp->partn_rejon
+               IF Empty(cMjestoKrajnjePotrosnje)
+                  // FBiH
+                  cMjestoKrajnjePotrosnje := "1"
+               ENDIF
+            ELSE
+                // PDV obveznik
+                cMjestoKrajnjePotrosnje := "0"
+            ENDIF
         ENDIF
 
 
@@ -568,12 +587,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             nPDVDaPDVObveznik := eisp->pdv
             nDaPDVObveznikSaPDV := eisp->pdv
 
-        ELSEIF cTipDokumenta == "02" 
-            // interna faktura vlastita potrosnja
-            nOsnovicaInterna := eisp->bez_pdv
-            nPDVInterna := eisp->pdv
-            nInternaSaPDV := eisp->iznos_sa_pdv
-
         ELSEIF cTipDokumenta == "04" 
             // izvoz
             nOsnovicaIzvoz := eisp->iznos_sa_pdv
@@ -582,13 +595,14 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             // PDV0 ostalo
              nOsnovicaPDV0Oostalo := eisp->iznos_sa_pdv
         
-        ELSEIF (Empty(cPDVBroj) .AND. Len(cJib) == 13)
+        ELSEIF cTipDokumenta == "02" .OR. cMjestoKrajnjePotrosnje $ "123"
             
-            // domaci NE-PDV obveznik 
+            // 02 - interna faktura vlastita potrosnja
+            // (Empty(cPDVBroj) .AND. Len(cJib) == 13) - domaci NE-PDV obveznik 
             nPDVNePDVObveznik := eisp->pdv
 
-            IF !Empty(cMjestoKrajnjePotrosnje) .AND. Empty(eisp->partn_id)
-               // 4730, 4731, 4732 bez partnera osnovica se utvrdjuje na osnovu PDV
+            IF cMjestoKrajnjePotrosnje $ "123" .AND. Empty(eisp->partn_id)
+               // 4720, 4730, 4731, 4732 bez partnera osnovica se utvrdjuje na osnovu PDV
                nOsnovicaNePdvObveznik := ROUND(nPDVNePDVObveznik / 0.17, 2)
                nNePDVObveznikSaPDV := nOsnovicaNePdvObveznik + nPDVNePDVObveznik 
             ELSE
@@ -613,7 +627,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         n32 := 0
         n33 := 0
         n34 := 0
-        IF cTipDokumenta == "02" .OR. (Empty(cPDVBroj) .AND. Len(cJib) == 13)
+        IF cTipDokumenta == "02" .OR. cMjestoKrajnjePotrosnje $ "123"
             SWITCH cMjestoKrajnjePotrosnje
                     CASE "2" // RS
                        n33 := eisp->pdv
@@ -1074,6 +1088,10 @@ FUNCTION gen_eIsporuke()
     // cMjestoKrajnjePotrosnje="3" BD
     gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeBD, cNabExcludeIdvn, .F., .F., .F., "3", @hUkupno)
     
+    // 02 interne fakture - sopstvena krajnja potrosnja; ; lPDVNule .F., lOsnovaNula .F., lSchema .F., 
+    // cMjestoKrajnjePotrosnje="1" sopstvena krajnja potrosnja je uvijek FBiH
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVInterne, cNabExcludeIdvn, .F., .F., .F., "1", @hUkupno)
+
     // 05 ostale isporuke - usloge stranih lica 4740
     gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., .T., .F., NIL, @hUkupno)
   
@@ -1134,93 +1152,93 @@ FUNCTION gen_eIsporuke()
     
     
 
-    STATIC FUNCTION xlsx_export_fill_row()
+STATIC FUNCTION xlsx_export_fill_row()
 
-        LOCAL nI
-        LOCAL aKolona
+    LOCAL nI
+    LOCAL aKolona
 
-      
-        aKolona := {}
-        AADD(aKolona, { "N", "Rbr. isporuke", 10, eisp->eisporuke_id })
-        AADD(aKolona, { "C", "Tip", 3, eisp->tip })
+    
+    aKolona := {}
+    AADD(aKolona, { "N", "Rbr. isporuke", 10, eisp->eisporuke_id })
+    AADD(aKolona, { "C", "Tip", 3, eisp->tip })
 
-     
-        AADD(aKolona, { "C", "Por.Per", 8, eisp->porezni_period })
-        AADD(aKolona, { "C", "Br.Fakt", 20, eisp->br_fakt })
-        AADD(aKolona, { "D", "Dat.fakt", 12, eisp->dat_fakt })
+    
+    AADD(aKolona, { "C", "Por.Per", 8, eisp->porezni_period })
+    AADD(aKolona, { "C", "Br.Fakt", 20, eisp->br_fakt })
+    AADD(aKolona, { "D", "Dat.fakt", 12, eisp->dat_fakt })
 
-        AADD(aKolona, { "C", "Kupac naziv", 60, eisp->kup_naz })
-        AADD(aKolona, { "C", "Kupac sjediste", 100, eisp->kup_sjediste })
-        AADD(aKolona, { "C", "Kup. PDV", 12, eisp->kup_pdv })
-        AADD(aKolona, { "C", "Kup. JIB", 13, eisp->kup_jib })
+    AADD(aKolona, { "C", "Kupac naziv", 60, eisp->kup_naz })
+    AADD(aKolona, { "C", "Kupac sjediste", 100, eisp->kup_sjediste })
+    AADD(aKolona, { "C", "Kup. PDV", 12, eisp->kup_pdv })
+    AADD(aKolona, { "C", "Kup. JIB", 13, eisp->kup_jib })
 
-        AADD(aKolona, { "M", "Fakt.SA PDV", 15, eisp->fakt_iznos_sa_pdv })
-        AADD(aKolona, { "M", "F.SA PDV interna", 15, eisp->fakt_iznos_sa_pdv_interna })
-        AADD(aKolona, { "M", "Fakt izvoz", 15, eisp->fakt_iznos_sa_pdv0_izvoz })
-        AADD(aKolona, { "M", "Fakt PDV0 ostalo", 15, eisp->fakt_iznos_sa_pdv0_ostalo })
+    AADD(aKolona, { "M", "Fakt.SA PDV", 15, eisp->fakt_iznos_sa_pdv })
+    AADD(aKolona, { "M", "F.SA PDV interna", 15, eisp->fakt_iznos_sa_pdv_interna })
+    AADD(aKolona, { "M", "Fakt izvoz", 15, eisp->fakt_iznos_sa_pdv0_izvoz })
+    AADD(aKolona, { "M", "Fakt PDV0 ostalo", 15, eisp->fakt_iznos_sa_pdv0_ostalo })
 
-        AADD(aKolona, { "M", "F.bez PDV", 15, eisp->fakt_iznos_bez_pdv })
-        AADD(aKolona, { "M", "F. PDV", 15, eisp->fakt_iznos_pdv })
+    AADD(aKolona, { "M", "F.bez PDV", 15, eisp->fakt_iznos_bez_pdv })
+    AADD(aKolona, { "M", "F. PDV", 15, eisp->fakt_iznos_pdv })
 
-        AADD(aKolona, { "M", "F.bez PDV NP", 15, eisp->fakt_iznos_bez_pdv_np })
-        AADD(aKolona, { "M", "F. PDV NP", 15, eisp->fakt_iznos_pdv_np })
+    AADD(aKolona, { "M", "F.bez PDV NP", 15, eisp->fakt_iznos_bez_pdv_np })
+    AADD(aKolona, { "M", "F. PDV NP", 15, eisp->fakt_iznos_pdv_np })
 
-        AADD(aKolona, { "M", "PDV neposl 32", 15, eisp->fakt_iznos_pdv_np_32 })
-        AADD(aKolona, { "M", "PDV neposl 33", 15, eisp->fakt_iznos_pdv_np_33 })
-        AADD(aKolona, { "M", "PDV neposl 34", 15, eisp->fakt_iznos_pdv_np_34 })
-        AADD(aKolona, { "C", "Opis", 200, eisp->opis })
-        AADD(aKolona, { "C", "FIN nalog", 20, eisp->fin_idfirma + "-" + eisp->fin_idvn + "-" + eisp->fin_brnal + "/" + Alltrim(Str(eisp->fin_rbr)) })
+    AADD(aKolona, { "M", "PDV neposl 32", 15, eisp->fakt_iznos_pdv_np_32 })
+    AADD(aKolona, { "M", "PDV neposl 33", 15, eisp->fakt_iznos_pdv_np_33 })
+    AADD(aKolona, { "M", "PDV neposl 34", 15, eisp->fakt_iznos_pdv_np_34 })
+    AADD(aKolona, { "C", "Opis", 200, eisp->opis })
+    AADD(aKolona, { "C", "FIN nalog", 20, eisp->fin_idfirma + "-" + eisp->fin_idvn + "-" + eisp->fin_brnal + "/" + Alltrim(Str(eisp->fin_rbr)) })
 
+    
+    IF s_pWorkSheet == NIL
         
-        IF s_pWorkSheet == NIL
-           
-           s_pWorkBook := workbook_new( s_cXlsxName )
-           s_pWorkSheet := workbook_add_worksheet(s_pWorkBook, NIL)
-     
-           s_pMoneyFormat := workbook_add_format(s_pWorkBook)
-           format_set_num_format(s_pMoneyFormat, /*"#,##0"*/ "#0.00" )
-     
-           s_pDateFormat := workbook_add_format(s_pWorkBook)
-           format_set_num_format(s_pDateFormat, "d.mm.yy")
-         
-           
-           /* Set the column width. */
-            for nI := 1 TO LEN(aKolona)
-              // worksheet_set_column(lxw_worksheet *self, lxw_col_t firstcol, lxw_col_t lastcol, double width, lxw_format *format)
-              worksheet_set_column(s_pWorkSheet, nI - 1, nI - 1, aKolona[ nI, 3], NIL)
-            next
-     
-     
-           //nema smisla header kada imamo vise konta ili vise partnera
-           //worksheet_write_string( s_pWorkSheet, 0, 0,  "Konto:", NIL)
-           //worksheet_write_string( s_pWorkSheet, 0, 1,  hb_StrToUtf8(cIdKonto + " - " + Trim( cKontoNaziv)), NIL)
-           //worksheet_write_string( s_pWorkSheet, 1, 0,  "Partner:", NIL)
-           //worksheet_write_string( s_pWorkSheet, 1, 1,  hb_StrToUtf8(cIdPartner + " - " + Trim(cPartnerNaziv)), NIL)
-         
-            /* Set header */
-            s_nWorkSheetRow := 0
-            for nI := 1 TO LEN(aKolona)
-              worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 2], NIL)
-            next
+        s_pWorkBook := workbook_new( s_cXlsxName )
+        s_pWorkSheet := workbook_add_worksheet(s_pWorkBook, NIL)
+    
+        s_pMoneyFormat := workbook_add_format(s_pWorkBook)
+        format_set_num_format(s_pMoneyFormat, /*"#,##0"*/ "#0.00" )
+    
+        s_pDateFormat := workbook_add_format(s_pWorkBook)
+        format_set_num_format(s_pDateFormat, "d.mm.yy")
+        
+        
+        /* Set the column width. */
+        for nI := 1 TO LEN(aKolona)
+            // worksheet_set_column(lxw_worksheet *self, lxw_col_t firstcol, lxw_col_t lastcol, double width, lxw_format *format)
+            worksheet_set_column(s_pWorkSheet, nI - 1, nI - 1, aKolona[ nI, 3], NIL)
+        next
+    
+    
+        //nema smisla header kada imamo vise konta ili vise partnera
+        //worksheet_write_string( s_pWorkSheet, 0, 0,  "Konto:", NIL)
+        //worksheet_write_string( s_pWorkSheet, 0, 1,  hb_StrToUtf8(cIdKonto + " - " + Trim( cKontoNaziv)), NIL)
+        //worksheet_write_string( s_pWorkSheet, 1, 0,  "Partner:", NIL)
+        //worksheet_write_string( s_pWorkSheet, 1, 1,  hb_StrToUtf8(cIdPartner + " - " + Trim(cPartnerNaziv)), NIL)
+        
+        /* Set header */
+        s_nWorkSheetRow := 0
+        for nI := 1 TO LEN(aKolona)
+            worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 2], NIL)
+        next
+        
+    ENDIF
+    
+    
+    s_nWorkSheetRow++
+    
+    FOR nI := 1 TO LEN(aKolona)
+            IF aKolona[ nI, 1 ] == "C"
+                worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  hb_StrToUtf8(aKolona[nI, 4]), NIL)
+            ELSEIF aKolona[ nI, 1 ] == "M"
+                worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pMoneyFormat)
+            ELSEIF aKolona[ nI, 1 ] == "N"
+                worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], NIL)
+            ELSEIF aKolona[ nI, 1 ] == "D"
+                worksheet_write_datetime( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pDateFormat)
+            ENDIF
+    NEXT
             
-        ENDIF
-     
-     
-        s_nWorkSheetRow++
-     
-        FOR nI := 1 TO LEN(aKolona)
-               IF aKolona[ nI, 1 ] == "C"
-                  worksheet_write_string( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  hb_StrToUtf8(aKolona[nI, 4]), NIL)
-               ELSEIF aKolona[ nI, 1 ] == "M"
-                  worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pMoneyFormat)
-               ELSEIF aKolona[ nI, 1 ] == "N"
-                 worksheet_write_number( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], NIL)
-              ELSEIF aKolona[ nI, 1 ] == "D"
-                 worksheet_write_datetime( s_pWorkSheet, s_nWorkSheetRow, nI - 1,  aKolona[nI, 4], s_pDateFormat)
-              ENDIF
-        NEXT
-             
-        RETURN .T.
+    RETURN .T.
      
 
         
@@ -1266,3 +1284,36 @@ FUNCTION export_eIsporuke()
     
     RETURN .T.
 
+
+/*
+     partn_nepdv( cPartnerId ) =>
+
+     "0" - PDV obveznik
+
+     "1" - NE-PDV obveznik FBiH
+     "2" - NE-PDV obveznik RS
+     "3" - NE-PDV obveznik BD
+*/
+FUNCTION partn_nepdv( cPartnerId )
+
+    LOCAL cPDV := get_partn_pdvb( cPartnerId )
+    LOCAL cJib := get_partn_idbr( cPartnerId )
+     
+    IF LEN(cJib) == 13 .AND. LEN(cPDV) == 0
+        // NEPDV obveznik
+        select_o_partner( cPartnerId )
+           SWITCH partn->rejon
+            CASE "2"
+               // RS 
+               RETURN "2"
+            CASE "3"
+               // BD
+               RETURN "3"
+            otherwise
+               // FBiH
+               RETURN "1"
+            ENDSWITCH
+    ENDIF
+        
+    // PDV obveznik
+    RETURN "0"

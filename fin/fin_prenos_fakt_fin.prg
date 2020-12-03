@@ -297,6 +297,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    LOCAL cPdvBroj, cJiB
    LOCAL GetList := {}
    LOCAL cIdPartner, cIdKonto
+   LOCAL cNePDV
 
    // o_roba()
    O_FINMAT
@@ -415,13 +416,34 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
                ELSEIF trfp2->Partner == "K"   // krajnja potrosnja
                    
-                  cPdvBroj := get_partn_pdvb( FINMAT->IdPartner )
-                  cJIB := get_partn_idbr( FINMAT->IdPartner )
-                  IF LEN(Trim(cPdvBroj)) < 12 // krajnja potrosnja
+                  //cPdvBroj := get_partn_pdvb( FINMAT->IdPartner )
+                  //cJIB := get_partn_idbr( FINMAT->IdPartner )
+
+                  //IF LEN(Trim(cPdvBroj)) < 12 // krajnja potrosnja
                      // 4700 -> 4730
                      // 4701 -> 4731
-                     cIdKonto := LEFT(cIdKonto, 2) + "3" + SUBSTR(cIdKonto, 4)
-                  ENDIF
+                  //   cIdKonto := LEFT(cIdKonto, 2) + "3" + SUBSTR(cIdKonto, 4)
+                  //ENDIF
+
+                  cNePDV := partn_nepdv( FINMAT->IdPartner )
+                  SWITCH cNePDV
+                     CASE "0"
+                        // pdv obveznik
+                        // cIdKonto ne mjenjati
+                        EXIT
+                     CASE "1"
+                        // NEPDV FBiH
+                        cIdKonto := PADR("4730")
+                        EXIT
+                     CASE "2"
+                        // NEPDV RS
+                        cIdKonto := PADR("4731")
+                        EXIT
+                     CASE "3"
+                        // NEPDV BD
+                        cIdKonto := PADR("4732")
+                        EXIT
+                  ENDSWITCH
 
                ENDIF
 

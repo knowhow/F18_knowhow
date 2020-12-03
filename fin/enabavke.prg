@@ -593,7 +593,6 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         RETURN .F.
     ENDIF
 
- 
     DO WHILE !EOF()
 
   
@@ -619,6 +618,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             IF cPDVBroj <> REPLICATE("0", 12)
                 // dobaci dobavljac
                 // preskoci domace dobavljace
+                IF ABS(round(enab->iznos_pdv,2)) + ABS(round(enab->iznos_pdv_np,2)) > 0
+                    Alert("05:" + Trim(cIdKonto) + " Partner: " + enab->partn_id + " nije strani dobavljac a mora biti?!")
+                ENDIF
                 skip
                 loop
             ENDIF
@@ -1293,6 +1295,7 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "D", "Dat.fakt", 12, enab->dat_fakt })
         AADD(aKolona, { "D", "Dat.f.prij", 12, enab->dat_fakt_prijem })
 
+ 
         AADD(aKolona, { "M", "Fakt dob.izn", 15, enab->fakt_iznos_dob })
 
         AADD(aKolona, { "C", "Dobavljac naziv", 60, enab->dob_naz })
@@ -1304,6 +1307,7 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "M", "Fakt.Bez PDV", 15, enab->fakt_iznos_bez_pdv })  
         AADD(aKolona, { "M", "Fakt.SA PDV", 15, enab->fakt_iznos_sa_pdv })
 
+       
         AADD(aKolona, { "M", "poljop. pausal", 15, enab->fakt_iznos_poljo_pausal })
         AADD(aKolona, { "M", "Ulazni PDV sve", 15, enab->fakt_iznos_pdv + enab->fakt_iznos_pdv_np })
         AADD(aKolona, { "M", "Ulazni PDV posl", 15, enab->fakt_iznos_pdv })
@@ -1313,6 +1317,7 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "M", "PDV neposl 34", 15, enab->fakt_iznos_pdv_np_34 })
         AADD(aKolona, { "C", "Opis", 200, enab->opis })
         AADD(aKolona, { "C", "FIN nalog", 20, enab->fin_idfirma + "-" + enab->fin_idvn + "-" + enab->fin_brnal + "/" + Alltrim(Str(enab->fin_rbr)) })
+
 
         
         IF s_pWorkSheet == NIL
@@ -1389,7 +1394,7 @@ FUNCTION export_eNabavke()
     ENDIF
     s_cXlsxName := my_home_root() + "enabavke_" + dtos(dDatOd) + "_" + dtos(dDatDo) + ".xlsx"
 
-    cQuery := "select * from public.enabavke where dat_fakt >=" + sql_quote(dDatOd) + " AND dat_fakt <=" + sql_quote(dDatDo)
+    cQuery := "select * from public.enabavke where dat_fakt_prijem >=" + sql_quote(dDatOd) + " AND dat_fakt_prijem <=" + sql_quote(dDatDo)
     cQuery += " ORDER BY enabavke_id"
 
     SELECT F_TMP

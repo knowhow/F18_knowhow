@@ -181,7 +181,7 @@ FUNCTION check_eIsporuke()
 
     nX:=1
     Box( ,15, 85)
-    @ box_x_koord() + nX++, box_y_koord() + 2 SAY "****** FIN nalozi koji nemaju zadane ispravne partnere ili veze (brdok ili opis):"
+    @ box_x_koord() + nX++, box_y_koord() + 2 SAY "****** FIN nalozi koji nemaju zadane ispravne partnere ili veze (brdok):"
 
     ++nX
     DO WHILE !EOF()

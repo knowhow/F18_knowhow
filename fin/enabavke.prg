@@ -306,7 +306,7 @@ FUNCTION check_eNabavke()
 
         nX:=1
         Box( ,15, 85)
-        @ box_x_koord() + nX++, box_y_koord() + 2 SAY "****** FIN nalozi koji nemaju zadane ispravne partnere ili veze (brdok ili opis):"
+        @ box_x_koord() + nX++, box_y_koord() + 2 SAY "****** FIN nalozi koji nemaju zadane ispravne partnere ili veze (brdok):"
         @ box_x_koord() + nX++, box_y_koord() + 2 SAY "          " + IIF(nStep==1, "POSLOVNA", "VANPOSLOVNA") + " potrosnja"
 
         ++nX

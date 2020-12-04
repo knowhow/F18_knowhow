@@ -620,6 +620,12 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             LOOP
         ENDIF
 
+        IF Empty(enab->partn_id)
+            // stavka 43% moze biti i 4300 (primljeni avans) bez partnera
+            SKIP
+            LOOP
+        ENDIF
+
         IF lUslugeStranogLica
             IF cPDVBroj <> REPLICATE("0", 12)
                 // dobaci dobavljac
@@ -798,11 +804,14 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             // iznos sa PDV u ovom slucaju ne odgovara iznosu fakture dobavljaca nego je uvecan za PDV
             hRec["fakt_iznos_sa_pdv"] := hRec["osn_pdv0"] + hRec["osn_pdv17"] * 1.17 + hRec["osn_pdv17np"] * 1.17
         ELSE
-            IF cTipDokumenta == "04"
+            //IF cTipDokumenta == "04"
                hRec["fakt_iznos_sa_pdv"] := hRec["fakt_iznos_bez_pdv"] + nPDVPosl + nPDVNP
-            ELSE
-               hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
-            ENDIF
+            //ELSE
+            //   IF lSchema
+            //       hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
+            //   ELSE 
+            //   hRec["fakt_iznos_sa_pdv"] := enab->iznos_sa_pdv
+            //ENDIF
         ENDIF
 
         hRec["fin_idfirma"] := enab->idfirma
@@ -1310,7 +1319,11 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "C", "Dob. PDV", 12, enab->dob_pdv })
         AADD(aKolona, { "C", "Dob. JIB", 13, enab->dob_jib })
 
-        AADD(aKolona, { "M", "Fakt.Bez PDV", 15, enab->fakt_iznos_bez_pdv })  
+        AADD(aKolona, { "M", "Osnov.PDV 0%", 15, enab->osn_pdv0 })
+        AADD(aKolona, { "M", "Osn.PDV 17% posl", 15, enab->osn_pdv17 })
+        AADD(aKolona, { "M", "Osn.PDV 17% nepo", 15, enab->osn_pdv17np }) 
+        
+        AADD(aKolona, { "M", "Fakt.BEZ PDV", 15, enab->fakt_iznos_bez_pdv })
         AADD(aKolona, { "M", "Fakt.SA PDV", 15, enab->fakt_iznos_sa_pdv })
 
        

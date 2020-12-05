@@ -41,6 +41,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    LOCAL _fakt_params := fakt_params()
    LOCAL nIznosKontiratiDEM
    LOCAL hRecTrfp, cStavka
+   LOCAL cEnabUvozSwitchKALK := fetch_metric( "fin_enab_uvoz_switch_kalk", NIL, "N" )
+
 
    PRIVATE lVrsteP := _fakt_params[ "fakt_vrste_placanja" ]
 
@@ -248,6 +250,16 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    nRbr := 0
    nRbr2 := 0
+
+
+   IF cEnabUvozSwitchKALK == "D"
+      // kalk_10_gen_uvoz( finmat->brdok ) => .F. ako su spediterski troskovi 0
+      IF kalk_10_gen_uvoz( finmat->brdok )
+         my_close_all_dbf()
+         RETURN .T.
+      ENDIF
+   ENDIF
+
 
    SELECT finmat
    MsgO( "KALK(shema, [" + AllTrim( finmat->brdok ) + "/" + AllTrim( finmat->brfaktp ) + "]) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )

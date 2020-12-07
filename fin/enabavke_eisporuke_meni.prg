@@ -15,7 +15,7 @@ FUNCTION fin_eIsporukeNabavkeMenu()
     AAdd( aOpc, "P. obračun PDV na osnovu generisanih enab/eisp" )
     AAdd( aOpcexe, {|| eNab_eIsp_PDV() } )
 
-    AAdd( aOpc, "X. fin generacija uvoz" )
+    AAdd( aOpc, "U. fin generacija uvoz" )
     AAdd( aOpcexe, {|| fin_gen_uvoz() } )
 
     AAdd( aOpc, "X. admin - init tabele enab/eisp" )

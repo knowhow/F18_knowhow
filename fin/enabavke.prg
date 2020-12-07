@@ -1432,6 +1432,12 @@ FUNCTION export_eNabavke()
 
     SELECT F_TMP
     use_sql("ENAB", cQuery)
+
+    IF reccount() == 0
+        Alert("ENAB - nema podataka za period " + DTOC(dDatOd) + "-" + DTOC(dDatDo))
+        RETURN .F.
+    ENDIF
+
     DO WHILE !EOF()
       xlsx_export_fill_row()
       SKIP

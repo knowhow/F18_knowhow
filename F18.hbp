@@ -51,4 +51,4 @@ reports/*.prg
 {linux}rddmisc.hbc
 {linux}hbhpdf.hbc
 
-{linux}hbxlsxwriter.hbc
+hbxlsxwriter.hbc

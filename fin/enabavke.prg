@@ -41,7 +41,7 @@ FUNCTION parametri_eNabavke
 
     Box(, 17, 80 )
 
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY "***** eIsporuke PARAMETRI *****"
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY "***** eNabavke PARAMETRI *****"
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto klasa dobavljaci        " GET cIdKontoDobav
        nX++
        @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV domaci posl. svrhe  " GET cIdKontoPDV VALID P_Konto(@cIdKontoPDV)

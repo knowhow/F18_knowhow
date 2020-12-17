@@ -80,7 +80,7 @@ FUNCTION PartVanProm()
 
       find_suban_by_konto_partner( cIdFirma, NIL, PARTN->Id )
 
-      WHILE ! Eof() .AND. SUBAN->IdFirma + suban->IdPartner ) == ( cIdFirma + PARTN->Id )
+      WHILE ! Eof() .AND. SUBAN->IdFirma + suban->IdPartner == cIdFirma + PARTN->Id
          IF ( Empty ( cIdKonto ) .OR. SUBAN->IdKonto == cIdKonto ) .AND. dDatOd <= DatDok .AND. DatDok <= dDatDo
             fNema := .F.
             EXIT

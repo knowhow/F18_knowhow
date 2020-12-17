@@ -16,6 +16,8 @@
    - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
 */
 
+STATIC s_nColIzn := 20
+
 FUNCTION fin_nalog_stampa_fill_psuban( cInd, lStampa, dDatNal, oNalog, aNaloziObradjeni )
 
    LOCAL nArr := Select()

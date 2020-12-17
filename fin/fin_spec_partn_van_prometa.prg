@@ -19,8 +19,7 @@ FUNCTION PartVanProm()
    LOCAL   dDatOd := CToD ( "" ), dDatDo := Date ()
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
-   PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), ;
-      cKrit := Space ( 60 ), aUsl
+   PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), cKrit := Space ( 60 ), aUsl
 
    o_konto()
    //o_partner()
@@ -32,17 +31,13 @@ FUNCTION PartVanProm()
       cIdFirma := self_organizacija_id()
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cIdfirma, 2 ), .T. }
    ENDIF
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY " Konto (prazno-svi)" GET cIdKonto ;
-      VALID Empty ( cIdKonto ) .OR. p_konto ( @cIdKonto )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY " Konto (prazno-svi)" GET cIdKonto VALID Empty ( cIdKonto ) .OR. p_konto ( @cIdKonto )
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Kriterij za telefon" GET cKrit PICT "@S30@!";
-      VALID {|| aUsl := Parsiraj ( cKrit, "Telefon" ), ;
-      iif ( aUsl == NIL, .F., .T. ) }
-   @ box_x_koord() + 8, box_y_koord() + 2 SAY "         Pocevsi od" GET dDatOd ;
-      VALID dDatOd <= dDatDo
-   @ box_x_koord() + 10, box_y_koord() + 2 SAY "       Zakljucno sa" GET dDatDo ;
-      VALID dDatOd <= dDatDo
+      VALID {|| aUsl := Parsiraj ( cKrit, "Telefon" ), iif ( aUsl == NIL, .F., .T. ) }
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "         Pocevsi od" GET dDatOd VALID dDatOd <= dDatDo
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "       Zakljucno sa" GET dDatDo VALID dDatOd <= dDatDo
    READ
    ESC_BCR
    BoxC()
@@ -66,13 +61,10 @@ FUNCTION PartVanProm()
    PopWa()
    
    ? Space ( 5 ) + " Kriterij:", cKrit
-   ? Space ( 5 ) + "Za period:", IIF ( Empty ( dDatOd ), "", DToC ( dDatOd ) + " " ) + ;
-      "do", DToC ( dDatDo )
+   ? Space ( 5 ) + "Za period:", IIF ( Empty ( dDatOd ), "", DToC ( dDatOd ) + " " ) + "do", DToC ( dDatDo )
    ?
-   ? Space ( 5 ) + PadR( "Sifra", FIELD_PARTNER_ID_LENGTH ), PadR( "NAZIV", 25 ), ;
-      PadR ( "MJESTO", Len ( PARTN->Mjesto ) ), PadR ( "ADRESA", Len ( PARTN->Adresa ) )
-   ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), ;
-      REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
+   //? Space ( 5 ) + PadR( "Sifra", FIELD_PARTNER_ID_LENGTH ), PadR( "NAZIV", 25 ), PadR ( "MJESTO", Len ( PARTN->Mjesto ) ), PadR ( "ADRESA", Len ( PARTN->Adresa ) )
+   //? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
 
    nBrPartn := 0
    SELECT SUBAN
@@ -85,11 +77,11 @@ FUNCTION PartVanProm()
    GO TOP
    WHILE ! Eof()
       fNema := .T.
-      SELECT SUBAN
-      SEEK cIdFirma + PARTN->Id
-      WHILE ! Eof() .AND. SUBAN->( IdFirma + IdPartner ) == ( cIdFirma + PARTN->Id )
-         IF ( Empty ( cIdKonto ) .OR. SUBAN->IdKonto == cIdKonto ) .AND. ;
-               dDatOd <= DatDok .AND. DatDok <= dDatDo
+
+      find_suban_by_konto_partner( cIdFirma, NIL, PARTN->Id )
+
+      WHILE ! Eof() .AND. SUBAN->IdFirma + suban->IdPartner ) == ( cIdFirma + PARTN->Id )
+         IF ( Empty ( cIdKonto ) .OR. SUBAN->IdKonto == cIdKonto ) .AND. dDatOd <= DatDok .AND. DatDok <= dDatDo
             fNema := .F.
             EXIT
          ENDIF
@@ -102,11 +94,9 @@ FUNCTION PartVanProm()
       SELECT PARTN // while
       SKIP
    END
-   ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), ;
-      REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
+   ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
    ?
-   ? Space ( 5 ) + "Ukupno izlistano", AllTrim ( Str ( nBrPartn ) ), ;
-      "partnera bez prometa"
+   ? Space ( 5 ) + "Ukupno izlistano", AllTrim ( Str ( nBrPartn ) ), "partnera bez prometa"
    EJECT
    end_print()
    CLOSERET

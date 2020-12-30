@@ -468,16 +468,12 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     DO WHILE !EOF()
 
         cMjestoKrajnjePotrosnje := cMjestoKrajnjePotrosnjeIn
-        
+
         hRec["eisporuke_id"] := nRbr
         hRec["porezni_period"] := cPorezniPeriod
         hRec["br_fakt"] := eisp->brdok
         hRec["dat_fakt"] := eisp->datdok
         hRec["jci"] := eisp->jci
-
-        if eisp->pdv_broj == "337324570003"
-            altd()
-        ENDIF
 
         IF eisp->eisp_rbr <> -99999
             // vec postoji stavka 21% u tabeli eisporuke

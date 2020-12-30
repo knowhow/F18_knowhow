@@ -363,7 +363,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
          SELECT trfp2
          SEEK cIdVD + " "
 
-         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema = " " .AND. !Eof()
+         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema == " " .AND. !Eof()
 
             cStavka := Id
 
@@ -433,23 +433,22 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                         EXIT
                      CASE "1"
                         // NEPDV FBiH
-                        cIdKonto := PADR("4730")
+                        cIdKonto := PADR("4730", 7)
                         EXIT
                      CASE "2"
                         // NEPDV RS
-                        cIdKonto := PADR("4731")
+                        cIdKonto := PADR("4731", 7)
                         EXIT
                      CASE "3"
                         // NEPDV BD
-                        cIdKonto := PADR("4732")
+                        cIdKonto := PADR("4732", 7)
                         EXIT
                   ENDSWITCH
 
                ENDIF
 
 
-               
-
+               SELECT fin_pripr
 
                cBrDok := Space( 8 )
                dDatDok := FINMAT->datdok
@@ -463,7 +462,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                SEEK FINMAT->IdFirma + cIdVn + cBrNalF
                IF fin_pripr->( Found() )
                   fExist := .F.
-                  DO WHILE FINMAT->idfirma + cIdvn + cBrNalF == fin_pripr->( IdFirma + idvn + BrNal )
+                  DO WHILE FINMAT->idfirma + cIdvn + cBrNalF == fin_pripr->IdFirma + fin_pripr->idvn + fin_pripr->BrNal
                      IF IdKonto == cIdKonto .AND. IdPartner == cIdPartner .AND. trfp2->d_p == d_p  .AND. idtipdok == FINMAT->idvd .AND. PadR( brdok, 10 ) == PadR( cBrDok, 10 ) .AND. datdok == dDatDok
                         // provjeriti da li se vec nalazi stavka koju dodajemo
                         fExist := .T.

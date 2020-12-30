@@ -70,7 +70,7 @@ FUNCTION f18_email_send( mail_params, attach )
       _files := attach
    ENDIF
 
-
+ 
    IF tip_MailSend( _server, ;
          _port, ;
          _from, ;
@@ -93,7 +93,8 @@ FUNCTION f18_email_send( mail_params, attach )
          _tls, ;
          _smtp_pass, ;
          _charset, ;
-         _encoding )
+         _encoding,;
+         "f18.bug.out.ba" )
 
       _ret := .T.
 
@@ -195,7 +196,7 @@ FUNCTION f18_email_test()
 
    IF Empty( _to )
       MsgBeep( "Nije podesen primaoc u fakt/parametri/razno !!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _mail_params := f18_email_prepare( _subject, _body, NIL, _to )
@@ -232,6 +233,6 @@ FUNCTION email_hash_za_podrska_bring_out( subject, body )
    _mail_params["trace"] := .f.
    _mail_params["mail_cc"] := ""
    _mail_params["mail_bcc"] := ""
-   _mail_params["mail_reply_to"] := ""
+   _mail_params["mail_reply_to"] := "no-reply@bug.out.ba"
 
    RETURN _mail_params

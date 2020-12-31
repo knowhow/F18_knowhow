@@ -551,10 +551,10 @@ FUNCTION get_run_prefix_cmd( cCommand, lAsync )
             cPrefix := "open "
          ENDIF
       ELSE
-         IF cCommand != NIL .AND. Left( cCommand, 9 ) == "xdg-open "
+         IF cCommand != NIL .AND. Left( cCommand, 9 ) == "gio open "
             cPrefix := ""
          ELSE
-            cPrefix := "xdg-open "
+            cPrefix := "LD_LIBRARY_PATH= gio open "
          ENDIF
       ENDIF
    ENDIF

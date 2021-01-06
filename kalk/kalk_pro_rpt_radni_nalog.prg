@@ -16,7 +16,8 @@
 
 FUNCTION kalk_stampa_dok_rn()
 
-   LOCAL nCol1 := nCol2 := 0, npom := 0
+   LOCAL nCol1 := nCol2 := 0, nPom := 0
+   LOCAL nFcj2, nNC
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -48,23 +49,13 @@ FUNCTION kalk_stampa_dok_rn()
 
    SELECT kalk_pripr
 
-   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+   PRIVATE cIdd := kalk_pripr->idpartner + kalk_pripr->brfaktp + kalk_pripr->idkonto + kalk_pripr->idkonto2
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
       nT := nT1 := nT2 := nT3 := nT4 := nT5 := nT6 := nT7 := nT8 := nT9 := nTA := 0
       cBrFaktP := brfaktp; dDatFaktP := datfaktp; cIdpartner := idpartner
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD .AND. idpartner + brfaktp + DToS( datfaktp ) == cidpartner + cbrfaktp + DToS( ddatfaktp )
 
-/*
-   if gmagacin<>"1"
-    if idpartner+brfaktp+idkonto+idkonto2<>cidd
-     set device to screen
-     Beep(2)
-     Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
-     set device to printer
-    endif
-   endif
-*/
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
          select_o_roba( kalk_pripr->IdRoba )
@@ -128,7 +119,7 @@ FUNCTION kalk_stampa_dok_rn()
 
          ENDIF
          @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
-         IF Val( rbr ) < 900
+         IF Val( kalk_pripr->rbr ) < 900
             @  PRow(), PCol() + 1 SAY  idkonto
          ELSE
             @  PRow(), PCol() + 1 SAY  Space( 7 )
@@ -138,18 +129,27 @@ FUNCTION kalk_stampa_dok_rn()
          @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicKol
          nCol1 := PCol() + 1
          @ PRow(), PCol() + 1 SAY fcj                   PICTURE PicCDEM
-         IF Val( rbr ) < 900
-            @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
-            @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
+         IF Val( kalk_pripr->rbr ) < 900
+            nFcj2 := kalk_pripr->FCJ2
+            nNC := kalk_pripr->NC
+            IF round(kalk_pripr->FCJ2, 4) == 0 
+               nFCJ2 := 0.00000001
+            ENDIF
+            IF round(kalk_pripr->NC, 4) == 0
+               nNC := 0.00000001
+            ENDIF
+
+            @ PRow(), PCol() + 1 SAY nPrevoz / nFCJ2 * 100      PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nBankTr / nFCJ2 * 100      PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nSpedTr / nFCJ2 * 100      PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nCarDaz / nFCJ2 * 100      PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nZavTr / nFCJ2 * 100       PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nNC                        PICTURE PicCDEM
+            @ PRow(), PCol() + 1 SAY nMarza / nNC * 100         PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY kalk_pripr->VPC            PICTURE PicCDEM
          ENDIF
 
-         IF Val( rbr ) < 900
+         IF Val( kalk_pripr->rbr ) < 900
             @ PRow() + 1, 11 SAY IdTarifa
             @ PRow(), nCol1    SAY Space( Len( PicCDEM ) )
             @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
@@ -163,7 +163,7 @@ FUNCTION kalk_stampa_dok_rn()
 
          @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
          // @ prow(),pcol()+1  SAY nU1         picture         PICDEM
-         IF Val( rbr ) < 900
+         IF Val( kalk_pripr->rbr ) < 900
             @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nU4         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nU5         PICTURE         PICDEM
@@ -192,4 +192,4 @@ FUNCTION kalk_stampa_dok_rn()
    ? m
 
    RETURN ( NIL )
-// }
+

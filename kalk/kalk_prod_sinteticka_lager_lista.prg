@@ -71,7 +71,6 @@ FUNCTION sint_lager_lista_prodavnice()
    ENDDO
    BoxC()
 
-   altd()
    o_koncij()
   
    MsgO( "Preuzimanje podataka sa SQL servera ..." )

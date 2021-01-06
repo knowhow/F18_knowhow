@@ -569,8 +569,7 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
       //_data_item := fakt_izracunaj_total( _arr, _partn_id, cIdTipDok )
       //nCijena := _data_item[ "ukupno" ]
 
-      
-      altd()
+
       IF field->dindem != Left( ValBazna(), 3 )
            /////////// FIX BUG zaokr na 2 DEC /////////////////
            nCijena :=  field->cijena

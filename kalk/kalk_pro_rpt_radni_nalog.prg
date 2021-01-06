@@ -23,14 +23,15 @@ FUNCTION kalk_stampa_dok_rn()
    // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
-   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
-   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
+   cIdPartner := kalk_pripr->IdPartner; cBrFaktP := kalk_pripr->BrFaktP; dDatFaktP := kalk_pripr->DatFaktP
+   cIdKonto := kalk_pripr->IdKonto; cIdKonto2 := kalk_pripr->IdKonto2
 
    P_COND
    ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    select_o_partner( cIdPartner )
 
+   select_o_koncij(cIdKonto)
    ? "RADNI NALOG:", kalk_pripr->IDZADUZ2
 
    m := "--- ------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"

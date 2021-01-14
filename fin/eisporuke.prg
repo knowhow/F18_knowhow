@@ -446,7 +446,8 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
 
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
     cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
-    
+    cQuery += " and COALESCE(substring(fin_suban.opis from 'EISP:\s*(PRESKOCI)'), '')<>'PRESKOCI'"
+
     /*
         cIdKonto == NIL u slucaju PDV 0%:
         // 04 izvoz
@@ -1126,7 +1127,6 @@ FUNCTION gen_eIsporuke()
     gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "03", cIdKontoPDVAvansi, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
 
     // 01 PDV ostalo 4780 (npr. knjizna odobrenja kupcima)
-    altd()
     gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVOstalo, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
 
 

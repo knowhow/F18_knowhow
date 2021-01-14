@@ -36,10 +36,15 @@ FUNCTION f18_exe_template_file_name( cTemplate )
    RETURN f18_exe_path() + "template" + SLASH + cTemplate
 
 
-FUNCTION download_template( cTemplateName,  cSHA256sum )
+FUNCTION download_template( cTemplateName,  cSHA256sum, cTemplateVer )
 
    IF s_hTemplates == NIL
       s_hTemplates := hb_Hash()
+   ENDIF
+
+   IF cTemplateVer == NIL
+      // default iz f18_ver.ch
+      cTemplateVer := f18_template_ver()
    ENDIF
 
    IF hb_HHasKey( s_hTemplates, cTemplateName )
@@ -47,7 +52,7 @@ FUNCTION download_template( cTemplateName,  cSHA256sum )
    ENDIF
 
    s_cDirF18Template := f18_exe_path() + "template" + SLASH
-   s_cUrl := TEMPLATE_URL_BASE + f18_template_ver() + "/" + cTemplateName
+   s_cUrl := TEMPLATE_URL_BASE + cTemplateVer + "/" + cTemplateName
 
    IF DirChange( s_cDirF18Template ) != 0
       IF MakeDir( s_cDirF18Template ) != 0

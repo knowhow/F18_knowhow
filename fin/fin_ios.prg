@@ -74,8 +74,15 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL GetList := {}
    LOCAL cPrintSaldo0DN := fetch_metric( "ios_print_saldo_0", my_user(), "D" )
 
-   download_template( "ios.odt",  "8d1fa4972d42e54cc0e97e5c8d8c525787fc6b7b4d7c07ce092c38897b48ce85" )
-   download_template( "ios_2.odt", "8a4f3492b7e0372dd8a0c78958fe45159333aaa4b1b2a4d61b7226e9ac1b0225" )
+   /*
+   $ sha256sum ios.odt 
+   f12cc61e99240c9ddb66634d1b55fb679c512f3a8e3df3058651bf50e45242b8  ios.odt
+   $ sha256sum ios_2.odt 
+   b1d6b83bd94e8670ba5705fb772de24ec411eb35977b14b0046342e90aa9394e  ios_2.odt
+   */
+   
+   download_template( "ios.odt",  "f12cc61e99240c9ddb66634d1b55fb679c512f3a8e3df3058651bf50e45242b8", "3.3.13" )
+   download_template( "ios_2.odt", "b1d6b83bd94e8670ba5705fb772de24ec411eb35977b14b0046342e90aa9394e", "3.3.13" )
 
    // o_konto()
    // o_partner()

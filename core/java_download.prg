@@ -58,11 +58,11 @@ FUNCTION java_version()
 
 FUNCTION java_cmd()
 
-   check_java_download()
+   IF is_linux()
+     RETURN "java " + s_cJavaOpts
+   ENDIF
 
-   //IF is_linux()
-    //  RETURN "java " + s_cJavaOpts
-   //ENDIF
+   check_java_download()
 
    // RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + s_cJavaOpts
 
@@ -79,6 +79,10 @@ FUNCTION check_java_download()
    LOCAL lDownload := .F.
    LOCAL cDownloadRazlog := "FILE"
    LOCAL cJavaCmd
+
+   IF is_linux()
+      RETURN .T.
+   ENDIF
 
    IF s_cDirF18Util == NIL
       s_cDirF18Util := f18_exe_path() + "F18_util" + SLASH

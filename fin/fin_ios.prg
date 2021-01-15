@@ -50,7 +50,9 @@ FUNCTION fin_ios_meni()
 
 STATIC FUNCTION mnu_ios_print()
 
-   LOCAL dDatumDo := Date()
+   LOCAL dDatumDo := fetch_metric( "ios_print_datum_do", my_user(), Date() )
+   LOCAL dDatumIOS := fetch_metric( "ios_print_datum_ios", my_user(), Date() )
+
    LOCAL hParams := hb_Hash()
    LOCAL hParametriGenIOS := hb_Hash()
    LOCAL cIdFirma := self_organizacija_id()
@@ -63,11 +65,11 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cPrintTip12 := fetch_metric( "ios_print_tip", my_user(), "1" )
 
    // LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
-   LOCAL dDatumIOS := Date()
+   
    LOCAL nX := 1
    LOCAL _launch, _exp_fields
    LOCAL cXmlIos := my_home() + "data.xml"
-   LOCAL _template := "ios.odt"
+   LOCAL cTemplateOdt := "ios.odt"
    LOCAL cIdPartnerTekuci
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
@@ -80,12 +82,11 @@ STATIC FUNCTION mnu_ios_print()
    $ sha256sum ios_2.odt 
    b1d6b83bd94e8670ba5705fb772de24ec411eb35977b14b0046342e90aa9394e  ios_2.odt
    */
-   
-   download_template( "ios.odt",  "f12cc61e99240c9ddb66634d1b55fb679c512f3a8e3df3058651bf50e45242b8", "3.3.13" )
+ 
+   //download_template( "ios.odt",  "8d1fa4972d42e54cc0e97e5c8d8c525787fc6b7b4d7c07ce092c38897b48ce85", "3.1.0" )
+   //download_template( "ios_2.odt", "c0ef9bd9871aa73d09c343c19681ae7a449ffbf0a7dd0196ca548a04fd080d03", "3.1.0" )
+   download_template( "ios.odt",  "c3b3b3e66618592f952d582f9ada064e402e0ada9fcd3a77211482176fb948a9", "3.3.13" )
    download_template( "ios_2.odt", "b1d6b83bd94e8670ba5705fb772de24ec411eb35977b14b0046342e90aa9394e", "3.3.13" )
-
-   // o_konto()
-   // o_partner()
 
    Box(, 16, 65, .F. )
 
@@ -144,6 +145,8 @@ STATIC FUNCTION mnu_ios_print()
    set_metric( "ios_print_prelom", my_user(), _prelomljeno )
    set_metric( "ios_print_tip", my_user(), cPrintTip12 )
    set_metric( "ios_print_saldo_0", my_user(), cPrintSaldo0DN )
+   set_metric( "ios_print_datum_ios", my_user(), dDatumIOS )
+   set_metric( "ios_print_datum_do", my_user(), dDatumDo )
 
    cIdFirma := Left( cIdFirma, 2 )
 
@@ -268,10 +271,10 @@ STATIC FUNCTION mnu_ios_print()
    IF cPrintTip12 == "1"
 
       IF Empty( cIdPartner ) .OR. cNastavak == "D" // vise partnera
-         _template := "ios_2.odt"
+         cTemplateOdt := "ios_2.odt"
       ENDIF
 
-      IF generisi_odt_iz_xml( _template, cXmlIos )
+      IF generisi_odt_iz_xml( cTemplateOdt, cXmlIos )
          prikazi_odt()
       ENDIF
 

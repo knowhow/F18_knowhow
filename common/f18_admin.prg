@@ -12,6 +12,27 @@
 #include "f18.ch"
 
 
+FUNCTION is_ramaglas()
+
+   LOCAL hDbServerParams := my_server_params()
+
+   IF Left( hDbServerParams[ "database" ], 3 ) == "rg_" // ne dirati ramaglas radi RNAL koristenja semafora
+     RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+FUNCTION is_rudnikze()
+
+   LOCAL hDbServerParams := my_server_params()
+   
+   IF Left( hDbServerParams[ "database" ], 4 ) == "rmu_" // ne dirati ramaglas radi RNAL koristenja semafora
+        RETURN .T.
+   ENDIF
+   
+   RETURN .F.
+
+
 CLASS F18Admin
 
    VAR update_app_f18
@@ -102,7 +123,7 @@ METHOD F18Admin:sql_cleanup()
 
    cQuery := "" // select max(version) from public.schema_migrations;"
 
-   IF Left( hDbServerParams[ "database" ], 3 ) != "rg_" // ne dirati ramaglas radi RNAL koristenja semafora
+   IF !is_ramaglas() // ne dirati ramaglas radi RNAL koristenja semafora
       cQuery += "DROP SCHEMA IF EXISTS sem CASCADE;"
 
       FOR EACH cItem IN { "banke", "dest", "dopr", "epdv_kif", "epdv_kuf", "epdv_pdv", "epdv_sg_kif", "epdv_sg_kuf", ;
@@ -1320,17 +1341,21 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_sint;"
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_nalog;"
 
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_suban;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_anal;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_sint;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_nalog;"
+   IF is_rudnikze()
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_suban;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_anal;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_sint;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_nalog;"
+   ENDIF
 
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it2;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log;"
-   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit;"
+   IF is_ramaglas()
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it2;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit;"
+   ENDIF
 
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kuf;"
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kif;"

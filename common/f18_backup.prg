@@ -391,7 +391,7 @@ METHOD F18Backup:backup_server()
    ::get_windows_ping_time()
    ::get_removable_drive()
 
-   F18Admin():sql_cleanup_all()
+   //F18Admin():sql_cleanup_all()
 
    F18Admin():relogin_as( hServerParams[ "user" ],  hServerParams[ "password" ], hServerParams[ "database" ] )
 

@@ -1439,7 +1439,8 @@ FUNCTION export_eNabavke()
     ENDIF
     s_cXlsxName := my_home_root() + "enabavke_" + dtos(dDatOd) + "_" + dtos(dDatDo) + ".xlsx"
 
-    cQuery := "select * from public.enabavke where dat_fakt_prijem >=" + sql_quote(dDatOd) + " AND dat_fakt_prijem <=" + sql_quote(dDatDo)
+    cQuery := "select * from public.enabavke"
+    cQuery += " where dat_fakt_prijem >=" + sql_quote(dDatOd) + " AND dat_fakt_prijem <=" + sql_quote(dDatDo)
     cQuery += " ORDER BY enabavke_id"
 
     SELECT F_TMP

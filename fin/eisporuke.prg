@@ -771,188 +771,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
 
 
 
-/*
-
- -- 4321 - dobavljaci nepdv obveznici, ili fakture PDV0  4320 - ali u opisu ima PDV0 (isporukka dobrara i usluge na koje se ne obracunava pdv)
-   select get_sifk('PARTN', 'PDVB', idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', idpartner) as jib,  
-        (case when d_p='2' then 1 else -1 end) * iznosbhd as iznos,
-        fin_suban.idkonto, partn.id, partn.naz, idkonto, fin_suban.* from fmk.fin_suban 
-   left join fmk.partn on fin_suban.idpartner=partn.id
-   where (trim(fin_suban.idkonto) = '4321' or (trim(fin_suban.idkonto) = '4320' and opis like '%PDV0%' )) and 
-         fin_suban.datdok >= '2020-10-01' and fin_suban.datdok <= '2020-10-31' 
-        and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
-
-
-Ovaj upit je bolji:
-
- -- 4321 - dobavljaci nepdv obveznici, ili fakture PDV0  4320 - ali u opisu ima PDV0 (isporukka dobrara i usluge na koje se ne obracunava pdv)
-select get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib,  
-        (case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos,
-        fin_suban.idkonto, partn.id, partn.naz, fin_suban.idkonto, sub2.idkonto as idkonto2
-   from fmk.fin_suban 
-   left join fmk.partn on fin_suban.idpartner=partn.id
-   left join fmk.fin_suban sub2 on fin_suban.brdok=sub2.brdok and fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal and (sub2.idkonto like '27%' or sub2.idkonto like '5559%')
-   where trim(fin_suban.idkonto) like '432%' and 
-         fin_suban.datdok >= '2020-10-01' and fin_suban.datdok <= '2020-10-31'
-         and sub2.idkonto is null
-        and not fin_suban.idvn in ('PD','IB', 'B1', 'B2', 'B3');
-
-STATIC FUNCTION gen_isporuke_stavke_pdv0(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cPDVNPExclude, cNabExcludeIdvn, lPDVNule, hUkupno )
-
-    LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
-    LOCAL cQuery, cTmps
-    LOCAL cCSV := ";"
-    LOCAL n32, n33, n34
-    LOCAL cPDVBroj, cJib
-    LOCAL nPDVNP, nPDVPosl
-    LOCAL hRec := hb_hash()
-
-    
-    cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
-
-    cSelectFields := "SELECT get_sifk('PARTN', 'PDVB', fin_suban.idpartner) as pdv_broj, get_sifk('PARTN', 'IDBR', fin_suban.idpartner) as jib,"
-    cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd as iznos,"
-    cSelectFields += "fin_suban.idkonto as idkonto, partn.id, partn.naz, partn.adresa, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal,fin_suban.rbr,"
-    cSelectFields += "fin_suban.brdok, fin_suban.opis, fin_suban.d_p, fin_suban.datdok, fin_suban.datval,"
-    cSelectFields += "partn.id as partn_id, partn.naz as partn_naz, partn.adresa as partn_adresa, partn.ptt as partn_ptt, partn.mjesto as partn_mjesto, partn.rejon partn_rejon"
-    
-    cBrDokFinFin2 := "fin_suban.brdok=sub2.brdok"
-    cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
-    // ovdje fin_suban 43% konto povezujemo sa sub2.idkonto 27%/5559% i ocekujemo DA NEMA VEZE - da ne postoji uparen konto PDV-a ! 
-    cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2 
-    cLeftJoinFin2 += "  and (sub2.idkonto like '27%' or sub2.idkonto like '" + trim( cPDVNPExclude) + "%')"
-
-    cQuery := cSelectFields
-    cQuery += " from fmk.fin_suban "
-    cQuery += " left join fmk.partn on fin_suban.idpartner=partn.id"
-    cQuery += cLeftJoinFin2
-    cQuery += " where fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
-    cQuery += " and sub2.idkonto is null"
-    cQuery += " and trim(fin_suban.idkonto) like '432%'"
-    // or (trim(fin_suban.idkonto) = '4320' and opis like '%PDV0%' )) and 
- 
-
-    IF !use_sql( "ENAB",  cQuery + " order by fin_suban.datdok, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr")
-        RETURN .F.
-    ENDIF
-        
-    DO WHILE !EOF()
-
-
-        hRec["enabavke_id"] := nRbr
-        hRec["tip"] := cTipDokumenta
-        hRec["porezni_period"] := cPorezniPeriod
-        hRec["br_fakt"] := eisp->brdok
-        hRec["dat_fakt"] := eisp->datdok
-        hRec["dat_fakt_prijem"] := eisp->datdok
-        hRec["dob_naz"] := say_string(eisp->partn_naz, 100, .F.)
-        hRec["dob_sjediste"] := say_string(trim(eisp->partn_ptt) + " " + trim(eisp->partn_mjesto) + " " + trim(eisp->partn_adresa), 100, .F.)
-
-        cPDVBroj := eisp->pdv_broj 
-        // uvoz
-        IF cTipDokumenta == "04" .OR. lPDVNule
-            cPDVBroj := REPLICATE("0",12)
-        ENDIF
-        hRec["dob_pdv"] := cPDVBroj
-        cJib := eisp->jib
-        IF LEN(TRIM(cJib)) < 13
-            cJib := ""
-        ENDIF
-        hRec["dob_jib"] := cJib
-
-        nPDVPosl := 0
-        nPDVNP := 0
-        n32 := 0
-        n33 := 0
-        n34 := 0
-
-        hRec["fakt_iznos_bez_pdv"] := eisp->iznos
-        hRec["fakt_iznos_sa_pdv"] := eisp->iznos
-        hRec["fakt_iznos_poljo_pausal"] := 0
-
-        hRec["fakt_iznos_pdv"] := nPDVPosl
-        hRec["fakt_iznos_pdv_np"] := nPDVNP
-        hRec["fakt_iznos_pdv_np_32"] := n32 
-        hRec["fakt_iznos_pdv_np_33"] := n33
-        hRec["fakt_iznos_pdv_np_34"] := n34
-        hRec["fin_idfirma"] := eisp->idfirma
-        hRec["fin_idvn"] := eisp->idvn
-        hRec["fin_brnal"] := eisp->brnal
-        hRec["fin_rbr"] := eisp->rbr
-        hRec["opis"] := eisp->opis
-        db_insert_enab( hRec)
-
-        // Vrsta sloga 2 = slogovi nabavki
-        ? "2" + cCSV
-        ?? cPorezniPeriod + cCSV
-        ?? PADL(AllTrim(STR(nRbr, 10, 0)), 10, "0") + cCSV
-        ?? cTipDokumenta + cCSV
-        // 5. broj fakture ili dokumenta
-        ?? say_string(eisp->brdok, 100) + cCSV
-        // 6. datum fakture ili dokumenta
-        ?? STRTRAN(sql_quote(eisp->datdok),"'","") + cCSV
-        // 7. datum prijema
-        ?? STRTRAN(sql_quote(eisp->datdok),"'","") + cCSV
-        // 8. naziv dobavljaca
-        ?? say_string(eisp->partn_naz, 100) + cCSV
-        // Sjediste dobavljaca
-        ?? say_string(trim(eisp->partn_ptt) + " " + trim(eisp->partn_mjesto) + " " + trim(eisp->partn_adresa), 100) + cCSV
-
-      
-        // 10. PDV dobav
-        ??  cPDVBroj + cCSV
-        // 11. JIB dobav
-        ?? cJib + cCSV
-        // 12. bez PDV
-        ?? say_number(eisp->iznos) + cCSV
-        hUkupno["bez"] += eisp->iznos
-
-        // 13. sa PDV
-        ?? say_number(eisp->iznos) + cCSV
-        hUkupno["sa_pdv"] += eisp->iznos
-
-        // 14. pausalna naknada
-        ?? say_number(0) + cCSV
-        hUkupno["paus"] += 0
-
-        
-        hUkupno["np"] += nPDVNP
-        hUkupno["posl"] += nPDVPosl
-
-        // 15. ulazni pdv 
-        ?? say_number(nPDVPosl + nPDVNP) + cCSV
-        
-        // 16. ulazni PDV koji se moze odbiti
-        ?? say_number(nPDVPosl) + cCSV
- 
-        // 17. ulazni PDV koji se ne moze odbiti
-        ?? say_number(nPDVNP) + cCSV
-        
-        hUkupno["np_32"] += n32
-        hUkupno["np_33"] += n33
-        hUkupno["np_34"] += n34
-
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 32 PDV FBiH
-        ?? say_number(n32) + cCSV
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 33 PDV RS
-        ?? say_number(n33) + cCSV
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 34 PDV Brcko
-        ?? say_number(n34)
-
-        hUkupno["redova"] += 1
-        nRbr++
-
-        SKIP
-    ENDDO
-
-    USE
-
-    RETURN .T.
-*/
-
-
-
 FUNCTION gen_eIsporuke()
     
     LOCAL nX := 1
@@ -1178,8 +996,6 @@ FUNCTION gen_eIsporuke()
 
     RETURN .T.
        
-    
-    
 
 STATIC FUNCTION xlsx_export_fill_row()
 
@@ -1197,10 +1013,12 @@ STATIC FUNCTION xlsx_export_fill_row()
     AADD(aKolona, { "C", "JCI", 10, eisp->jci })
     AADD(aKolona, { "D", "Dat.fakt", 12, eisp->dat_fakt })
 
+    AADD(aKolona, { "C", "Kupac id", 10, eisp->kup_id })
     AADD(aKolona, { "C", "Kupac naziv", 60, eisp->kup_naz })
     AADD(aKolona, { "C", "Kupac sjediste", 100, eisp->kup_sjediste })
     AADD(aKolona, { "C", "Kup. PDV", 12, eisp->kup_pdv })
     AADD(aKolona, { "C", "Kup. JIB", 13, eisp->kup_jib })
+    AADD(aKolona, { "C", "Osl.Cl", 5, eisp->kup_osl_clan })
 
     AADD(aKolona, { "M", "Fakt.SA PDV", 15, eisp->fakt_iznos_sa_pdv })
     AADD(aKolona, { "M", "F.SA PDV interna", 15, eisp->fakt_iznos_sa_pdv_interna })
@@ -1294,11 +1112,13 @@ FUNCTION export_eIsporuke()
     ENDIF
     s_cXlsxName := my_home_root() + "eisporuke_" + dtos(dDatOd) + "_" + dtos(dDatDo) + ".xlsx"
 
-    cQuery := "select * from public.eisporuke where dat_fakt >=" + sql_quote(dDatOd) + " AND dat_fakt <=" + sql_quote(dDatDo)
+    cQuery := "select *, fin_suban.idpartner as kup_id, get_sifk('PARTN', 'PDVO', fin_suban.idpartner) as kup_osl_clan from public.eisporuke"
+    cQuery += " LEFT JOIN fmk.fin_suban on eisporuke.fin_idfirma=fin_suban.idfirma and eisporuke.fin_idvn=fin_suban.idvn and eisporuke.fin_brnal=fin_suban.brnal and eisporuke.fin_rbr=fin_suban.rbr"
+    cQuery += " LEFT JOIN partn on fin_suban.idpartner=partn.id"
+    cQuery += " WHERE dat_fakt >=" + sql_quote(dDatOd) + " AND dat_fakt <=" + sql_quote(dDatDo)
     cQuery += " ORDER BY eisporuke_id"
 
     SELECT F_TMP
-
     use_sql("EISP", cQuery)
 
     IF reccount() == 0

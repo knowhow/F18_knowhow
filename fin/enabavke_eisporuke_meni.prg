@@ -186,19 +186,33 @@ FUNCTION eNab_eIsp_PDV()
     hPDV["12"] += ROUND(eisp->fakt_iznos, 0)
     use
 
-    // isporuke PDV0 po ostalim osnovama
-    cQuery := "select sum(fakt_iznos_sa_pdv0_ostalo) as fakt_iznos" 
-    cQuery += " FROM public.eisporuke WHERE porezni_period=" + sql_quote(cPorezniPeriod)
+    altd()
+    // oslobodjeno po clnu 24 i 25 ide u polje PDV 13
+    cQuery := "select sum(fakt_iznos_sa_pdv0_ostalo) as fakt_iznos FROM public.eisporuke" 
+    cQuery += " LEFT JOIN fmk.fin_suban on eisporuke.fin_idfirma=fin_suban.idfirma and eisporuke.fin_idvn=fin_suban.idvn and eisporuke.fin_brnal=fin_suban.brnal and eisporuke.fin_rbr=fin_suban.rbr"
+    cQuery += " WHERE porezni_period=" + sql_quote(cPorezniPeriod)
+    cQuery += " and substr(get_sifk('PARTN', 'PDVO', fin_suban.idpartner),1,2) IN ('24','25')"
     use_sql("EISP", cQuery)
     hPDV["13"] := ROUND(eisp->fakt_iznos, 0)
     use
 
-    // isporuke sve iznos bez pdv osim izvoz i pdv0_ostalo
+    // oslobodjeno po ostalim clanovima ide u polje PDV 11
+    cQuery := "select sum(fakt_iznos_sa_pdv0_ostalo) as fakt_iznos FROM public.eisporuke" 
+    cQuery += " LEFT JOIN fmk.fin_suban on eisporuke.fin_idfirma=fin_suban.idfirma and eisporuke.fin_idvn=fin_suban.idvn and eisporuke.fin_brnal=fin_suban.brnal and eisporuke.fin_rbr=fin_suban.rbr"
+    cQuery += " WHERE porezni_period=" + sql_quote(cPorezniPeriod)
+    cQuery += " and substr(get_sifk('PARTN', 'PDVO', fin_suban.idpartner),1,2) NOT IN ('24','25')"
+    use_sql("EISP", cQuery)
+    hPDV["11"] := eisp->fakt_iznos
+    use
+
+    // isporuke sve iznos bez pdv osim izvoz i pdv0_ostalo clan 24 i 25
     cQuery := "select sum(fakt_iznos_bez_pdv + fakt_iznos_bez_pdv_np) as fakt_iznos_bez_pdv, sum(fakt_iznos_pdv + fakt_iznos_pdv_np) as iznos_pdv" 
     cQuery += " FROM public.eisporuke WHERE porezni_period=" + sql_quote(cPorezniPeriod)
     cQuery += " AND tip<>'04' and fakt_iznos_sa_pdv0_ostalo=0 and fakt_iznos_sa_pdv0_izvoz=0"
     use_sql("EISP", cQuery)
-    hPDV["11"] := ROUND(eisp->fakt_iznos_bez_pdv, 0)
+    hPDV["11"] += eisp->fakt_iznos_bez_pdv
+    hPDV["11"] := ROUND(hPDV["11"], 0)
+
     // izlazni PDV
     hPDV["51"] := ROUND(eisp->iznos_pdv, 0)
     use

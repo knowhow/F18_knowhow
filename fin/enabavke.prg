@@ -340,6 +340,41 @@ FUNCTION check_eNabavke()
 
     NEXT
 
+    cQuery := "select idvn,brnal,brdok from fmk.fin_suban"
+    cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoDobav) + "%'"
+    cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
+    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += " group by idvn,brnal,brdok"
+    cQuery += " having count(*) > 1"
+
+    IF !use_sql( "ENAB", cQuery + " order by idvn, brnal, brdok")
+       RETURN .F.
+    ENDIF
+
+    IF reccount() > 0
+        nX:=1
+        Box( ,15, 85)
+        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "****** Dobavljači sa duplim brojevima veze:"
+    
+        ++nX
+        DO WHILE !EOF()
+            @ box_x_koord() + nX++, box_y_koord() + 2 SAY "BRNAL: " + enab->idvn + "-" + enab->brnal + " BRDOK: " + enab->brdok
+            IF nX > 13
+               Inkey(0)
+               nX := 3
+            ENDIF
+            IF LastKey() == K_ESC
+                EXIT
+            ENDIF
+            skip
+        ENDDO
+
+        Inkey(0)
+        BoxC()
+    ENDIF
+
+    USE
+
     RETURN .T.
 
 

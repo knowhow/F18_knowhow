@@ -166,7 +166,6 @@ FUNCTION check_eIsporuke()
 
     ++nX
     DO WHILE !EOF()
-
         IF !is_part_pdv_oslob_po_clanu(eisp->idpartner) .AND. !partner_is_ino(eisp->idpartner )
           @ box_x_koord() + nX++, box_y_koord() + 2 SAY eisp->idfirma + "-" + eisp->idvn + "-" + eisp->brnal + " Rbr:" + str(eisp->rbr,4) +;
                    " Konto:" + trim(eisp->idkonto) + " / " + trim(eisp->idkonto2)
@@ -181,8 +180,45 @@ FUNCTION check_eIsporuke()
         ENDIF
         skip
     ENDDO
+
     Inkey(0)
     BoxC()
+
+    USE
+
+    cQuery := "select idvn,brnal,brdok from fmk.fin_suban"
+    cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoKupac) + "%'"
+    cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
+    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += " group by idvn,brnal,brdok"
+    cQuery += " having count(*) > 1"
+
+    IF !use_sql( "EISP", cQuery + " order by idvn, brnal, brdok")
+       RETURN .F.
+    ENDIF
+
+    IF reccount() > 0
+        nX:=1
+        Box( ,15, 85)
+        @ box_x_koord() + nX++, box_y_koord() + 2 SAY "****** Kupci sa duplim brojevima veze:"
+    
+        ++nX
+        DO WHILE !EOF()
+            @ box_x_koord() + nX++, box_y_koord() + 2 SAY "BRNAL: " + eisp->idvn + "-" + eisp->brnal + " BRDOK: " + eisp->brdok
+            IF nX > 13
+               Inkey(0)
+               nX := 3
+            ENDIF
+            IF LastKey() == K_ESC
+                EXIT
+            ENDIF
+            skip
+        ENDDO
+
+        Inkey(0)
+        BoxC()
+    ENDIF
+
 
     USE
     RETURN .T.

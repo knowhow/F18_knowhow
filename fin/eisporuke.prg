@@ -402,6 +402,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     LOCAL cBrDok
     LOCAL cTipDokumenta2
     LOCAL cMjestoKrajnjePotrosnje
+    LOCAL cOpisIznosFaktureIzvoz := ""
 
 
     LOCAL cIdKontoKupac := trim(fetch_metric( "fin_eisp_idkonto_kup", NIL, '21'))
@@ -422,6 +423,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "0 as bez_pdv,"
         cSelectFields += "0 as from_opis_osn_pdv17,"
         cSelectFields += "substring(fin_suban.opis from 'JCI:\s*(\d+)') as JCI,"
+        cSelectFields += "COALESCE(substring(fin_suban.opis from 'JCI-IZN:\s*([\d.]+)')::DECIMAL, 0.0) as JCI_IZN,"
         cSelectFields += "fin_suban.idkonto as idkonto, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
         
     ELSE
@@ -430,6 +432,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "(case when fin_suban.d_p='2' then 1 else -1 end) * fin_suban.iznosbhd  as pdv,"
         cSelectFields += "(case when sub2.d_p='1' then 1 else -1 end) * sub2.iznosbhd  as iznos_sa_pdv,"
         cSelectFields += "'' as JCI,"
+        cSelectFields += "0 as JCI_IZN,"
         cSelectFields += "COALESCE(substring(sub2.opis from 'OSN-PDV17:\s*([-+\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
         cSelectFields += "fin_suban.idkonto as idkonto, sub2.idkonto as idkonto2, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
     ENDIF
@@ -534,6 +537,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             
         ENDIF
 
+        cOpisIznosFaktureIzvoz := ""
         IF cTipDokumenta == "04"
             cBrDok := eisp->jci
         else   
@@ -631,7 +635,9 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
 
         ELSEIF cTipDokumenta == "04" 
             // izvoz
-            nOsnovicaIzvoz := eisp->iznos_sa_pdv
+            nOsnovicaIzvoz := eisp->jci_izn
+            cOpisIznosFaktureIzvoz := " (IZNOS FAKTURE : " + ALLTRIM(STR(eisp->iznos_sa_pdv, 12,2)) + ")"
+            //nOsnovicaIzvoz := eisp->iznos_sa_pdv
 
         ELSEIF cTipDokumenta <> "04" .AND. ROUND(eisp->pdv, 2) == 0
 
@@ -724,7 +730,10 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         hRec["fin_idvn"] := eisp->idvn
         hRec["fin_brnal"] := eisp->brnal
         hRec["fin_rbr"] := eisp->rbr
-        hRec["opis"] := eisp->opis
+        hRec["opis"] := TRIM(eisp->opis) 
+        IF !Empty(cOpisIznosFaktureIzvoz)
+            hRec["opis"] += " " + cOpisIznosFaktureIzvoz
+        ENDIF
 
         IF hRec["kup_jib"] == REPLICATE("9", 13)
             hRec["kup_jib"] := ""

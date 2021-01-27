@@ -31,19 +31,19 @@ FUNCTION parametri_eIsporuke
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto kupac                             " GET cIdKontoKupac
 
        nX++
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV pdv obveznici                 " GET cIdKontoPDV VALID P_Konto(@cIdKontoPDV)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV primljeni avansi              " GET cIdKontoPDVAvansi VALID P_Konto(@cIdKontoPDVAvansi)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV interne fakture neposl. svrhe " GET cIdKontoPDVInterne VALID P_Konto(@cIdKontoPDVInterne)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV pdv obveznici                 " GET cIdKontoPDV VALID !Empty(cIdKontoPDV)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV primljeni avansi              " GET cIdKontoPDVAvansi VALID !Empty(cIdKontoPDVAvansi)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV interne fakture neposl. svrhe " GET cIdKontoPDVInterne VALID !Empty(cIdKontoPDVInterne)
 
        nX++
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici FBiH          " GET cIdKontoPDVNeFBiH VALID P_Konto(@cIdKontoPDVNeFBiH)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici RS            " GET cIdKontoPDVNeRS VALID P_Konto(@cIdKontoPDVNeRS)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici BD            " GET cIdKontoPDVNeBD VALID P_Konto(@cIdKontoPDVNeBD)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici FBiH          " GET cIdKontoPDVNeFBiH VALID !Empty(cIdKontoPDVNeFBiH)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici RS            " GET cIdKontoPDVNeRS VALID !Empty(cIdKontoPDVNeRS)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV nepdv obveznici BD            " GET cIdKontoPDVNeBD VALID !Empty(cIdKontoPDVNeBD)
 
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica            " GET cIdKontoPDVUslugeStranaLica VALID P_Konto(@cIdKontoPDVUslugeStranaLica)
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV posebna schema                " GET cIdKontoPDVSchema VALID P_Konto(@cIdKontoPDVSchema)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica            " GET cIdKontoPDVUslugeStranaLica VALID !Empty(cIdKontoPDVUslugeStranaLica)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV posebna schema                " GET cIdKontoPDVSchema VALID !Empty(cIdKontoPDVSchema)
        
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV ostalo                        " GET cIdKontoPDVOstalo VALID P_Konto(@cIdKontoPDVOstalo)
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV ostalo                        " GET cIdKontoPDVOstalo VALID !Empty(cIdKontoPDVOstalo)
 
 
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji su isključuju iz generacije e-nabavki/isporuka"

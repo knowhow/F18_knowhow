@@ -5,7 +5,7 @@ set HB_COMPILER=msvc
 
 set F18_DEBUG=
 set F18_POS=1
-set DATE=26.01.2021
+set DATE=27.01.2021
 set VERSION=3.3.20
 
 IF [%VERSION%]==[] (

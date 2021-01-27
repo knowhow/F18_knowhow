@@ -43,26 +43,26 @@ FUNCTION parametri_eNabavke
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY "***** eNabavke PARAMETRI *****"
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto klasa dobavljaci        " GET cIdKontoDobav
        nX++
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV domaci posl. svrhe  " GET cIdKontoPDV VALID P_Konto(@cIdKontoPDV)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV domaci VANPOSLOVNE  " GET cIdKontoPDVNP VALID P_Konto(@cIdKontoPDVNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV domaci posl. svrhe  " GET cIdKontoPDV VALID !Empty(cIdKontoPDV)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV domaci VANPOSLOVNE  " GET cIdKontoPDVNP VALID !Empty(cIdKontoPDVNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV uvoz                " GET cIdKontoPDVUvoz VALID P_Konto(@cIdKontoPDVUvoz)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV uvoz VANPOSLOVNO    " GET cIdKontoPDVUvozNP VALID P_Konto(@cIdKontoPDVUvozNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV uvoz                " GET cIdKontoPDVUvoz VALID !Empty(cIdKontoPDVUvoz)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV uvoz VANPOSLOVNO    " GET cIdKontoPDVUvozNP VALID !Empty(cIdKontoPDVUvozNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV dati avansi         " GET cIdKontoPDVAvansi VALID P_Konto(@cIdKontoPDVAvansi)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV dati avansi VANPOSL " GET cIdKontoPDVAvansiNP VALID P_Konto(@cIdKontoPDVAvansiNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV dati avansi         " GET cIdKontoPDVAvansi VALID !Empty(cIdKontoPDVAvansi)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV dati avansi VANPOSL " GET cIdKontoPDVAvansiNP VALID !Empty(cIdKontoPDVAvansiNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica  " GET cIdKontoPDVUslugeStranaLica VALID P_Konto(@cIdKontoPDVUslugeStranaLica)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "usluge strana lica VANPOSL    " GET cIdKontoPDVUslugeStranaLicaNP VALID P_Konto(@cIdKontoPDVUslugeStranaLicaNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV usluge strana lica  " GET cIdKontoPDVUslugeStranaLica VALID !Empty(cIdKontoPDVUslugeStranaLica)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "usluge strana lica VANPOSL    " GET cIdKontoPDVUslugeStranaLicaNP VALID !Empty(cIdKontoPDVUslugeStranaLicaNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV paušal poljoprivr.  " GET cIdKontoPDVPolj VALID P_Konto(@cIdKontoPDVPolj)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "paušal poljoprivr. VANPOSL    " GET cIdKontoPDVPoljNP VALID P_Konto(@cIdKontoPDVPoljNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV paušal poljoprivr.  " GET cIdKontoPDVPolj VALID !Empty(cIdKontoPDVPolj)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "paušal poljoprivr. VANPOSL    " GET cIdKontoPDVPoljNP VALID !Empty(cIdKontoPDVPoljNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV posebna schema      " GET cIdKontoPDVSchema VALID P_Konto(@cIdKontoPDVSchema)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "posebna schema VANPOSL        " GET cIdKontoPDVSchemaNP VALID P_Konto(@cIdKontoPDVSchemaNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV posebna schema      " GET cIdKontoPDVSchema VALID !Empty(cIdKontoPDVSchema)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "posebna schema VANPOSL        " GET cIdKontoPDVSchemaNP VALID P_Konto(cIdKontoPDVSchemaNP)
 
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV ostalo              " GET cIdKontoPDVOstalo VALID P_Konto(@cIdKontoPDVOstalo)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV ostalo VANPOSL      " GET cIdKontoPDVOstaloNP VALID P_Konto(@cIdKontoPDVOstaloNP)
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV ostalo              " GET cIdKontoPDVOstalo VALID !Empty(cIdKontoPDVOstalo)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV ostalo VANPOSL      " GET cIdKontoPDVOstaloNP VALID !Empty(cIdKontoPDVOstaloNP)
 
 
        nX++

@@ -5,7 +5,7 @@ STATIC s_cXlsxName := NIL
 STATIC s_pWorkBook, s_pWorkSheet, s_nWorkSheetRow
 STATIC s_pMoneyFormat, s_pDateFormat
 
-FUNCTION parametri_eNabavke
+FUNCTION parametri_eNabavke()
 
     LOCAL nX := 1
     LOCAL GetList := {}
@@ -455,7 +455,6 @@ GRANT ALL ON TABLE public.eNabavke TO xtrole;
 
 
 
-
 STATIC FUNCTION db_insert_enab( hRec )
 
     LOCAL cQuery := "INSERT INTO public.enabavke", oRet
@@ -599,7 +598,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cSelectFields += "(case when sub3.d_p='1' then 1 else -1 end) * sub3.iznosbhd as iznos_pdv_np,"
 
     // iz opisa ako ima ekstraktovati JCI, PDV0 osnovicu, PDV17 osnovicu, PDV17 neposlovnu osnovicu
-    cSelectFields += "substring(fin_suban.opis from 'JCI:\s*(\d+)') as JCI,"
+    cSelectFields += "substring(fin_suban.opis from 'JCI:\s*([A-z]*\d+)') as JCI,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV0:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv0,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
     cSelectFields += "COALESCE(substring(fin_suban.opis from 'OSN-PDV17NP:\s*([\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17np,"
@@ -631,7 +630,8 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cQuery += cLeftJoinFin3
     cQuery += " left join fmk.partn on fin_suban.idpartner=partn.id"
 
-    cQuery += " left join public.enabavke on fin_suban.idfirma=enabavke.fin_idfirma and fin_suban.idvn=enabavke.fin_idvn and fin_suban.brnal=enabavke.fin_brnal and fin_suban.rbr=enabavke.fin_rbr"
+    cQuery += " left join public.enabavke on fin_suban.idfirma=enabavke.fin_idfirma and fin_suban.idvn=enabavke.fin_idvn"
+    cQuery += " and fin_suban.brnal=enabavke.fin_brnal and fin_suban.rbr=enabavke.fin_rbr and extract(year from  fin_suban.datdok)=extract(year from  enabavke.dat_fakt)"
  
     cQuery += " where fin_suban.idkonto like  '" + Trim(cIdKontoDobav) + "%'" 
     // dobavljac potrazuje, sub2.d_p, sub3.d_p duguje
@@ -651,7 +651,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     IF !use_sql( "ENAB", cQuery + " order by fin_suban.datdok, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr")
         RETURN .F.
     ENDIF
-
+altd()
     DO WHILE !EOF()
 
         IF cTipDokumenta == "04"
@@ -719,6 +719,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                cTipDokumenta2 := "01"
             ENDIF
         ENDIF
+
 
         // ako se radi o vrsti naloga koji zelimo oznaciti u CSV kao tip '05'
         IF enab->idvn $ cNabIdvn05
@@ -1166,7 +1167,6 @@ FUNCTION gen_eNabavke()
     LOCAL cNabExcludeIdvn := PadR( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,B3,PD" ), 100 )
     LOCAL cNabIdvn05 := PadR( fetch_metric( "fin_enab_idvn_05", NIL, "05,06,07" ), 100 )
 
-
     LOCAL cPDV  := fetch_metric( "fin_enab_my_pdv", NIL, PadR( "<POPUNI>", 12 ) )
     LOCAL dDatOd := fetch_metric( "fin_enab_dat_od", my_user(), DATE()-1 )
     LOCAL dDatDo := fetch_metric( "fin_enab_dat_do", my_user(), DATE() )
@@ -1182,7 +1182,6 @@ FUNCTION gen_eNabavke()
 
     LOCAL GetList := {}
     LOCAL cLokacijaExport := my_home() + "export" + SLASH, nCreate
-
 
     Box(, 6, 70 )
         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 " Vaš PDV broj:" GET cPDV
@@ -1228,7 +1227,6 @@ FUNCTION gen_eNabavke()
     set_metric( "fin_enab_dat_od", my_user(), dDatOd )
     set_metric( "fin_enab_dat_do", my_user(), dDatDo )
 
-
     IF DirChange( cLokacijaExport ) != 0
            nCreate := MakeDir ( cLokacijaExport )
            IF nCreate != 0
@@ -1251,7 +1249,6 @@ FUNCTION gen_eNabavke()
     info_bar( "csv", "lokacija csv: " + cLokacijaExport )
     
     cExportFile := cPDV + "_"
-
  
     cExPortFile += cPorezniPeriod
     
@@ -1503,7 +1500,7 @@ FUNCTION export_eNabavke()
 
 FUNCTION opis_enabavka(cIdKonto, cOpis)
 
-    LOCAL pRegexJCI := hb_regexComp( "JCI:\s*([\d]+)" )
+    LOCAL pRegexJCI := hb_regexComp( "JCI:\s*([A-z]*\d+)" )
     LOCAL pRegexOsnPDV17 := hb_regexComp( "OSN-PDV17:\s*([\d.]+)" )
     LOCAL pRegexOsnPDV17NP := hb_regexComp( "OSN-PDV17NP:\s*([\d.]+)" )
     LOCAL pRegexOsnPDV0 := hb_regexComp( "OSN-PDV0:\s*([\d.]+)" )

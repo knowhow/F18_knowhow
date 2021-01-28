@@ -172,7 +172,7 @@ FUNCTION kalk_fix_brdok( cBrKalk )
 
 FUNCTION slovo_unutar( cString )
 
-   LOCAL aMatch, pRegex := hb_regexComp( ".*[a-zA-Z].*" )
+   LOCAL aMatch, pRegex := hb_regexComp( ".*[A-z].*" )
 
    aMatch := hb_regex( pRegex, cString )
    IF Len( aMatch ) > 0

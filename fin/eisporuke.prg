@@ -422,7 +422,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "0 as pdv,"
         cSelectFields += "0 as bez_pdv,"
         cSelectFields += "0 as from_opis_osn_pdv17,"
-        cSelectFields += "substring(fin_suban.opis from 'JCI:\s*(\d+)') as JCI,"
+        cSelectFields += "substring(fin_suban.opis from 'JCI:\s*([A-z]*\d+)') as JCI,"
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'JCI-IZN:\s*([\d.]+)')::DECIMAL, 0.0) as JCI_IZN,"
         cSelectFields += "fin_suban.idkonto as idkonto, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
         
@@ -475,7 +475,8 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
       cQuery += " left join fmk.partn on sub2.idpartner=partn.id"
     ENDIF
 
-    cQuery += " left join public.eisporuke on fin_suban.idfirma=eisporuke.fin_idfirma and fin_suban.idvn=eisporuke.fin_idvn and fin_suban.brnal=eisporuke.fin_brnal and fin_suban.rbr=eisporuke.fin_rbr" 
+    cQuery += " left join public.eisporuke on fin_suban.idfirma=eisporuke.fin_idfirma and fin_suban.idvn=eisporuke.fin_idvn"
+    cQuery += " and fin_suban.brnal=eisporuke.fin_brnal and fin_suban.rbr=eisporuke.fin_rbr and extract(year from  fin_suban.datdok)=extract(year from  eisporuke.dat_fakt)"
     
     IF cIdKonto == NIL
        cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoKupac) + "%'"

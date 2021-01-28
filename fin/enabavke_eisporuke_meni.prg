@@ -348,7 +348,7 @@ FUNCTION db_create_enabavke_eisporuke()
     cQuery += "GRANT ALL ON TABLE public.enabavke TO xtrole;"
 
     cQuery += "DROP INDEX if exists enabavke_fin_nalog;"
-    cQuery += "CREATE unique INDEX enabavke_fin_nalog ON public.enabavke USING btree (fin_idfirma, fin_idvn, fin_brnal, fin_rbr);"
+    cQuery += "CREATE unique INDEX enabavke_fin_nalog ON public.enabavke USING btree (fin_idfirma, fin_idvn, fin_brnal, fin_rbr, extract(year from dat_fakt_prijem));"
 
     cQuery += 'ALTER TABLE public.eNabavke OWNER TO "admin";'
     cQuery += 'GRANT ALL ON TABLE public.eNabavke TO "admin";'
@@ -390,7 +390,7 @@ FUNCTION db_create_enabavke_eisporuke()
     cQuery += 'GRANT ALL ON TABLE public.eisporuke TO xtrole;'
 
     cQuery += "DROP INDEX if exists eisporuke_fin_nalog;"
-    cQuery += "CREATE unique INDEX eisporuke_fin_nalog ON public.eisporuke USING btree (fin_idfirma, fin_idvn, fin_brnal, fin_rbr);"
+    cQuery += "CREATE unique INDEX eisporuke_fin_nalog ON public.eisporuke USING btree (fin_idfirma, fin_idvn, fin_brnal, fin_rbr, extract(year from dat_fakt));"
 
     cQuery += 'ALTER TABLE public.eisporuke OWNER TO "admin";'
     cQuery += 'GRANT ALL ON TABLE public.eisporuke TO "admin";'

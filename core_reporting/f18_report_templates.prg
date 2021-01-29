@@ -55,7 +55,7 @@ FUNCTION f18_template_location( cTemplate )
       ENDIF
    ENDIF
 
-   // 2) ~/.f18/template
+   // 3) ~/.f18/template
    cLoc := my_home_root() + "template" +  SLASH
    aFileList := Directory( cLoc + cTemplate )
    IF Len( aFileList ) > 0

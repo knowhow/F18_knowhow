@@ -535,7 +535,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
               skip
               loop
             ENDIF
-            
         ENDIF
 
         cOpisIznosFaktureIzvoz := ""
@@ -673,7 +672,16 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                ENDIF 
 
                nPDVNePDVObveznik := eisp->pdv
-               nOsnovicaNePdvObveznik := eisp->bez_pdv
+               // ako ima razlike izmedju osnovice i iznosa sa PDV, onda je to PDV0
+               // npr 119.00 - 17.00 - (17/0.17=100) = 2.00
+               nOsnovicaPDV0Oostalo := eisp->iznos_sa_pdv - eisp->pdv - ROUND(eisp->pdv / 0.17, 2)
+               IF ABS(nOsnovicaPDV0Oostalo)*10 < 1
+                 // greske u zaokr
+                 nOsnovicaPDV0Oostalo := 0
+               ENDIF
+               // u slucaju da postoji PDV0 osnovica 2.00, 102.00 - 2 = 100.00
+               nOsnovicaNePdvObveznik := eisp->bez_pdv - nOsnovicaPDV0Oostalo
+               
                nNePDVObveznikSaPDV := eisp->iznos_sa_pdv
                
             ENDIF
@@ -681,9 +689,17 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         ELSE
             // PDV obveznik
             nPDVDaPDVObveznik := eisp->pdv
-
+            // ako ima razlike izmedju osnovice i iznosa sa PDV, onda je to PDV0
+            // npr 119.00 - 17.00 - (17/0.17=100) = 2.00
+            nOsnovicaPDV0Oostalo := eisp->iznos_sa_pdv - eisp->pdv - ROUND(eisp->pdv / 0.17, 2)
+            IF ABS(nOsnovicaPDV0Oostalo)*10 < 1
+                // greskr u zaokr
+                nOsnovicaPDV0Oostalo := 0
+            ENDIF
+            // u slucaju da postoji PDV0 osnovica 2.00, 102.00 - 2 = 100.00
+            nOsnovicaDaPdvObveznik := eisp->bez_pdv - nOsnovicaPDV0Oostalo
             nDaPDVObveznikSaPDV := eisp->iznos_sa_pdv
-            nOsnovicaDaPdvObveznik := eisp->bez_pdv
+            
             
             IF ROUND(eisp->from_opis_osn_pdv17, 2) <> -9999999.99
                 nOsnovicaDaPDVObveznik := eisp->from_opis_osn_pdv17

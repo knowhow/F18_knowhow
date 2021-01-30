@@ -31,8 +31,13 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
     ELSE
        hParams["fin_uvoz_fin_brnal"] := REPLICATE("0", 8)
     ENDIF
-   
-    hParams["fin_uvoz_jci_broj"]:= fetch_metric( "fin_uvoz_jci_broj", my_user(), 0 )
+
+    hParams["fin_uvoz_jci_broj"]:= fetch_metric( "fin_uvoz_jci_broj", my_user(), SPACE(20) )
+
+    IF ValType(hParams["fin_uvoz_jci_broj"]) <> "C"
+        hParams["fin_uvoz_jci_broj"] := SPACE(20)
+    ENDIF
+    hParams["fin_uvoz_jci_broj"] := Padr(hParams["fin_uvoz_jci_broj"], 20) 
 
     IF dDatDok <> NIL
         hParams["fin_uvoz_jci_datdok"]:= dDatDok
@@ -191,7 +196,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
        @ box_x_koord() + nX++, col() + 2 SAY "broj naloga: " GET hParams["fin_uvoz_fin_brnal"]
 
        nX++
-       @ box_x_koord() + nX, box_y_koord() + 2 SAY "JCI:" GET hParams["fin_uvoz_jci_broj"] PICT "99999999" VALID hParams["fin_uvoz_jci_broj"] > 0
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY "JCI:" GET hParams["fin_uvoz_jci_broj"] PICT "@!" VALID !Empty(hParams["fin_uvoz_jci_broj"])
        @ box_x_koord() + nX, col() + 2 SAY "datum JCI:" GET hParams["fin_uvoz_jci_datdok"] VALID !Empty(hParams["fin_uvoz_jci_datdok"])
        @ box_x_koord() + nX, col() + 2 SAY "datum prijema:" GET hParams["fin_uvoz_jci_datprij"] VALID !Empty(hParams["fin_uvoz_jci_datprij"]) .AND. ;
            hParams["fin_uvoz_jci_datprij"] >= hParams["fin_uvoz_jci_datdok"]
@@ -319,8 +324,8 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
 
     // dobavljac robe potrazuje
     hRec["rbr"] := nRbr++
-    hRec["opis"] := "RN " + hParams["fin_uvoz_dob_brdok"] + ", "
-    hRec["opis"] += "JCI: " + Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+    hRec["opis"] := "RN " + Alltrim(hParams["fin_uvoz_dob_brdok"]) + ", "
+    hRec["opis"] += "JCI: " + Alltrim(hParams["fin_uvoz_jci_broj"])
     hRec["brdok"] := hParams["fin_uvoz_dob_brdok"]
     hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
 
@@ -336,7 +341,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
     dbf_update_rec( hRec )
 
 
-    cJCIBR := "JCI BR " + Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+    cJCIBR := "JCI BR " + Alltrim(hParams["fin_uvoz_jci_broj"])
     nDadzbine := 0
 
     // PDV JCI duguje
@@ -391,7 +396,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
         APPEND BLANK
         hRec["rbr"] := nRbr++
         hRec["opis"] := cJCIBR
-        hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+        hRec["brdok"] := Alltrim(hParams["fin_uvoz_jci_broj"])
         hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
         hRec["datval"] := CTOD("")
         hRec["idkonto"] := hParams["fin_uvoz_jci_kto_potraz"]
@@ -408,7 +413,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             APPEND BLANK
             hRec["rbr"] := nRbr++
             hRec["opis"] := "PRELEVMANI " + cJCIBR 
-            hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+            hRec["brdok"] := Alltrim(hParams["fin_uvoz_jci_broj"])
             hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
             hRec["datval"] := CTOD("")
             hRec["idkonto"] := hParams["fin_uvoz_kto_prevalm_potraz"]
@@ -427,7 +432,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             APPEND BLANK
             hRec["rbr"] := nRbr++
             hRec["opis"] := "CARINE " + cJCIBR
-            hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+            hRec["brdok"] := Alltrim(hParams["fin_uvoz_jci_broj"])
             hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
             hRec["datval"] := CTOD("")
             hRec["idkonto"] := hParams["fin_uvoz_kto_car_potraz"]
@@ -447,7 +452,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             APPEND BLANK
             hRec["rbr"] := nRbr++
             hRec["opis"] := "AKCIZE " + cJCIBR 
-            hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+            hRec["brdok"] := Alltrim(hParams["fin_uvoz_jci_broj"])
             hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
             hRec["datval"] := CTOD("")
             hRec["idkonto"] := hParams["fin_uvoz_kto_akcize_potraz"]
@@ -712,7 +717,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             APPEND BLANK
             hRec["rbr"] := nRbr++
             hRec["opis"] := TRIM( cJCIBR ) + " ENAB:PRESKOCI"
-            hRec["brdok"] := Alltrim(Str(hParams["fin_uvoz_jci_broj"]))
+            hRec["brdok"] := Alltrim(hParams["fin_uvoz_jci_broj"])
             hRec["datdok"] := hParams["fin_uvoz_jci_datprij"]
             hRec["datval"] := CTOD("")
             hRec["idkonto"] := PADR("4320", 7)
@@ -794,4 +799,75 @@ FUNCTION kalk_10_gen_uvoz( cBrKalk )
 
    
     RETURN .T.
+
+
+FUNCTION set_novi_broj_jci()
+
+    LOCAL GetList := {}
+    LOCAL cOldJCI := SPACE(20)
+    LOCAL cNewJCI := SPACE(20)
+
+    LOCAL pRegexJCI := hb_regexComp( "JCI:(\s*[A-z\d]+)" )
+    LOCAL pRegexJCI2 := hb_regexComp( "JCI BR(\s*[A-z\d]+)" )
+    LOCAL aMatch
+    LOCAL cMatch
+    LOCAL nCnt
+  
+
+
+    Box(, 3, 60)
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Stari broj JCI:" GET cOldJCI VALID !Empty(cOldJCI)
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY " Novi broj JCI:" GET cNewJCI VALID !Empty(cNewJCI)
+      READ
+    BoxC()
+
+    IF LastKey() == K_ESC
+       RETURN .F.
+    ENDIF
+
+    cOldJCI := AllTRIM(cOldJCI)
+    cNewJCI := AllTRIM(cNewJCI)
+
+    select_o_fin_pripr()
+    USE
+    o_fin_pripr()
+    SET ORDER TO 0
+    GO TOP
+    
+    nCnt := 0
+    DO WHILE !EOF()
+
+        // JCI: OLDJCI
+        aMatch := hb_regex( pRegexJCI, fin_pripr->opis )
+        IF Len( aMatch ) > 0
+           cMatch := aMatch[ 2 ]
+           IF Alltrim(cMatch) == cOldJCI
+             RREPLACE fin_pripr->opis WITH StrTran(fin_pripr->opis, cMatch, " " + cNewJCI)
+             nCnt++
+           ENDIF
+        ENDIF
+        // JCI BR OLDJCI
+        aMatch := hb_regex( pRegexJCI2, fin_pripr->opis )
+        IF Len( aMatch ) > 0
+           IF Alltrim(cMatch) == cOldJCI
+             cMatch := aMatch[ 2 ]
+             RREPLACE fin_pripr->opis WITH StrTran(fin_pripr->opis, cMatch, " " + cNewJCI)
+             nCnt++
+           ENDIF
+        ENDIF
+
+        IF Trim(fin_pripr->brdok) == trim(cOldJCI)
+            RREPLACE fin_pripr->brdok WITH cNewJCI
+            nCnt++
+        ENDIF 
+
+        SKIP
+    ENDDO
+    USE
+    select_o_fin_pripr()
+
+    Alert(_u("Izvršeno promjena: " + Alltrim(Str(nCnt))))
+    RETURN .T.
+
+
 

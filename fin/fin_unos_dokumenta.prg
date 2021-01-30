@@ -1034,10 +1034,10 @@ FUNCTION fin_tek_rec_2()
 
 FUNCTION fin_knjizenje_ostale_opcije()
 
-   PRIVATE opc[ 1 ]
+   PRIVATE opc[ 2 ]
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
-   // opc[ 2 ] := "2. podijeli nalog na vise dijelova"
+   opc[ 2 ] := "2. FIN uvoz promjena broja JCI"
 
    h[ 1 ] := h[ 2 ] := ""
    PRIVATE Izbor := 1
@@ -1050,8 +1050,8 @@ FUNCTION fin_knjizenje_ostale_opcije()
          EXIT
       CASE izbor == 1
          SetDatUPripr()
-         // CASE izbor == 2
-         // PodijeliN()
+      CASE izbor == 2
+         set_novi_broj_jci()
       ENDCASE
    ENDDO
    box_x_koord( am_x )

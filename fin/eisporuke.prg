@@ -422,7 +422,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "0 as pdv,"
         cSelectFields += "0 as bez_pdv,"
         cSelectFields += "0 as from_opis_osn_pdv17,"
-        cSelectFields += "substring(fin_suban.opis from 'JCI:\s*([A-z]*\d+)') as JCI,"
+        cSelectFields += "substring(fin_suban.opis from 'JCI:\s*([A-z\d]+)') as JCI,"
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'JCI-IZN:\s*([\d.]+)')::DECIMAL, 0.0) as JCI_IZN,"
         cSelectFields += "fin_suban.idkonto as idkonto, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
         

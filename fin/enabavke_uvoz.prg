@@ -477,7 +477,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             nSpedOsnPDV0 := hParams["fin_uvoz_sped_osn_pdv0"]
         ENDIF
         hRec["opis"] := "OSN-PDV0: " + AllTrim(Transform(nSpedOsnPDV0, cPictIznos)) + " ; "
-        hRec["opis"] += "SPEDITER RN " + hParams["fin_uvoz_sped_brdok"] + ", " + cJCIBR
+        hRec["opis"] += "SPEDITER RN " + AllTrim(hParams["fin_uvoz_sped_brdok"]) + ", " + cJCIBR
         hRec["brdok"] := hParams["fin_uvoz_sped_brdok"]
         hRec["datdok"] := hParams["fin_uvoz_sped_datdok"]
         hRec["datval"] := hParams["fin_uvoz_sped_datval"]
@@ -492,7 +492,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // spediter PDV poslovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "SPEDITER RN " + hParams["fin_uvoz_sped_brdok"] + " (VAN JCI PDV) "
+            hRec["opis"] := "SPEDITER RN " + AllTrim(hParams["fin_uvoz_sped_brdok"]) + " (VAN JCI PDV) "
             hRec["brdok"] := hParams["fin_uvoz_sped_brdok"]
             hRec["datdok"] := hParams["fin_uvoz_sped_datdok"]
             hRec["datval"] := CTOD("")
@@ -508,7 +508,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // spediter PDV vanposlovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "SPEDITER RN " + hParams["fin_uvoz_sped_brdok"] + " (VAN JCI PDV VANPOSL) "
+            hRec["opis"] := "SPEDITER RN " + AllTrim(hParams["fin_uvoz_sped_brdok"]) + " (VAN JCI PDV VANPOSL) "
             hRec["brdok"] := hParams["fin_uvoz_sped_brdok"]
             hRec["datdok"] := hParams["fin_uvoz_sped_datdok"]
             hRec["datval"] := CTOD("")
@@ -522,7 +522,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             APPEND BLANK
             // spediter PDV vanposlovni protustav
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "SPEDITER RN " + hParams["fin_uvoz_sped_brdok"] + " (VAN JCI PDV VANPOSL) PROTUSTAV"
+            hRec["opis"] := "SPEDITER RN " + AllTrim(hParams["fin_uvoz_sped_brdok"]) + " (VAN JCI PDV VANPOSL) PROTUSTAV"
             hRec["brdok"] := ""
             hRec["datdok"] := hParams["fin_uvoz_sped_datdok"]
             hRec["datval"] := CTOD("")
@@ -543,7 +543,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
         APPEND BLANK
         hRec["rbr"] := nRbr++
         hRec["opis"] := "OSN-PDV0: " + AllTrim(Transform(hParams["fin_uvoz_prev_osn_pdv0"], cPictIznos)) + " ; "
-        hRec["opis"] += "PREVOZ RN " + hParams["fin_uvoz_prev_brdok"] + ", " + cJCIBR
+        hRec["opis"] += "PREVOZ RN " + AllTrim(hParams["fin_uvoz_prev_brdok"]) + ", " + cJCIBR
         hRec["brdok"] := hParams["fin_uvoz_prev_brdok"]
         hRec["datdok"] := hParams["fin_uvoz_prev_datdok"]
         hRec["datval"] := hParams["fin_uvoz_prev_datval"]
@@ -558,7 +558,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // prevoz PDV poslovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "PREVOZ RN " + hParams["fin_uvoz_prev_brdok"] + " (VAN JCI PDV)"
+            hRec["opis"] := "PREVOZ RN " + AllTrim(hParams["fin_uvoz_prev_brdok"]) + " (VAN JCI PDV)"
             hRec["datdok"] := hParams["fin_uvoz_prev_datdok"]
             hRec["datval"] := CTOD("")
             hRec["brdok"] := hParams["fin_uvoz_prev_brdok"]
@@ -575,7 +575,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // prevoz PDV vanposlovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "PREVOZ RN " + hParams["fin_uvoz_prev_brdok"] + " (VAN JCI PDV VANPOSL)"
+            hRec["opis"] := "PREVOZ RN " + AllTrim(hParams["fin_uvoz_prev_brdok"]) + " (VAN JCI PDV VANPOSL)"
             hRec["brdok"] := hParams["fin_uvoz_prev_brdok"]
             hRec["datdok"] := hParams["fin_uvoz_prev_datdok"]
             hRec["datval"] := CTOD("")
@@ -589,7 +589,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // prevoz PDV vanposlovni protustav
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "PREVOZ RN " + hParams["fin_uvoz_prev_brdok"] + " (VAN JCI PDV VANPOSL) PROTUSTAV"
+            hRec["opis"] := "PREVOZ RN " + AllTrim(hParams["fin_uvoz_prev_brdok"]) + " (VAN JCI PDV VANPOSL) PROTUSTAV"
             hRec["brdok"] := ""
             hRec["datdok"] := hParams["fin_uvoz_prev_datdok"]
             hRec["datval"] := CTOD("")
@@ -610,7 +610,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
         APPEND BLANK
         hRec["rbr"] := nRbr++
         hRec["opis"] := "OSN-PDV0: " + AllTrim(Transform(hParams["fin_uvoz_zav_osn_pdv0"], cPictIznos)) + " ; "
-        hRec["opis"] += "ZAVTR RN " + hParams["fin_uvoz_zav_brdok"] + ", " + cJCIBR
+        hRec["opis"] += "ZAVTR RN " + AllTrim(hParams["fin_uvoz_zav_brdok"]) + ", " + cJCIBR
         hRec["brdok"] := hParams["fin_uvoz_zav_brdok"]
         hRec["datdok"] := hParams["fin_uvoz_zav_datdok"]
         hRec["datval"] := hParams["fin_uvoz_zav_datval"]
@@ -625,7 +625,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // ZAVTR PDV poslovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "ZAVTR RN " + hParams["fin_uvoz_zav_brdok"] + " (VAN JCI PDV)"
+            hRec["opis"] := "ZAVTR RN " + AllTrim(hParams["fin_uvoz_zav_brdok"]) + " (VAN JCI PDV)"
             hRec["datdok"] := hParams["fin_uvoz_zav_datdok"]
             hRec["datval"] := CTOD("")
             hRec["brdok"] := hParams["fin_uvoz_zav_brdok"]
@@ -642,7 +642,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // ZAVTR PDV vanposlovni
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "ZAVTR RN " + hParams["fin_uvoz_zav_brdok"] + " (VAN JCI PDV VANPOSL)"
+            hRec["opis"] := "ZAVTR RN " + AllTrim(hParams["fin_uvoz_zav_brdok"]) + " (VAN JCI PDV VANPOSL)"
             hRec["brdok"] := hParams["fin_uvoz_zav_brdok"]
             hRec["datdok"] := hParams["fin_uvoz_zav_datdok"]
             hRec["datval"] := CTOD("")
@@ -656,7 +656,7 @@ FUNCTION fin_gen_uvoz(cBrKalk, cIdKonto, dDatDok, cIdDobavljac, cBrFakt, nDobavI
             // ZAVTR PDV vanposlovni protustav
             APPEND BLANK
             hRec["rbr"] := nRbr++
-            hRec["opis"] := "ZAVTR RN " + hParams["fin_uvoz_zav_brdok"] + " (VAN JCI PDV VANPOSL) PROTUSTAV"
+            hRec["opis"] := "ZAVTR RN " + AllTrim(hParams["fin_uvoz_zav_brdok"]) + " (VAN JCI PDV VANPOSL) PROTUSTAV"
             hRec["brdok"] := ""
             hRec["datdok"] := hParams["fin_uvoz_zav_datdok"]
             hRec["datval"] := CTOD("")

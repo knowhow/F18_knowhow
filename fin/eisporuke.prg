@@ -386,7 +386,7 @@ STATIC FUNCTION say_string( cString, nLen, lToUTF)
 
 */
 STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDokumenta, cIdKonto, cNabExcludeIdvn, ;
-    lPDVNule, lOsnovaNula, cMjestoKrajnjePotrosnjeIn, hUkupno )
+    lPDVNule, lOsnovaNula, cMjestoKrajnjePotrosnjeIn, lMozeNeimenovaniKupac, hUkupno )
 
     LOCAL cSelectFields, cBrDokFinFin2, cFinNalogNalog2, cLeftJoinFin2
     LOCAL cQuery, cTmps
@@ -479,8 +479,10 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     cQuery += " and fin_suban.brnal=eisporuke.fin_brnal and fin_suban.rbr=eisporuke.fin_rbr and extract(year from  fin_suban.datdok)=extract(year from  eisporuke.dat_fakt)"
     
     IF cIdKonto == NIL
+       // npr. (1) 2110 <-> (2) 47% ; posto zelimo obuvhatiti samo PDV 0%  stavke, ako postoji 47% onda se preskace ova stavka jer ima PDV
        cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoKupac) + "%'"
     ELSE
+       // (1) 471% <-> (2) 21%
        cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKonto) + "%'"
     ENDIF
 
@@ -501,7 +503,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     ELSE
         // konto PDV potrazuje
        cQuery += " and fin_suban.d_p='2'"
-       IF cMjestoKrajnjePotrosnjeIn == NIL
+       IF cMjestoKrajnjePotrosnjeIn == NIL .AND. !lMozeNeimenovaniKupac
          // mora postojati partner ako nije definisano mjesto krajnje potrosnje
          cQuery += "  and NOT (sub2.idpartner is null or trim(sub2.idpartner) ='')"
        ENDIF
@@ -544,7 +546,11 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
            cBrDok := eisp->brdok
         ENDIF
 
-        IF cMjestoKrajnjePotrosnje <> NIL .AND. Empty(eisp->partn_id)
+        IF (cMjestoKrajnjePotrosnje <> NIL .OR. lMozeNeimenovaniKupac) .AND. Empty(eisp->partn_id)
+            IF cMjestoKrajnjePotrosnje == NIL
+                // lMozeNeimenovaniKupac
+                cMjestoKrajnjePotrosnje := "1"
+            ENDIF
             SWITCH cMjestoKrajnjePotrosnje
                 CASE "2" // RS
                    hRec["kup_naz"] := say_string("NEIMENOVANI KUPAC RS", 100, .F.)
@@ -978,42 +984,42 @@ FUNCTION gen_eIsporuke()
 
     // 01 standardne isporuke 4700  ; lPDVNule .F. (koristi se kod 4740 - usluge stranih lica), 
     //                                lOsnovaNula .F. (koristi se kod 4740 - usluge stranih lica), cMjestoKrajnjePotrosnje NIL
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDV, cNabExcludeIdvn, .F., .F., NIL, .F., @hUkupno)
 
 
     // 01 standardne isporuke 4730 - ne PDV obveznici krajnja potrosnja; ; lPDVNule .F., lOsnovaNula .F., 
     // cMjestoKrajnjePotrosnje="1" FBiH
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeFBiH, cNabExcludeIdvn, .F., .F., "1", @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeFBiH, cNabExcludeIdvn, .F., .F., "1", .T., @hUkupno)
 
     // 01 standardne isporuke 4731 - ne PDV obveznici krajnja potrosnja; ; lPDVNule .F., lOsnovaNula .F., 
     // cMjestoKrajnjePotrosnje="2" RS
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeRS, cNabExcludeIdvn, .F., .F., "2", @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeRS, cNabExcludeIdvn, .F., .F., "2", .T., @hUkupno)
 
     // 01 standardne isporuke 4732 - ne PDV obveznici krajnja potrosnja; ; lPDVNule .F., lOsnovaNula .F.,
     // cMjestoKrajnjePotrosnje="3" BD
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeBD, cNabExcludeIdvn, .F., .F., "3", @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVNeBD, cNabExcludeIdvn, .F., .F., "3", .T., @hUkupno)
     
     // 02 interne fakture - sopstvena krajnja potrosnja; ; lPDVNule .F., lOsnovaNula .F., 
     // cMjestoKrajnjePotrosnje="1" sopstvena krajnja potrosnja je uvijek FBiH
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVInterne, cNabExcludeIdvn, .F., .F., "1", @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "02", cIdKontoPDVInterne, cNabExcludeIdvn, .F., .F., "1", .T., @hUkupno)
 
     // 05 ostale isporuke - usluge stranih lica 4740, lPDVNule = .T., lOsnovaNula = .T.
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., .T., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "05", cIdKontoPDVUslugeStranaLica, cNabExcludeIdvn, .T., .T., NIL, .F., @hUkupno)
   
     // 01 standardne isporuke, 4750 - po posebnoj shemi
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVSchema, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVSchema, cNabExcludeIdvn, .F., .F., NIL, .F., @hUkupno)
 
     // 04 izvoz
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "04", NIL, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "04", NIL, cNabExcludeIdvn, .F., .F., NIL, .F., @hUkupno)
 
     // 01 isporuke oslobodjenje po ZPDV PDV-a
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", NIL, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", NIL, cNabExcludeIdvn, .F., .F., NIL, .F., @hUkupno)
 
     // 03 primljeni avansi
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "03", cIdKontoPDVAvansi, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "03", cIdKontoPDVAvansi, cNabExcludeIdvn, .F., .F., NIL, .T. /* moze neimenovani kupac*/, @hUkupno)
 
-    // 01 PDV ostalo 4780 (npr. knjizna odobrenja kupcima)
-    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVOstalo, cNabExcludeIdvn, .F., .F., NIL, @hUkupno)
+    // 01 PDV ostalo 4780 (npr. nekakva korekcija PDV-a )
+    gen_eisporuke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVOstalo, cNabExcludeIdvn, .F., .F., NIL, .F., @hUkupno)
 
 
     // 1. 3 - prateći slog

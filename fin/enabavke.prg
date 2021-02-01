@@ -59,7 +59,7 @@ FUNCTION parametri_eNabavke()
        @ box_x_koord() + nX++, col() + 2 SAY8 "paušal poljoprivr. VANPOSL    " GET cIdKontoPDVPoljNP VALID !Empty(cIdKontoPDVPoljNP)
 
        @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV posebna schema      " GET cIdKontoPDVSchema VALID !Empty(cIdKontoPDVSchema)
-       @ box_x_koord() + nX++, col() + 2 SAY8 "posebna schema VANPOSL        " GET cIdKontoPDVSchemaNP VALID P_Konto(cIdKontoPDVSchemaNP)
+       @ box_x_koord() + nX++, col() + 2 SAY8 "posebna schema VANPOSL        " GET cIdKontoPDVSchemaNP VALID !Empty(cIdKontoPDVSchemaNP)
 
        @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto PDV ostalo              " GET cIdKontoPDVOstalo VALID !Empty(cIdKontoPDVOstalo)
        @ box_x_koord() + nX++, col() + 2 SAY8 "Konto PDV ostalo VANPOSL      " GET cIdKontoPDVOstaloNP VALID !Empty(cIdKontoPDVOstaloNP)
@@ -1564,7 +1564,7 @@ STATIC FUNCTION xlsx_export_fill_row()
 
         AADD(aKolona, { "C", "Konto", 7, enab->idkonto})
         AADD(aKolona, { "C", "Kto.NP", 7, enab->idkonto_np})
-        
+        altd()
         IF s_pWorkSheet == NIL
            
            s_pWorkBook := workbook_new( s_cXlsxName )

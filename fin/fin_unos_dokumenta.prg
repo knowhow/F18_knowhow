@@ -60,6 +60,17 @@ FUNCTION fin_knjizenje_naloga()
    LOCAL i
 
    o_fin_edit()
+   IF Len(fin_pripr->brdok) < 20  .OR. Len(fin_pripr->opis) < 300  .OR. Len(psuban->opis) < 300
+      IF reccount2() > 0
+         Alert(_u("Priprema nije prazna. ispraznite je pa ponovo pokrenite ovu opciju"))
+      ELSE
+         my_close_all_dbf()
+         f18_delete_dbf("fin_pripr")
+         f18_delete_dbf("fin_psuban")
+         Alert(_u("Izvršena promjena BRDOK 10-> 20 priprema, OPIS -> 300"))
+         QUIT_1
+      ENDIF
+   ENDIF
 
    ImeKol := { ;
       { "F.",            {|| my_dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
@@ -132,7 +143,6 @@ FUNCTION fin_knjizenje_naloga()
    my_close_all_dbf()
 
    RETURN .T.
-
 
 
 
@@ -213,7 +223,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
    ENDIF
 
    //@ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| opis_enabavka(_Idkonto, @_Opis) } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
-   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 25 ) )
 
    IF hFinParams[ "fin_k1" ]
       @ box_x_koord() + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"

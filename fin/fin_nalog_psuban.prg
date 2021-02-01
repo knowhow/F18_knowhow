@@ -18,6 +18,8 @@
 
 STATIC s_nColIzn := 20
 
+#define LEN_OPIS 55
+
 FUNCTION fin_nalog_stampa_fill_psuban( cInd, lStampa, dDatNal, oNalog, aNaloziObradjeni )
 
    LOCAL nArr := Select()
@@ -167,7 +169,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lStampa, dDatNal, oNalog, aNaloziOb
 
          aRez := SjeciStr( cStr, 28 ) // konto partner
          cStr := opis
-         aOpis := SjeciStr( cStr, 20 )
+         aOpis := SjeciStr( cStr, LEN_OPIS )
 
 
          @ PRow(), PCol() + 1 SAY Idpartner( idpartner ) // šifra partnera
@@ -260,7 +262,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lStampa, dDatNal, oNalog, aNaloziOb
                nPok := 1
             ENDIF
 
-            @ PRow() + nPok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
+            @ PRow() + nPok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( LEN_OPIS ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. gFinRj == "D" .OR. gFinFunkFond == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF lVrstePlacanja

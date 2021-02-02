@@ -81,6 +81,7 @@
 #define F18_PSQL_SCHEMA_DOT        "fmk."
 
 #define BRFAKTP_LEN 20
+#define FIN_BRDOK_LEN 20
 
 #xcommand LOG_CALL_STACK <cLogStr>                 ;
   => FOR nI := 1 TO 30                             ;

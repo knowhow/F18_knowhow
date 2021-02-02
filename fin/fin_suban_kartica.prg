@@ -25,7 +25,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    LOCAL cBrza := "D"
    LOCAL nC1 := 37
-   LOCAL nSirOp := 20
+   LOCAL nSirinaOpisa := 20
    LOCAL nCOpis := 0
    LOCAL cOpis := ""
    LOCAL cBoxName
@@ -66,6 +66,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL hRec
    LOCAL cBrDokFilter
    LOCAL GetList := {}
+   LOCAL aOpis
 
    PRIVATE fK1 := _fin_params[ "fin_k1" ]
    PRIVATE fK2 := _fin_params[ "fin_k2" ]
@@ -731,18 +732,18 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   @ PRow(), nc7 SAY get_datval_field()
                ENDIF
 
-               // IF cSazeta == "N"
                IF cDinDem == "3"
-                  nSirOp := 16
+                  nSirinaOpisa := 16
                   nCOpis := PCol() + 1
-                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hRec[ "opis" ] ), 16 )
+                  aOpis := SjeciStr( AllTrim( hRec[ "opis" ] ), 16 )
+                  @ PRow(), nCOpis SAY aOpis[1]
                ELSE
-                  nSirOp := 20
+                  nSirinaOpisa := 20
                   nCOpis := PCol() + 1
-                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hRec[ "opis" ] ), 20 )
+                  aOpis := SjeciStr( AllTrim( hRec[ "opis" ] ), 20 )
+                  @ PRow(), nCOpis SAY aOpis[1]
                ENDIF
-               // ENDIF
-
+               cOpis := AllTrim(substr(AllTrim(hRec[ "opis" ]), LEN(Trim(aOpis[1])) + 1))
                nC1 := PCol() + 1
             ENDIF
 
@@ -849,7 +850,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   ENDIF
                ENDIF
             ENDIF
-            fin_print_ostatak_opisa( @cOpis, nCOpis, {|| check_nova_strana( bZagl, oPDF ) }, nSirOp )
+
+            fin_print_ostatak_opisa( @cOpis, nCOpis, {|| check_nova_strana( bZagl, oPDF ) }, 70 )
 
             IF cExpDbf == "D" .AND. !( lOtvoreneStavke .AND. hRec[ "otvst" ] == "9" )
 

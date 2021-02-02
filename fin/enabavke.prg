@@ -1655,7 +1655,7 @@ FUNCTION enab_pdv_prijava_21()
         ENDIF
     ENDIF
 
-    RETURN enab->osn_pdv17 + enab->osn_pdv17np
+    RETURN enab->osn_pdv17 + enab->osn_pdv17np + enab->osn_pdv0
 
 
 /*

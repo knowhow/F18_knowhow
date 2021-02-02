@@ -63,21 +63,25 @@ FUNCTION GenPocStanja()
 // ------------------------------------------------------
 // stampa ostatka opisa
 // ------------------------------------------------------
-FUNCTION fin_print_ostatak_opisa( cO, nCO, bUslov, nSir )
+FUNCTION fin_print_ostatak_opisa( cOpis, nCO, bUslov, nSirina )
 
-   IF nSir == NIL
-      nSir := 20
+   LOCAL aOpis, nI
+
+   IF nSirina == NIL
+      nSirina := 20
    ENDIF
 
-   DO WHILE Len( cO ) > nSir
+   aOpis := SjeciStr(cOpis, nSirina)
+   IF Empty(AllTrim(aOpis[1]))
+      RETURN .T.
+   ENDIF
+
+   FOR nI:=1 TO LEN(aOpis)
       IF bUslov != NIL
          Eval( bUslov )
       ENDIF
-      cO := SubStr( cO, nSir + 1 )
-      IF !Empty( PadR( cO, nSir ) )
-         @ PRow() + 1, nCO SAY PadR( cO, nSir )
-      ENDIF
-   ENDDO
+      @ PRow() + 1, nCO SAY PadR( aOpis[nI], nSirina )
+   NEXT
 
    RETURN .T.
 

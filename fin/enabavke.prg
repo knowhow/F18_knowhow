@@ -594,6 +594,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL hNal
     LOCAL cIdKontoPDV, cIdKontoPDVNP
     LOCAL cAlias := "ENAB"
+    LOCAL cPartnerNaziv, cPartnerSjediste
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
@@ -945,6 +946,8 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         hRec["fin_brnal"] := (cAlias)->brnal
         hRec["fin_rbr"] := (cAlias)->rbr
         hRec["opis"] := (cAlias)->opis
+        cPartnerNaziv := (cAlias)->partn_naz
+        cPartnerSjediste := trim((cAlias)->partn_ptt) + " " + trim((cAlias)->partn_mjesto) + " " + trim((cAlias)->partn_adresa)
 
         IF cTipDokumenta == "04"
             hNal := hb_hash()
@@ -977,6 +980,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             // hRec["dob_naz"] := say_string(enab->partn_naz, 100, .F.)
             // hRec["dob_sjediste"] := say_string(trim(enab->partn_ptt) + " " + trim(enab->partn_mjesto) + " " + trim(enab->partn_adresa), 100, .F.)
             db_insert_enab( hRec)
+            // ino dobavljac roba
+            csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartnerNaziv, cPartnerSjediste, (cAlias)->brdok, dDatFakt, dDatFaktPrij, cJib, cPDVBroj, 0, 0, n32, n33, n34,;
+                       hRec, @nRbr, @hUkupno)
 
             hNal["idfirma"] := (cAlias)->idfirma
             hNal["idvn"] := (cAlias)->idvn
@@ -1004,7 +1010,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                 @hNal, @hUkupno)
             PopWa()
     
-            altd()
+
             /*
               Osn.PDV 17% posl
               ROBA    37299.78
@@ -1016,12 +1022,10 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
               => hNal["osn_pdv17_uvoz"] - hNal[ "osn_pdv17" ] = usaglasena osnovica po JCI 
             */
 
-            altd()
             // 2. stavka - uvoz JCI
             // redoslijed je dobavljac robe rbr=1, pa onda PDV rbr=2
             hRec["fin_rbr"] := (cAlias)->rbr + 1
             // enabavke redni broj uvecati
-            nRbr++
             hRec["enabavke_id"] := nRbr
             hRec["br_fakt"]  := ""
             hRec["dat_fakt"] := dDatJCI
@@ -1044,69 +1048,14 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             ENDIF
             hRec["fakt_iznos_dob"] := 0
             db_insert_enab( hRec)
+            csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, "UVOZ", "", (cAlias)->jci, dDatJCI, dDatJCIPrij, cJib, cPDVBroj, nPDVNP, nPDVPosl, n32, n33, n34, ;
+                hRec, @nRbr, @hUkupno)
         ELSE
             db_insert_enab( hRec)
+            csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartnerNaziv, cPartnerSjediste, cBrDok, dDatFakt, dDatFaktPrij, cJib, cPDVBroj, nPDVNP, nPDVPosl, n32, n33, n34, ;
+                hRec, @nRbr, @hUkupno)
         ENDIF
         
-
-        // Vrsta sloga 2 = slogovi nabavki
-        ? "2" + cCSV
-        ?? cPorezniPeriod + cCSV
-        ?? PADL(AllTrim(STR(nRbr,10,0)), 10, "0") + cCSV
-        ?? cTipDokumenta2 + cCSV
-        // 5. broj fakture ili dokumenta ili JCI ako je tip dokumenta = "04" - uvoz
-        ?? say_string(cBrDok, 100) + cCSV
-        // 6. datum fakture ili dokumenta
-        ?? STRTRAN(sql_quote(dDatFakt),"'","") + cCSV
-        // 7. datum prijema
-        ?? STRTRAN(sql_quote(dDatFaktPrij),"'","") + cCSV
-        // 8. naziv dobavljaca
-        ?? say_string((cAlias)->partn_naz, 100) + cCSV
-        // Sjediste dobavljaca
-        ?? say_string(trim((cAlias)->partn_ptt) + " " + trim((cAlias)->partn_mjesto) + " " + trim((cAlias)->partn_adresa), 100) + cCSV
-
-        // 10. PDV dobav
-        ??  cPDVBroj + cCSV
-        // 11. JIB dobav
-        ?? cJib + cCSV
-        // 12. bez PDV
-        ?? say_number(hRec["fakt_iznos_bez_pdv"]) + cCSV
-        hUkupno["bez"] += hRec["fakt_iznos_bez_pdv"]
-
-        // 13. sa PDV
-        ?? say_number(hRec["fakt_iznos_sa_pdv"]) + cCSV
-        hUkupno["sa_pdv"] += hRec["fakt_iznos_sa_pdv"]
-
-        // 14. pausalna naknada
-        ?? say_number(0) + cCSV
-        hUkupno["paus"] += 0
-
-        hUkupno["np"] += nPDVNP
-        hUkupno["posl"] += nPDVPosl
-
-        // 15. ulazni pdv 
-        ?? say_number(nPDVPosl + nPDVNP) + cCSV
-        
-        // 16. ulazni PDV koji se moze odbiti
-        ?? say_number(nPDVPosl) + cCSV
- 
-        // 17. ulazni PDV koji se ne moze odbiti
-        ?? say_number(nPDVNP) + cCSV
- 
-        hUkupno["np_32"] += n32
-        hUkupno["np_33"] += n33
-        hUkupno["np_34"] += n34
-
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 32 PDV FBiH
-        ?? say_number(n32) + cCSV
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 33 PDV RS
-        ?? say_number(n33) + cCSV
-        // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 34 PDV Brcko
-        ?? say_number(n34)
-
-        hUkupno["redova"] += 1
-        nRbr ++
-
         SKIP
     ENDDO
 
@@ -1115,6 +1064,69 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     RETURN .T.
 
 
+
+
+STATIC FUNCTION csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartnerNaziv, cPartnerSjediste, cBrDok, dDatFakt, dDatFaktPrij, cJib, cPDVBroj, nPDVNP, nPDVPosl, n32, n33, n34, hRec, nRbr, hUkupno)
+
+    // Vrsta sloga 2 = slogovi nabavki
+    ? "2" + cCSV
+    ?? cPorezniPeriod + cCSV
+    ?? PADL(AllTrim(STR(nRbr,10,0)), 10, "0") + cCSV
+    ?? cTipDokumenta2 + cCSV
+    // 5. broj fakture ili dokumenta ili JCI ako je tip dokumenta = "04" - uvoz
+    ?? say_string(cBrDok, 100) + cCSV
+    // 6. datum fakture ili dokumenta
+    ?? STRTRAN(sql_quote(dDatFakt),"'","") + cCSV
+    // 7. datum prijema
+    ?? STRTRAN(sql_quote(dDatFaktPrij),"'","") + cCSV
+    // 8. naziv dobavljaca
+    ?? say_string(cPartnerNaziv, 100) + cCSV
+    // Sjediste dobavljaca
+    ?? say_string(cPartnerSjediste, 100) + cCSV
+
+    // 10. PDV dobav
+    ??  cPDVBroj + cCSV
+    // 11. JIB dobav
+    ?? cJib + cCSV
+    // 12. bez PDV
+    ?? say_number(hRec["fakt_iznos_bez_pdv"]) + cCSV
+    hUkupno["bez"] += hRec["fakt_iznos_bez_pdv"]
+
+    // 13. sa PDV
+    ?? say_number(hRec["fakt_iznos_sa_pdv"]) + cCSV
+    hUkupno["sa_pdv"] += hRec["fakt_iznos_sa_pdv"]
+
+    // 14. pausalna naknada
+    ?? say_number(0) + cCSV
+    hUkupno["paus"] += 0
+
+    altd()
+    hUkupno["np"] += nPDVNP
+    hUkupno["posl"] += nPDVPosl
+
+    // 15. ulazni pdv 
+    ?? say_number(nPDVPosl + nPDVNP) + cCSV
+    
+    // 16. ulazni PDV koji se moze odbiti
+    ?? say_number(nPDVPosl) + cCSV
+
+    // 17. ulazni PDV koji se ne moze odbiti
+    ?? say_number(nPDVNP) + cCSV
+
+    hUkupno["np_32"] += n32
+    hUkupno["np_33"] += n33
+    hUkupno["np_34"] += n34
+
+    // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 32 PDV FBiH
+    ?? say_number(n32) + cCSV
+    // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 33 PDV RS
+    ?? say_number(n33) + cCSV
+    // 17. ulazni PDV koji se ne moze odbiti, ulazi u polje 34 PDV Brcko
+    ?? say_number(n34)
+
+    hUkupno["redova"] += 1
+    nRbr ++
+    RETURN .T.
 
 /*
 
@@ -1570,7 +1582,7 @@ STATIC FUNCTION xlsx_export_fill_row()
 
         AADD(aKolona, { "C", "Konto", 7, enab->idkonto})
         AADD(aKolona, { "C", "Kto.NP", 7, enab->idkonto_np})
-        altd()
+ 
         IF s_pWorkSheet == NIL
            
            s_pWorkBook := workbook_new( s_cXlsxName )

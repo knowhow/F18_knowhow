@@ -5,6 +5,9 @@ STATIC s_cXlsxName := NIL
 STATIC s_pWorkBook, s_pWorkSheet, s_nWorkSheetRow
 STATIC s_pMoneyFormat, s_pDateFormat
 
+STATIC s_cIdKontoPDVUvoz
+STATIC s_cIdKontoPDVUvozNP
+
 FUNCTION parametri_eNabavke()
 
     LOCAL nX := 1
@@ -1545,7 +1548,10 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "C", "Dob. PDV", 12, enab->dob_pdv })
         AADD(aKolona, { "C", "Dob. JIB", 13, enab->dob_jib })
 
-        AADD(aKolona, { "M", "Osnov.PDV 0%", 15, enab->osn_pdv0 })
+        AADD(aKolona, { "M", "PDV[21]", 15, enab_pdv_prijava_21() })
+        AADD(aKolona, { "M", "PDV[22]", 15, enab_pdv_prijava_22() })
+
+        AADD(aKolona, { "M", "Osn.PDV 0%", 15, enab->osn_pdv0 })
         AADD(aKolona, { "M", "Osn.PDV 17% posl", 15, enab->osn_pdv17 })
         AADD(aKolona, { "M", "Osn.PDV 17% nepo", 15, enab->osn_pdv17np }) 
         
@@ -1614,8 +1620,51 @@ STATIC FUNCTION xlsx_export_fill_row()
              
         RETURN .T.
      
+/*
+  vrijednost nabavke bez uvoza, PDV prijava polje 21
+*/
 
-        
+FUNCTION enab_pdv_prijava_21()
+
+    IF s_cIdKontoPDVUvoz == NIL
+        s_cIdKontoPDVUvoz := Trim( fetch_metric( "fin_enab_idkonto_pdv_u", NIL, "271" ))
+    ENDIF
+
+    //IF s_cIdKontoPDVUvozNP == NIL
+    //    s_cIdKontoPDVUvozNP := Trim( fetch_metric( "fin_enab_idkonto_pdv_u_np", NIL, "27691" ))
+    //ENDIF
+
+    // 04, uvoz
+    IF enab->tip == "04" 
+        IF LEFT(enab->idkonto, 3) == s_cIdKontoPDVUvoz
+          return 0
+        ELSE
+          // preracunato na osnovu PDV-a
+          RETURN (enab->fakt_iznos_pdv + enab->fakt_iznos_pdv_np)/0.17
+        ENDIF
+    ENDIF
+
+    RETURN enab->osn_pdv17 + enab->osn_pdv17np
+
+
+/*
+ vrijednost uvoza bez PDV, PDV prijava polje 22
+*/
+
+FUNCTION enab_pdv_prijava_22()
+
+    IF s_cIdKontoPDVUvoz == NIL
+        s_cIdKontoPDVUvoz := Trim( fetch_metric( "fin_enab_idkonto_pdv_u", NIL, "271" ))
+    ENDIF
+
+    // 04, uvoz
+    IF enab->tip == "04" 
+        RETURN enab->osn_pdv17 + enab->osn_pdv17np
+    ENDIF
+
+    RETURN 0
+
+
 
 FUNCTION export_eNabavke()
 

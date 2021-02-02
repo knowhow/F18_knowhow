@@ -53,6 +53,20 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    hb_default( @lAsistentObrada, .F. )
    o_kalk_edit()
+
+   IF Len(kalk_pripr->brfaktp) < BRFAKTP_LEN
+      IF reccount2() > 0
+         Alert(_u("Priprema nije prazna. ispraznite je pa ponovo pokrenite ovu opciju"))
+      ELSE
+         my_close_all_dbf()
+         f18_delete_dbf("kalk_pripr")
+         f18_delete_dbf("finmat")
+         Alert(_u("Izvršena promjena BFAKTP 10-> 20 priprema"))
+         db_create_enabavke_eisporuke(.T.)
+         QUIT_1
+      ENDIF
+   ENDIF
+
    kalk_is_novi_dokument( .F. )
 
    PRIVATE PicCDEM := kalk_pic_cijena_bilo_gpiccdem()
@@ -1595,17 +1609,6 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 FUNCTION o_kalk_edit()
 
-   // select_o_partner()
-   // o_kalk_doks()
-   // select_o_roba()
-   // o_kalk()
-   // select_o_konto()
-//   o_tdok()
-//   o_valute()
-   // o_tarifa()
-//   o_koncij()
-   // o_sifk()
-   // o_sifv()
    o_kalk_pripr()
 
    SELECT kalk_pripr

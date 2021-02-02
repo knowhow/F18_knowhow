@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-#define DB_VER 7
+#define DB_VER 8
 
 FUNCTION fin_eIsporukeNabavkeMenu()
 
@@ -86,7 +86,6 @@ STATIC FUNCTION fin_eIsporuke()
         f18_menu( "fin_ei", .F., nIzbor, aOpc, aOpcexe )
      
         RETURN .T.
-
 
 
 
@@ -207,6 +206,9 @@ FUNCTION db_create_enabavke_eisporuke(lSilent)
     cQuery += 'ALTER TABLE public.enabavke ADD column IF NOT EXISTS idkonto varchar(7);'
     cQuery += 'ALTER TABLE public.enabavke ADD column IF NOT EXISTS idkonto_np varchar(7);'
 
+    cQuery += 'ALTER TABLE fmk.kalk_kalk ALTER column brfaktp TYPE varchar(20);'
+    cQuery += 'ALTER TABLE fmk.kalk_doks ALTER column brfaktp TYPE varchar(20);'
+
     oQuery := run_sql_query( cQuery )
     
     IF sql_error_in_query( oQuery, "UPDATE" )
@@ -217,7 +219,6 @@ FUNCTION db_create_enabavke_eisporuke(lSilent)
        Alert("tabele enabavke/eisporuke kreirane - ver: " + AllTrim(Str(DB_VER)))
     ENDIF
 
-    
     
     QUIT_1
 

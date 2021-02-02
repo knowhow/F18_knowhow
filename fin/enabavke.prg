@@ -981,7 +981,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             // hRec["dob_sjediste"] := say_string(trim(enab->partn_ptt) + " " + trim(enab->partn_mjesto) + " " + trim(enab->partn_adresa), 100, .F.)
             db_insert_enab( hRec)
             // ino dobavljac roba
-            csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartnerNaziv, cPartnerSjediste, (cAlias)->brdok, dDatFakt, dDatFaktPrij, cJib, cPDVBroj, 0, 0, n32, n33, n34,;
+            csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartnerNaziv, cPartnerSjediste, (cAlias)->brdok, dDatFakt, dDatFaktPrij, cJib, cPDVBroj, 0, 0, 0, 0, 0,;
                        hRec, @nRbr, @hUkupno)
 
             hNal["idfirma"] := (cAlias)->idfirma
@@ -1100,7 +1100,6 @@ STATIC FUNCTION csv_insert(cCsv, cAlias, cPorezniPeriod, cTipDokumenta2, cPartne
     ?? say_number(0) + cCSV
     hUkupno["paus"] += 0
 
-    altd()
     hUkupno["np"] += nPDVNP
     hUkupno["posl"] += nPDVPosl
 

@@ -49,7 +49,7 @@ Harbour extended Field Types
    AAdd( aDBf, { "IDVD", "C",   2,  0 } )
    AAdd( aDBf, { "BRDOK", "C",   8,  0 } )
    AAdd( aDBf, { "DATDOK", "D",   8,  0 } )
-   AAdd( aDBf, { "BRFAKTP", "C",  10,  0 } )
+   AAdd( aDBf, { "BRFAKTP", "C",  BRFAKTP_LEN,  0 } )
    AAdd( aDBf, { "DATFAKTP", "D",   8,  0 } )
    AAdd( aDBf, { "DATKURS", "D",   8,  0 } )
    AAdd( aDBf, { 'RABAT', 'B',  8,  8 } )

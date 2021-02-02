@@ -25,7 +25,7 @@ FUNCTION vise_kalk_dok_u_pripremi( cIdd )
    ENDIF
 */
 
-   RETURN
+   RETURN .T.
 
 FUNCTION show_more_info( cPartner, dDatum, cFaktura, cMU_I )
 

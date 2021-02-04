@@ -1308,7 +1308,7 @@ FUNCTION export_eIsporuke()
     ENDIF
     s_cXlsxName := my_home_root() + "eisporuke_" + dtos(dDatOd) + "_" + dtos(dDatDo) + ".xlsx"
 
-    cQuery := "select *, get_sifk('PARTN', 'PDVO', idpartner) as kup_osl_clan from public.eisporuke"
+    cQuery := "select *, get_sifk('PARTN', 'PDVO', COALESCE(idpartner,'')) as kup_osl_clan from public.eisporuke"
     cQuery += " WHERE dat_fakt >=" + sql_quote(dDatOd) + " AND dat_fakt <=" + sql_quote(dDatDo)
     cQuery += " ORDER BY eisporuke_id"
 

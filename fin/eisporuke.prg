@@ -799,7 +799,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         ELSE
 
             IF lMozeNeimenovaniKupac
-                altd() 
                 IF !Empty(eisp->partn_id)
                     IF hNeimenovani != NIL
                         hNeimenovani["eisporuke_id"] := nRbr
@@ -814,7 +813,8 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                     db_insert_eisp(hRec)
                     csv_insert(cPorezniPeriod, cCSV, hRec, @hUkupno, @nRbr )
                 ELSE
-                    IF (hNeimenovani != NIL .AND. hNeimenovani["fin_idfirma"] == hRec["fin_idfirma"] .AND. hNeimenovani["fin_idvn"] == hRec["fin_idvn"] .AND. hNeimenovani["fin_brnal"] == hRec["fin_brnal"] .AND. hNeimenovani["dat_fakt"] == hRec["dat_fakt"])
+                    IF (hNeimenovani != NIL .AND. hNeimenovani["fin_idfirma"] == hRec["fin_idfirma"] .AND. hNeimenovani["fin_idvn"] == hRec["fin_idvn"] .AND. hNeimenovani["fin_brnal"] == hRec["fin_brnal"] ;
+                            .AND. hNeimenovani["dat_fakt"] == hRec["dat_fakt"] .AND. hNeimenovani["idkonto_pdv"] == hRec["idkonto_pdv"])
                         hNeimenovani["cnt"] += 1
                         hNeimenovani["fakt_iznos_bez_pdv"]    += hRec["fakt_iznos_bez_pdv"]
                         hNeimenovani["fakt_iznos_pdv"]        += hRec["fakt_iznos_pdv"] 
@@ -825,6 +825,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                         hNeimenovani["fakt_iznos_pdv_np_33"]  += hRec["fakt_iznos_pdv_np_33"]
                         hNeimenovani["fakt_iznos_pdv_np_34"]  += hRec["fakt_iznos_pdv_np_34"]
                     ELSE
+                        // novi nalog - nova nafaka, takodje ako je novi datum unutar naloga hRec["dat_fakt"] ili novi konto hRec["idkonto_pdv"]
                         IF hNeimenovani != NIL
                            hNeimenovani["eisporuke_id"] := nRbr
                            IF hNeimenovani["cnt"] > 1
@@ -834,7 +835,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                            db_insert_eisp(hNeimenovani)
                            csv_insert(cPorezniPeriod, cCSV, hNeimenovani, @hUkupno, @nRbr )
                         ENDIF
-                        // novi nalog - nova nafaka, ili novi datum unutar naloga
                         hNeimenovani := hb_hash()
                         hNeimenovani["cnt"] := 1
                         hNeimenovani["tip"] := cTipDokumenta2
@@ -895,13 +895,12 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     RETURN .T.
 
 
-
 STATIC FUNCTION csv_insert(cPorezniPeriod, cCSV, hRec, hUkupno, nRbr )
 
      // Vrsta sloga 2 = slogovi isporuka
     ? "2" + cCSV
     ?? cPorezniPeriod + cCSV
-    ?? PADL(AllTrim(STR(nRbr,10,0)), 10, "0") + cCSV
+    ?? PADL(AllTrim(STR(hRec["eisporuke_id"],10,0)), 10, "0") + cCSV
     ?? hRec["tip"] + cCSV
 
     // 5. broj fakture ili dokumenta

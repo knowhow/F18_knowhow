@@ -407,6 +407,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     LOCAL cMjestoKrajnjePotrosnje
     LOCAL dDatJCI
     LOCAL hNeimenovani := NIL
+    LOCAL nIzvozPoFakturama
     //LOCAL cOpisIznosFaktureIzvoz := ""
 
 
@@ -775,18 +776,47 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         ENDIF
 
         IF cTipDokumenta == "04"
-            // faktura izvoz
-            hRec["fakt_iznos_sa_pdv0_izvoz"] := eisp->iznos_sa_pdv
-            hRec["br_fakt"] := eisp->brdok
-            hRec["dat_fakt"] := eisp->datdok
-            hRec["jci"] := eisp->jci
-            db_insert_eisp( hRec)
-            csv_insert(cPorezniPeriod, cCSV, hRec, @hUkupno, @nRbr )
+            nIzvozPoFakturama := 0
+            DO WHILE .T.
+                // faktura izvoz
+                hRec["fakt_iznos_sa_pdv0_izvoz"] := eisp->iznos_sa_pdv
+                hRec["br_fakt"] := eisp->brdok
+                hRec["dat_fakt"] := eisp->datdok
+                hRec["jci"] := eisp->jci
+                hRec["kup_jib"] := REPLICATE("0", 13)
+                hRec["eisporuke_id"] := nRbr
+                hRec["kup_naz"] := say_string(eisp->partn_naz, 100, .F.)
+                hRec["kup_sjediste"] := say_string(trim(eisp->partn_ptt) + " " + trim(eisp->partn_mjesto) + " " + trim(eisp->partn_adresa), 100, .F.)     
+                hRec["idkonto_pdv"] := eisp->idkonto_pdv
+                hRec["idkonto_kup"] := eisp->idkonto_kup
+                hRec["idpartner"] := eisp->idpartner
+                nIzvozPoFakturama += eisp->iznos_sa_pdv
+                db_insert_eisp( hRec)
+                csv_insert(cPorezniPeriod, cCSV, hRec, @hUkupno, @nRbr )
+                
+                SKIP
+                IF EOF()
+                    // dosli smo do kraja eisp
+                    SKIP -1
+                    EXIT
+                ELSE
+                    IF eisp->jci == hRec["jci"] .AND. eisp->idfirma == hRec["fin_idfirma"] .AND. eisp->idvn == hRec["fin_idvn"] .AND. eisp->brnal == hRec["fin_brnal"] 
+                       // i dalje smo na istom jci-u i ova faktura se biljezi
+                       hRec["fin_rbr"] := eisp->rbr
+                       LOOP
+                    ENDIF
+                    // samo jedna faktura je po ovom jci-u, naredna stavka je nesto novo
+                    // vratimo se na posljednju fakturu op ovom jci-u
+                    SKIP -1
+                    EXIT
+                ENDIF
+            ENDDO
 
             // JCI izvoz
             hRec["kup_naz"] := say_string("IZVOZ", 100, .F.)
             hRec["kup_sjediste"] := say_string("", 100, .F.)
-            hRec["fakt_iznos_sa_pdv0_izvoz"] := nOsnovicaIzvoz - eisp->iznos_sa_pdv
+            hRec["eisporuke_id"] := nRbr
+            hRec["fakt_iznos_sa_pdv0_izvoz"] := nOsnovicaIzvoz - nIzvozPoFakturama
             hRec["br_fakt"] := eisp->jci
             
             IF eisp->from_opis_dat_jci <> "UNDEF"
@@ -797,7 +827,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             hRec["dat_fakt"] := dDatJCI
             hRec["br_fakt"] := eisp->jci
             hRec["jci"] := eisp->jci
-            hRec["fin_rbr"] := eisp->rbr + 1
+            hRec["fin_rbr"] := eisp->rbr + 1000
             db_insert_eisp( hRec)
             csv_insert(cPorezniPeriod, cCSV, hRec, @hUkupno, @nRbr )
 

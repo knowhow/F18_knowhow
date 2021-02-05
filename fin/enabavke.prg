@@ -888,6 +888,10 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                    ELSE
                       // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
                       hRec["osn_pdv0"] := (cAlias)->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17
+                      IF ABS(hRec["osn_pdv0"])*10 < 1
+                        // greske u zaokr
+                        hRec["osn_pdv0"] := 0
+                      ENDIF
                    ENDIF
                 ENDIF
             ENDIF

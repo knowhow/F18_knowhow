@@ -28,7 +28,7 @@ FUNCTION xlsx_export_init( aFieldList, aHeader, cXlsxName )
    ELSE
       s_cXlsxName := "f18_export.xlsx" 
    ENDIF
-   
+
    s_aKolone := {}
    FOR nI := 1 TO LEN(aFieldList)
       // { "tip", "C", 1, 0 } )  => { "C", "tip", 4 }
@@ -134,6 +134,18 @@ FUNCTION open_exported_xlsx()
    s_pWorkBook := NIL
    s_pWorkSheet := NIL
    f18_open_mime_document( s_cXlsxName )
+
+   RETURN .T.
+
+
+FUNCTION check_mogu_izbrisati_fajl(cFileName)
+
+   altd()
+   Ferase(cFileName)
+   IF File(cFileName)
+      Alert("Fajl već otvoren " + cFileName)
+      RETURN .F.
+   ENDIF
 
    RETURN .T.
 

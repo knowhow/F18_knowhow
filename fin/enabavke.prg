@@ -1432,7 +1432,7 @@ STATIC FUNCTION xlsx_export_fill_row()
         AADD(aKolona, { "C", "Kto.NP", 7, enab->idkonto_np})
  
         IF s_pWorkSheet == NIL
-           
+
            s_pWorkBook := workbook_new( s_cXlsxName )
            s_pWorkSheet := workbook_add_worksheet(s_pWorkBook, NIL)
      

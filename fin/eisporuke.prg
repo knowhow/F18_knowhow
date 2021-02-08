@@ -1304,7 +1304,6 @@ STATIC FUNCTION xlsx_export_fill_row()
     AADD(aKolona, { "D", "Dat.fakt", 12, eisp->dat_fakt_pravi })
     AADD(aKolona, { "D", "Dat.FIN", 12, eisp->dat_fakt })
 
-
     AADD(aKolona, { "C", "Kupac naziv", 60, eisp->kup_naz })
     AADD(aKolona, { "C", "Kupac sjediste", 100, eisp->kup_sjediste })
     AADD(aKolona, { "C", "Kup. PDV", 12, eisp->kup_pdv })
@@ -1335,7 +1334,7 @@ STATIC FUNCTION xlsx_export_fill_row()
     AADD(aKolona, { "C", "P.Osl.Cl", 6, eisp->kup_osl_clan })
     
     IF s_pWorkSheet == NIL
-        
+
         s_pWorkBook := workbook_new( s_cXlsxName )
         s_pWorkSheet := workbook_add_worksheet(s_pWorkBook, NIL)
     

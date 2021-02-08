@@ -23,6 +23,7 @@ FUNCTION parametri_eIsporuke
     LOCAL cIdKontoPDVSchema := PadR( fetch_metric( "fin_eisp_idkonto_pdv_schema", NIL, "475" ), 7 )
     LOCAL cIdKontoPDVOstalo := PadR( fetch_metric( "fin_eisp_idkonto_pdv_ostalo", NIL, "478" ), 7 )
     LOCAL cNabExcludeIdvn := PadR( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,B3,PD" ), 100 )
+    LOCAL cNabIdvn05 := PadR( fetch_metric( "fin_enab_idvn_05", NIL, "05,06,07" ), 100 )
 
     Box(, 18, 80 )
 
@@ -46,8 +47,11 @@ FUNCTION parametri_eIsporuke
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Konto PDV ostalo                        " GET cIdKontoPDVOstalo VALID !Empty(cIdKontoPDVOstalo)
 
 
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji su isključuju iz generacije e-nabavki/isporuka"
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "(blagajna, izvodi, obračun PDV)" GET cNabExcludeIdvn PICTURE "@S35" 
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji su isključuju iz generacije eNabavki/eIsporuke"
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "(blagajna, izvodi, obračun PDV)" GET cNabExcludeIdvn PICTURE "@S35"
+
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji odredjuju ostale eNabavke/eIsporuke"
+       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "(tip 05)" GET cNabIdvn05 PICTURE "@S35" 
 
        READ
     BoxC()
@@ -69,6 +73,7 @@ FUNCTION parametri_eIsporuke
     set_metric( "fin_eisp_idkonto_pdv_schema", NIL, cIdKontoPDVSchema)
     set_metric( "fin_eisp_idkonto_pdv_ostalo", NIL, cIdKontoPDVOstalo)
     set_metric( "fin_enab_idvn_exclude", NIL, Trim(cNabExcludeIdvn))
+    set_metric( "fin_enab_idvn_05", NIL, Trim(cNabIdvn05) )
 
 
     RETURN .T.
@@ -410,12 +415,12 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
     LOCAL hNeimenovani := NIL
     LOCAL nIzvozPoFakturama
     LOCAL dDatFaktPravi
-    LOCAL cClan
-  
+    LOCAL cClan  
     //LOCAL cOpisIznosFaktureIzvoz := ""
 
     LOCAL cIdKontoKupac := trim(fetch_metric( "fin_eisp_idkonto_kup", NIL, '21'))
     LOCAL cIdKontoDobavljac := trim(fetch_metric( "fin_enab_idkonto_dob", NIL, '43'))
+    LOCAL cNabIdvn05 := PadR( fetch_metric( "fin_enab_idvn_05", NIL, "05,06,07" ), 100 )
     
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
     
@@ -446,7 +451,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "'' as JCI,"
         cSelectFields += "'UNDEF' as from_opis_pdv0_clan,"
         cSelectFields += "'UNDEF' as from_opis_dat_jci,"
-        cSelectFields += "'UNDEF' as from_opis_dat_fakt,"
+        cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-FAKT:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_fakt,"
         cSelectFields += "0 as JCI_IZN,"
         cSelectFields += "COALESCE(substring(sub2.opis from 'OSN-PDV17:\s*([-+\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
         cSelectFields += "fin_suban.idkonto as idkonto_pdv, sub2.idkonto as idkonto_kup, sub2.idpartner as idpartner, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
@@ -547,6 +552,9 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         hRec["fin_brnal"] := eisp->brnal
         hRec["fin_rbr"] := eisp->rbr
         hRec["kup_pdv0_clan"] := cClan
+        IF trim(hRec["br_fakt"]) == "ZAOST-2020"
+        altd()
+        endif
         set_datumi_eisporuke(@hRec)
 
         IF eisp->eisp_rbr <> -99999
@@ -740,7 +748,6 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             nOsnovicaDaPdvObveznik := eisp->bez_pdv - nOsnovicaPDV0Ostalo
             nDaPDVObveznikSaPDV := eisp->iznos_sa_pdv
             
-            altd()
             IF ROUND(eisp->from_opis_osn_pdv17, 2) <> -9999999.99
                 nOsnovicaDaPDVObveznik := eisp->from_opis_osn_pdv17
                 // u tom slucaju osnovica PDV0 ovisi o ovoj varijabli
@@ -765,6 +772,11 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
                        EXIT     
             ENDSWITCH
 
+        ENDIF
+
+        // ako se radi o vrsti naloga koji zelimo oznaciti u CSV kao tip '05'
+        IF eisp->idvn $ cNabIdvn05
+            cTipDokumenta2 := "05"
         ENDIF
 
         hRec["tip"] := cTipDokumenta2
@@ -964,6 +976,7 @@ STATIC FUNCTION set_datumi_eisporuke(hRec)
     // za izvoz faktura moze biti proslog mjeseca
     hRec["dat_fakt_pravi"] := eisp->datdok
     IF eisp->from_opis_dat_fakt <> "UNDEF"
+        altd()
         hRec["dat_fakt_pravi"] := CTOD(eisp->from_opis_dat_fakt)
     ENDIF
 

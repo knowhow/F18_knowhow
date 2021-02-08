@@ -142,7 +142,7 @@ FUNCTION get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
 FUNCTION check_eNabavke()
 
-    LOCAL nStep, cKonto
+    LOCAL nStep, cKonto, cPreskoci
     LOCAL cIdKontoDobav := PadR( fetch_metric( "fin_enab_idkonto_dob", NIL, "43" ), 7 )
     
     LOCAL cIdKontoPDV := PadR( fetch_metric( "fin_enab_idkonto_pdv", NIL, "270" ), 7 )
@@ -199,6 +199,8 @@ FUNCTION check_eNabavke()
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
+    cPreskoci := " and COALESCE(substring(fin_suban.opis from 'ENAB:\s*(PRESKOCI)'), '')<>'PRESKOCI'"
+    cPreskoci += " and not fin_suban.idvn in (" + cTmps + ")"
 
     FOR nStep := 1 TO 2 
         cSelectFields := "SELECT fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr, fin_suban.idkonto as idkonto, sub2.idkonto as idkonto2, fin_suban.brdok as brdok"
@@ -219,7 +221,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery += cPreskoci
         cQuery += " and " + cPartnerBrdokUslov
     
         // 2710 - uvoz
@@ -234,7 +236,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery2 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery2 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery2 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery2 += cPreskoci
         cQuery2 += " and " + cPartnerBrdokUslov
 
         // 2720 - avansi
@@ -249,7 +251,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery3 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery3 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery3 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery3 += cPreskoci
         cQuery3 += " and " + cPartnerBrdokUslov
 
         // 2730 - strana lica
@@ -264,7 +266,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery4 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery4 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery4 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery4 += cPreskoci
         cQuery4 += " and " + cPartnerBrdokUslov
 
         // 2740 - poljo
@@ -279,7 +281,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery5 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery5 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery5 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery5 += cPreskoci
         cQuery5 += " and " + cPartnerBrdokUslov
 
         // 2750 - posebna schema
@@ -294,7 +296,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery6 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery6 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery6 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery6 += cPreskoci
         cQuery6 += " and " + cPartnerBrdokUslov
 
         // 2780 - ostalo
@@ -309,7 +311,7 @@ FUNCTION check_eNabavke()
         ENDIF
         cQuery7 += " where fin_suban.idkonto like  '"  + cKonto + "%' and fin_suban.d_p='1'" 
         cQuery7 += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-        cQuery7 += " and not fin_suban.idvn in (" + cTmps + ")"
+        cQuery7 += cPreskoci
         cQuery7 += " and " + cPartnerBrdokUslov
 
     
@@ -346,7 +348,7 @@ FUNCTION check_eNabavke()
     cQuery := "select idvn,brnal,brdok from fmk.fin_suban"
     cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoDobav) + "%'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += cPreskoci
     cQuery += " group by idvn,brnal,brdok"
     cQuery += " having count(*) > 1"
 

@@ -4,7 +4,7 @@ STATIC s_cXlsxName := NIL
 STATIC s_pWorkBook, s_pWorkSheet, s_nWorkSheetRow
 STATIC s_pMoneyFormat, s_pDateFormat
 
-FUNCTION parametri_eIsporuke
+FUNCTION parametri_eIsporuke()
 
     LOCAL nX := 1
     LOCAL GetList := {}
@@ -82,8 +82,9 @@ FUNCTION parametri_eIsporuke
 
 FUNCTION check_eIsporuke()
 
-    LOCAL cIdKontoKupac := PadR( fetch_metric( "fin_eisp_idkonto_kup", NIL, "21" ), 7 )
+    LOCAL cPreskoci
 
+    LOCAL cIdKontoKupac := PadR( fetch_metric( "fin_eisp_idkonto_kup", NIL, "21" ), 7 )
 
     LOCAL cIdKontoPDV := trim( fetch_metric( "fin_eisp_idkonto_pdv", NIL, "470" ))
     LOCAL cIdKontoPDVAvansi := trim( fetch_metric( "fin_eisp_idkonto_pdv_a", NIL, "471"))
@@ -125,6 +126,10 @@ FUNCTION check_eIsporuke()
     set_metric( "fin_enab_dat_do", my_user(), dDatDo )
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
+    cPreskoci := " and not fin_suban.idvn in (" + cTmps + ")"
+    cPreskoci += " and COALESCE(substring(fin_suban.opis from 'EISP:\s*(PRESKOCI)'), '')<>'PRESKOCI'"
+
+
     cSelectFields := "SELECT fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr, fin_suban.idkonto as idkonto, sub2.idkonto as idkonto2,"
     cSelectFields += "fin_suban.BrDok brdok, sub2.brdok brdok2, fin_suban.idpartner"
     cFinNalogNalog2 := "fin_suban.idfirma=sub2.idfirma and fin_suban.idvn=sub2.idvn and fin_suban.brnal=sub2.brnal"
@@ -132,7 +137,7 @@ FUNCTION check_eIsporuke()
     // 470
     cQuery := cSelectFields
     cQuery += " from fmk.fin_suban "
-   
+
     
     cLeftJoinFin2 := " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and fin_suban.brdok=sub2.brdok" +;
       " and (sub2.idkonto like '" + Trim(cIdKontoPDV) +;
@@ -150,7 +155,7 @@ FUNCTION check_eIsporuke()
     cQuery += " left join fmk.partn on sub2.idpartner=partn.id"
     cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoKupac) + "%'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += cPreskoci
 
     // kupac duguje
     cQuery += " and fin_suban.d_p='1'"
@@ -193,7 +198,7 @@ FUNCTION check_eIsporuke()
     cQuery := "select idvn,brnal,brdok from fmk.fin_suban"
     cQuery += " where fin_suban.idkonto like  '"  + Trim(cIdKontoKupac) + "%'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
-    cQuery += " and not fin_suban.idvn in (" + cTmps + ")"
+    cQuery += cPreskoci
     cQuery += " group by idvn,brnal,brdok"
     cQuery += " having count(*) > 1"
 

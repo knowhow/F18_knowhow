@@ -602,6 +602,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL cBrDok
     LOCAL dDatFakt, dDatFaktPrij, dDatJCI, dDatJCIPrij
     LOCAL cIdKontoDobav := Trim( fetch_metric( "fin_enab_idkonto_dob", NIL, "43" ))
+    LOCAL cIdKontoKupac := Trim(fetch_metric( "fin_eisp_idkonto_kup", NIL, '21'))
     LOCAL hNal
     LOCAL cIdKontoPDV, cIdKontoPDVNP
     LOCAL cAlias := "ENAB"
@@ -656,7 +657,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     cQuery += " left join public.enabavke on fin_suban.idfirma=enabavke.fin_idfirma and fin_suban.idvn=enabavke.fin_idvn"
     cQuery += " and fin_suban.brnal=enabavke.fin_brnal and fin_suban.rbr=enabavke.fin_rbr and extract(year from  fin_suban.datdok)=extract(year from  enabavke.dat_fakt)"
  
-    cQuery += " WHERE fin_suban.idkonto like  '" + Trim(cIdKontoDobav) + "%'" 
+    IF lSchema
+        // ako je kooperant moze biti kupac potrazuje, ako je glavni izvodjac onda je dobavljac potrazuje 0
+        cQuery += " WHERE (fin_suban.idkonto like '" + Trim(cIdKontoDobav) + "%' or fin_suban.idkonto like '"   + Trim(cIdKontoKupac) + "%')"
+    ELSE
+        cQuery += " WHERE fin_suban.idkonto like '" + Trim(cIdKontoDobav) + "%'" 
+    ENDIF
+
     // dobavljac potrazuje, sub2.d_p, sub3.d_p duguje
     cQuery += " and fin_suban.d_p='2'"
     cQuery += " and fin_suban.datdok >= " + sql_quote(dDatOd) + " and fin_suban.datdok <= " + sql_quote(dDatDo)
@@ -1327,7 +1334,7 @@ FUNCTION gen_eNabavke()
       NIL, @hUkupno)
 
     // posebna schema u gradjevinarstvu
-    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVSchema, cIdKontoPDVSchemaNP, cNabExcludeIdvn, cNabIdvn05, .F., .F., .T., ;
+    gen_enabavke_stavke(@nRbr, dDatOd, dDatDo, cPorezniPeriod, "01", cIdKontoPDVSchema, cIdKontoPDVSchemaNP, cNabExcludeIdvn, cNabIdvn05, .F., .F., .T. /* lSchema */, ;
       NIL, @hUkupno)
 
     // poljoprivreda

@@ -143,7 +143,8 @@ FUNCTION get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 FUNCTION check_eNabavke()
 
     LOCAL nStep, cKonto, cPreskoci
-    LOCAL cIdKontoDobav := PadR( fetch_metric( "fin_enab_idkonto_dob", NIL, "43" ), 7 )
+    LOCAL cIdKontoDobav := Trim( fetch_metric( "fin_enab_idkonto_dob", NIL, "43" ))
+    LOCAL cIdKontoKupac := Trim(fetch_metric( "fin_eisp_idkonto_kup", NIL, '21'))
     
     LOCAL cIdKontoPDV := PadR( fetch_metric( "fin_enab_idkonto_pdv", NIL, "270" ), 7 )
     LOCAL cIdKontoPDVNP := PadR( fetch_metric( "fin_enab_idkonto_pdv_np", NIL, "27690" ), 7 )
@@ -192,7 +193,6 @@ FUNCTION check_eNabavke()
 
     // dobavljac - partner mora postojati, brdok mora postojati
     cPartnerBrdokUslov := "(sub2.idpartner is null or trim(sub2.idpartner)='' or trim(fin_suban.brdok)='')"
-
 
     set_metric( "fin_enab_dat_od", my_user(), dDatOd )
     set_metric( "fin_enab_dat_do", my_user(), dDatDo )
@@ -287,7 +287,10 @@ FUNCTION check_eNabavke()
         // 2750 - posebna schema
         cQuery6 := cSelectFields
         cQuery6 += " from fmk.fin_suban "
-        cQuery6 += cLeftJoinFin2
+        // u posebnoj schemi moze biti i dobavljac i kupac sa desne strane
+        cQuery6 += " left join fmk.fin_suban sub2 on " + cFinNalogNalog2 + " and " + cBrDokFinFin2
+        cQuery6 += " and (sub2.idkonto like '" + Trim(cIdKontoDobav) + "%' or sub2.idkonto like '" + Trim(cIdKontoKupac) + "%')"
+
         cQuery6 += " left join fmk.partn on sub2.idpartner=partn.id"
         IF nStep == 1
             cKonto := Trim(cIdKontoPDVSchema)

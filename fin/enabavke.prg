@@ -479,6 +479,10 @@ STATIC FUNCTION db_insert_enab( hRec )
         Alert("dat_fakt_prijem NULL " + hRec["fin_idfirma"] + "-" + hRec["fin_idvn"] + "-" + hRec["fin_brnal"] + "-" + AllTrim(Str(hRec["fin_rbr"])) )
     ENDIF
 
+    IF len(hRec["dob_pdv"]) > 12
+        Alert("PDV od "  + hRec["dob_naz"] + " ne kontam: " + hRec["dob_pdv"])
+    ENDIF
+    
     cQuery += "(enabavke_id, tip, porezni_period, br_fakt, jci, dat_fakt, dat_fakt_prijem,"
     cQuery += "dob_naz,dob_sjediste, dob_pdv, dob_jib,"
     cQuery += "fakt_iznos_bez_pdv, osn_pdv0, osn_pdv17, osn_pdv17np, fakt_iznos_sa_pdv, fakt_iznos_dob, fakt_iznos_poljo_pausal, fakt_iznos_pdv, fakt_iznos_pdv_np, fakt_iznos_pdv_np_32, fakt_iznos_pdv_np_33, fakt_iznos_pdv_np_34,"

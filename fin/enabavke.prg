@@ -38,6 +38,7 @@ FUNCTION parametri_eNabavke()
 
     LOCAL cNabExcludeIdvn := PadR( fetch_metric( "fin_enab_idvn_exclude", NIL, "I1,I2,IB,B1,B2,B3,PD" ), 100 )
     LOCAL cNabIdvn05 := PadR( fetch_metric( "fin_enab_idvn_05", NIL, "05,06,07" ), 100 )
+    LOCAL cShemaPatch1 := PadR( fetch_metric( "fin_enab_schema_patch_1", NIL, "N" ), 1 )
 
     LOCAL cEnabUvozSwitchKALK := PadR( fetch_metric( "fin_enab_uvoz_switch_kalk", NIL, "N" ), 1 )
 
@@ -74,8 +75,10 @@ FUNCTION parametri_eNabavke()
 
 
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "FIN nalozi koji odredjuju ostale eNabavke/eIsporuke"
-       @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "(tip 05)" GET cNabIdvn05 PICTURE "@S35" 
+       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "(tip 05)" GET cNabIdvn05 PICTURE "@S35" 
 
+       @ box_x_koord() + nX, COL() + 2 SAY8 "Posebna schema patch[1]  " GET cShemaPatch1 PICTURE "@!" VALID cShemaPatch1 $ "DN"
+       
        nX++
        @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Kontiranje KALK 10/uvoz zamijeniti sa FIN-gen enabavke (D/N):" GET cEnabUvozSwitchKALK ;
            PICTURE "@!" VALID cEnabUvozSwitchKALK $ "DN"
@@ -116,6 +119,7 @@ FUNCTION parametri_eNabavke()
     set_metric( "fin_enab_idvn_05", NIL, Trim(cNabIdvn05) )
 
     set_metric( "fin_enab_uvoz_switch_kalk", NIL, cEnabUvozSwitchKALK )
+    set_metric( "fin_enab_schema_patch_1", NIL, cShemaPatch1)
 
     RETURN .T.
 
@@ -610,6 +614,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL cIdKontoPDV, cIdKontoPDVNP
     LOCAL cAlias := "ENAB"
     LOCAL cPartnerNaziv, cPartnerSjediste
+    LOCAL cShemaPatch1 := fetch_metric( "fin_enab_schema_patch_1", NIL, "N" )
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
@@ -816,7 +821,6 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                hRec["dob_jib"] := cJib
             ENDIF
         ENDIF
-        hRec["tip"] := cTipDokumenta2
         hRec["dat_fakt"] := dDatFakt
         hRec["dat_fakt_prijem"] := dDatFaktPrij
         IF cTipDokumenta == "04"
@@ -868,6 +872,8 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         hRec["osn_pdv17np"] := nUndefined
 
         IF lSchema
+            // uplata na po posebnoj shemi je tip ostalo
+            cTipDokumenta2 := "05"
             hRec[ "osn_pdv17"] := 0
             hRec[ "osn_pdv17np"] := 0
         ELSE
@@ -955,9 +961,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                 
             ELSE
                 hRec["fakt_iznos_sa_pdv"] := hRec["fakt_iznos_bez_pdv"] + nPDVPosl + nPDVNP
+                IF cShemaPatch1 == "D"
+                    hRec["fakt_iznos_sa_pdv"] := 0
+                ENDIF
             ENDIF
         ENDIF
 
+        hRec["tip"] := cTipDokumenta2
         hRec["fin_idfirma"] := (cAlias)->idfirma
         hRec["fin_idvn"] := (cAlias)->idvn
         hRec["fin_brnal"] := (cAlias)->brnal

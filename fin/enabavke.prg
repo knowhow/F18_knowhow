@@ -619,6 +619,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL cAlias := "ENAB"
     LOCAL cPartnerNaziv, cPartnerSjediste
     LOCAL cShemaPatch1 := fetch_metric( "fin_enab_schema_patch_1", NIL, "N" )
+    LOCAL lZadanaOsnovica := .F.
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
@@ -875,6 +876,9 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
         hRec["osn_pdv17"] := nUndefined
         hRec["osn_pdv17np"] := nUndefined
 
+        // u opisu je zadana osnovica, npr OSN-PDV0: 0.0, OSN-PDV17NP: 100.00
+        lZadanaOsnovica := .F.
+
         IF lSchema
             // uplata na po posebnoj shemi je tip ostalo
             cTipDokumenta2 := "05"
@@ -884,11 +888,14 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             // osnovica PDV
             IF (cAlias)->from_opis_osn_pdv17 <> nUndefined
                 hRec["osn_pdv17"] := (cAlias)->from_opis_osn_pdv17
+                lZadanaOsnovica := .T.
             ELSE
                 hRec["osn_pdv17"] := ROUND((cAlias)->iznos_pdv / 0.17, 2)
             ENDIF
             IF (cAlias)->from_opis_osn_pdv17np <> nUndefined
                 hRec["osn_pdv17np"] := (cAlias)->from_opis_osn_pdv17np
+                altd()
+                lZadanaOsnovica := .T.
             ELSE
                 hRec["osn_pdv17np"] := ROUND((cAlias)->iznos_pdv_np / 0.17, 2)
             ENDIF
@@ -896,6 +903,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
 
         IF (cAlias)->from_opis_osn_pdv0 <> nUndefined
             hRec["osn_pdv0"] := (cAlias)->from_opis_osn_pdv0
+            lZadanaOsnovica := .T.
         ELSE
             IF cTipDokumenta == "04"
                 // stavka uvoza ne sadrzi PDV 0% osnovicu 
@@ -908,11 +916,16 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                    IF lSchema
                       hRec[ "osn_pdv0" ] := 0
                    ELSE
-                      // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
-                      hRec["osn_pdv0"] := ROUND((cAlias)->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17, 2)
-                      IF ABS(hRec["osn_pdv0"])*10 < 1
-                        // greske u zaokr
+                      IF lZadanaOsnovica
+                        // vec je zadana osnovica OSN-PDV17 ili OSN-PDV17NP
                         hRec["osn_pdv0"] := 0
+                      ELSE
+                        // proracun osnovice PDV0 na osnovu cijene sa PDV i ostalih osnovica
+                        hRec["osn_pdv0"] := ROUND((cAlias)->iznos_sa_pdv - hRec["osn_pdv17"] * 1.17 - hRec["osn_pdv17np"] * 1.17, 2)
+                        IF ABS(hRec["osn_pdv0"])*10 < 1
+                            // greske u zaokr
+                            hRec["osn_pdv0"] := 0
+                        ENDIF
                       ENDIF
                    ENDIF
                 ENDIF
@@ -965,7 +978,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                 
             ELSE
                 hRec["fakt_iznos_sa_pdv"] := hRec["fakt_iznos_bez_pdv"] + nPDVPosl + nPDVNP
-                IF cShemaPatch1 == "D"
+                IF lSchema .ANd. cShemaPatch1 == "D"
                     hRec["fakt_iznos_sa_pdv"] := 0
                 ENDIF
             ENDIF

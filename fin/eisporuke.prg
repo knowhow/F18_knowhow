@@ -557,9 +557,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         hRec["fin_brnal"] := eisp->brnal
         hRec["fin_rbr"] := eisp->rbr
         hRec["kup_pdv0_clan"] := cClan
-        IF trim(hRec["br_fakt"]) == "ZAOST-2020"
-        altd()
-        endif
+
         set_datumi_eisporuke(@hRec)
 
         IF eisp->eisp_rbr <> -99999
@@ -688,14 +686,24 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             ENDIF
 
             cClan := ""
+            nOsnovicaPDV0Ostalo := eisp->iznos_sa_pdv
             IF eisp->from_opis_pdv0_clan <> "UNDEF"
                 cClan := eisp->from_opis_pdv0_clan
                 IF cClan == "15" // isporuke stranim licima je tip '05'
                     cTipDokumenta2 := "05"
+                    nOsnovicaPDV0Ostalo := 0
+                    hRec["kup_pdv"] := ""
+                    hRec["kup_jib"] := "" 
+                    cJib := ""
+                    cPDVBroj := ""
+                    //dole ce biti navedeno
+                    //hRec["fakt_iznos_sa_pdv"] := eisp->iznos_sa_pdv
+                ELSE
+                    nOsnovicaPDV0Ostalo := eisp->iznos_sa_pdv
                 ENDIF
             ENDIF
             hRec["kup_pdv0_clan"] := cClan
-            nOsnovicaPDV0Ostalo := eisp->iznos_sa_pdv
+            
         
         ELSEIF cTipDokumenta == "02" .OR. cMjestoKrajnjePotrosnje $ "123"
             
@@ -796,7 +804,12 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         hRec["fakt_iznos_bez_pdv_np"] := nOsnovicaNePdvObveznik + nOsnovicaInterna
         hRec["fakt_iznos_pdv_np"] := nPDVNePDVObveznik + nPDVInterna
         
-        hRec["fakt_iznos_sa_pdv"] := (nOsnovicaDaPDVObveznik + nPDVDaPDVObveznik) + (nOsnovicaNePdvObveznik + nPDVNePDVObveznik)
+        IF hRec["kup_pdv0_clan"] == "15"
+           // usluge stranom licu, mjesto oporezivanja inostranostvo
+           hRec["fakt_iznos_sa_pdv"] := eisp->iznos_sa_pdv
+        ELSE
+           hRec["fakt_iznos_sa_pdv"] := (nOsnovicaDaPDVObveznik + nPDVDaPDVObveznik) + (nOsnovicaNePdvObveznik + nPDVNePDVObveznik)
+        ENDIF
 
         hRec["fakt_iznos_pdv_np_32"] := n32 
         hRec["fakt_iznos_pdv_np_33"] := n33
@@ -809,7 +822,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             cJib := ""
         ENDIF
 
-        IF cTipDokumenta == "04"
+        IF cTipDokumenta == "04" // izvoz
             nIzvozPoFakturama := 0
             DO WHILE .T.
                 // faktura izvoz
@@ -868,7 +881,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
             db_insert_eisp(hRec)
             csv_insert(cPorezniPeriod, cCSV, hRec, @hUkupno, @nRbr )
 
-        ELSE
+        ELSE // nije izvoz
 
             IF lMozeNeimenovaniKupac
                 IF !Empty(eisp->partn_id)
@@ -989,6 +1002,11 @@ STATIC FUNCTION set_datumi_eisporuke(hRec)
 
 STATIC FUNCTION hrec_cleanup(hRec)
     
+    IF hRec["tip"] == "05" .AND. hRec["kup_pdv"] == REPLICATE("0", 12)
+        // ino partner ali nije izvoz
+        hRec["kup_pdv"] := ""
+    ENDIF
+
     hRec["fakt_iznos_sa_pdv"]        := ROUND(hRec["fakt_iznos_sa_pdv"], 2)
     hRec["fakt_iznos_sa_pdv_interna"]:= ROUND(hRec["fakt_iznos_sa_pdv_interna"], 2)
     hRec["fakt_iznos_sa_pdv0_izvoz"] := ROUND(hRec["fakt_iznos_sa_pdv0_izvoz"], 2)
@@ -1302,7 +1320,6 @@ STATIC FUNCTION xlsx_export_fill_row()
     AADD(aKolona, { "N", "Rbr. isporuke", 10, eisp->eisporuke_id })
     AADD(aKolona, { "C", "Tip", 3, eisp->tip })
 
-    
     AADD(aKolona, { "C", "Por.Per", 8, eisp->porezni_period })
     AADD(aKolona, { "C", "Br.Fakt", 20, eisp->br_fakt })
     AADD(aKolona, { "C", "JCI", 10, eisp->jci })

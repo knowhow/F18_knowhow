@@ -620,6 +620,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
     LOCAL cPartnerNaziv, cPartnerSjediste
     LOCAL cShemaPatch1 := fetch_metric( "fin_enab_schema_patch_1", NIL, "N" )
     LOCAL lZadanaOsnovica := .F.
+    LOCAL lGreskaUZaokruzivanjuPDV0
 
     cTmps := get_sql_expression_exclude_idvns(cNabExcludeIdvn)
 
@@ -894,13 +895,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             ENDIF
             IF (cAlias)->from_opis_osn_pdv17np <> nUndefined
                 hRec["osn_pdv17np"] := (cAlias)->from_opis_osn_pdv17np
-                altd()
                 lZadanaOsnovica := .T.
             ELSE
                 hRec["osn_pdv17np"] := ROUND((cAlias)->iznos_pdv_np / 0.17, 2)
             ENDIF
         ENDIF
 
+        lGreskaUZaokruzivanjuPDV0 := .F.
         IF (cAlias)->from_opis_osn_pdv0 <> nUndefined
             hRec["osn_pdv0"] := (cAlias)->from_opis_osn_pdv0
             lZadanaOsnovica := .T.
@@ -925,6 +926,7 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                         IF ABS(hRec["osn_pdv0"])*10 < 1
                             // greske u zaokr
                             hRec["osn_pdv0"] := 0
+                            lGreskaUZaokruzivanjuPDV0 := .T.
                         ENDIF
                       ENDIF
                    ENDIF
@@ -932,7 +934,22 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
             ENDIF
         ENDIF
 
-        hRec["fakt_iznos_bez_pdv"] := hRec["osn_pdv17"] + hRec["osn_pdv17np"] + hRec["osn_pdv0"]
+        IF lGreskaUZaokruzivanjuPDV0
+            // ako je bilo greske u zaokuzivanju osnovice PDV 0%, onda se moze ocekivati ta greska kod osnovice PDV 17%
+            // zato se treba osloniti iskljucivo na iznos fakture sa PDV i iznos-om PDV-a
+            // ... a ne na matematiku proracuna osnovice
+            hRec["fakt_iznos_bez_pdv"] := (cAlias)->iznos_sa_pdv - nPDVNP - nPDVPosl
+            IF ROUND(nPDVNP, 2) == 0
+                // nema neposlovnog PDV-a
+                hRec["osn_pdv17"] := hRec["fakt_iznos_bez_pdv"]
+            ENDIF
+            IF ROUND(nPDVPosl, 2) == 0
+                // nema poslovnog PDV-a
+                hRec["osn_pdv17np"] := hRec["fakt_iznos_bez_pdv"]
+            ENDIF
+        ELSE
+            hRec["fakt_iznos_bez_pdv"] := hRec["osn_pdv17"] + hRec["osn_pdv17np"] + hRec["osn_pdv0"]
+        ENDIF
      
         // iznos fakture dobavljaca
         hRec["fakt_iznos_dob"] := (cAlias)->iznos_sa_pdv

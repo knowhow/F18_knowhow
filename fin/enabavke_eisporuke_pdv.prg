@@ -76,7 +76,7 @@ FUNCTION eNab_eIsp_PDV()
     use
 
     // uvoz tip=04, samo PDV po JCI
-    cQuery := "select sum(fakt_iznos_pdv + fakt_iznos_pdv_np) as iznos_pdv" 
+    cQuery := "select sum(fakt_iznos_pdv) as iznos_pdv" 
     cQuery += " FROM public.enabavke WHERE porezni_period=" + sql_quote(cPorezniPeriod)
     cQuery += " AND tip='04'"
     cQuery += " AND (idkonto like '" +  cIdKontoPDVUvoz + "%' OR idkonto_np like '" + cIdKontoPDVUvozNP + "%')"
@@ -85,7 +85,7 @@ FUNCTION eNab_eIsp_PDV()
     hPDV["42"] := enab->iznos_pdv
     use
     
-    // uvoz tip=04, osnovica na osnovu domaceg PDV-a unutar uvoza
+    // uvoz tip=04, osnovica na osnovu domaceg prometa speditera kod fakture uvoza (domaci PDV-a u fakturi speditera)
     cQuery := "select sum(fakt_iznos_pdv + fakt_iznos_pdv_np)/0.17 as osnovica_pdv" 
     cQuery += " FROM public.enabavke WHERE porezni_period=" + sql_quote(cPorezniPeriod)
     cQuery += " AND tip='04'"

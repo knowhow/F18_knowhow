@@ -980,7 +980,13 @@ STATIC FUNCTION gen_enabavke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipDo
                 IF nPDVNP > 0
                     hRec["osn_pdv17np"] := hRec["fakt_iznos_bez_pdv"]
                 ELSE
-                    hRec["osn_pdv17"] := hRec["fakt_iznos_bez_pdv"]
+                    IF ROUND(hNalog["osn_pdv17np_uvoz"], 2) > 0
+                        // neposlovni uvoz
+                        hRec["osn_pdv17np"] := hRec["fakt_iznos_bez_pdv"]
+                    ELSE
+                        // standardni poslovni uovz
+                        hRec["osn_pdv17"] := hRec["fakt_iznos_bez_pdv"]
+                    ENDIF
                 ENDIF
                 hNalog["osn_pdv17"] += hRec["osn_pdv17"]
                 hNalog["osn_pdv17np"] += hRec["osn_pdv17np"]
@@ -1537,7 +1543,7 @@ STATIC FUNCTION xlsx_export_fill_row()
         RETURN .T.
      
 /*
-  vrijednost nabavke bez uvoza, PDV prijava polje 21
+  vrijednost nabavke kod uvoza ali se odnosi na domaci promet speditera, PDV prijava polje 21
 */
 
 FUNCTION enab_pdv_prijava_21()
@@ -1555,7 +1561,7 @@ FUNCTION enab_pdv_prijava_21()
         IF LEFT(enab->idkonto, 3) == s_cIdKontoPDVUvoz
           return 0
         ELSE
-          // preracunato na osnovu PDV-a
+          // preracunato na osnovu PDV-a, odnosi se na domaci promet
           RETURN (enab->fakt_iznos_pdv + enab->fakt_iznos_pdv_np)/0.17
         ENDIF
     ENDIF

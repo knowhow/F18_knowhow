@@ -381,6 +381,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
                WHEN valid_rok_placanja( @nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "0", lFaktNoviRec ) ;
                VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "1", lFaktNoviRec )
             ++nX2
+            // datum valute
             @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Datum plaćanja :" GET hFaktTxt[ "datpl" ] ;
                VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "2", lFaktNoviRec )
 

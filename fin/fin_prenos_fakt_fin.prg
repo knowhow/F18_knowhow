@@ -16,6 +16,9 @@ FUNCTION fakt_fin_prenos()
    LOCAL nNV := 0, nFV := 0
    LOCAL nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTota, nTotb
    LOCAL cIdRjFakt
+   LOCAL hParamsFaktDoks := hb_hash()
+   LOCAL aMemo, dDatVal
+
 
    o_params()
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
@@ -120,16 +123,16 @@ FUNCTION fakt_fin_prenos()
    nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := 0
    DO WHILE !Eof()
 
-      cIdFirma := IdFirma
-      cBrDok := BrDok
-      cIdTipDok := IdTipdok
+      cIdFirma := fakt->IdFirma
+      cBrDok := fakt->BrDok
+      cIdTipDok := fakt->IdTipdok
 
       SELECT fakt
 
-      cIdPartner := idpartner
-      IF Empty( IdPartner )
+      cIdPartner := fakt->idpartner
+      IF Empty( fakt->IdPartner )
          Box(, 6, 66 )
-         aMemo := fakt_ftxt_decode( txt )
+         aMemo := fakt_ftxt_decode( fakt->txt )
          IF Len( aMemo ) >= 5
             @ box_x_koord() + 1, box_y_koord() + 2 SAY "FAKT broj:" + BrDOK
             @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -143,15 +146,38 @@ FUNCTION fakt_fin_prenos()
          BoxC()
       ENDIF
 
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdTipDok == IdTipDok
 
-         nFV := Cijena * Kolicina
-         nRabat := Cijena * kolicina * Rabat / 100
+      /*
+       SELECT(F_FAKT_DOKS)
+       hParamsFaktDoks["idfirma"] := fakt->idfirma
+       hParamsFaktDoks["idvn"] := fakt->idtipdok
+       hParamsFaktDoks["brdok"] := fakt->brdok
+       hParamsFaktDoks["area"] := F_FAKT_DOKS
+       hParamsFaktDoks["alias"] := "FAKT_DOKS"
+       hParamsFaktDoks["indeks"] := .F.
+       use_sql_fakt_doks( hParamsFaktDoks )
+       */
+      
+      SELECT FAKT
+
+      DO WHILE !Eof() .AND. cIdFirma == fakt->IdFirma .AND.  cBrDok == fakt->BrDok .AND. cIdTipDok == fakt->IdTipDok
+
+         nFV := fakt->Cijena * fakt->Kolicina
+         nRabat := fakt->Cijena * fakt->kolicina * fakt->Rabat / 100
 
          select_o_roba( FAKT->IdRoba )
          select_o_tarifa( roba->idtarifa )
          SELECT fakt
 
+         dDatVal := CTOD("")
+         IF Val(fakt->rbr) == 1 // prva stavka
+            aMemo := fakt_ftxt_decode( fakt->txt )
+            IF Len( aMemo ) >= 9
+               altd()
+               dDatVal := CTOD(aMemo[9])
+            ENDIF
+         ENDIF
+            
          nNV := 0
 /*
 
@@ -181,7 +207,9 @@ FUNCTION fakt_fin_prenos()
             Porez     WITH IIF( cIdVD <> "11", ( nFV - nRabat ) * fakt->( porez / 100 ), ;
             fakt_porez_11( nFV, nRabat ) ), ;
             idroba    WITH fakt->idroba, ;
-            Kolicina  WITH fakt->Kolicina
+            Kolicina  WITH fakt->Kolicina,;
+            DATFAKTP  WITH dDatVal
+         
 
             //POREZV    WITH IOF( cIdVD <> "11", Porez, fakt_porez_11( "PPU" ) ), ;
             //POREZ2    WITH IOF( cIdVD <> "11", 0,  fakt_porez_11( "PPP" ) ), ;
@@ -298,6 +326,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    LOCAL GetList := {}
    LOCAL cIdPartner, cIdKonto
    LOCAL cNePDV
+   LOCAL dDatVal
 
    // o_roba()
    O_FINMAT
@@ -363,7 +392,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
          SELECT trfp2
          SEEK cIdVD + " "
 
-         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema == " " .AND. !Eof()
+         DO WHILE !Empty( cBrNalF ) .AND. trfp2->idvd == cIDVD  .AND. trfp2->shema == " " .AND. !Eof()
 
             cStavka := Id
 
@@ -405,8 +434,10 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
                cIdKonto := PadR( cIdKonto, 7 )
                cIdPartner := Space( 6 )
+               dDatNal := CTOD("")
                IF trfp2->Partner == "1"  // stavi Partnera
                   cIdpartner := FINMAT->IdPartner
+                  dDatVal := FINMAT->DATFAKTP
                ELSEIF trfp2->Partner == "A"   // stavi  Lice koje se zaduz2
                   cIdpartner := PadR( cPartner1, 7 )
                ELSEIF trfp2->Partner == "B"   // stavi  Lice koje se zaduz2
@@ -492,6 +523,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   IdTipDok WITH FINMAT->IdVD, ;
                   BrDok    WITH cBrDok, ;
                   DatDok   WITH dDatDok, ;
+                  DatVal   WITH dDatVal, ;
                   opis     WITH trfp2->naz
 
                IF !fExist

@@ -289,7 +289,7 @@ FUNCTION fakt_ftxt_encode_5( hFaktTxt )
    cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datotp" ] ) + Chr( 17 )
    // 8 - br nar
    cTxt += Chr( 16 ) + hFaktTxt[ "brnar" ] + Chr( 17 )
-   // 9 - dat nar
+   // 9 - dat placanja
    cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datpl" ] ) + Chr( 17 )
    // 10
    cTxt += Chr( 16 ) + hFaktTxt[ "veza_otpremnice" ] + Chr( 17 )

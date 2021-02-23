@@ -445,7 +445,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'PDV0:\s*CLAN(\d+)'), 'UNDEF') as from_opis_pdv0_clan,"
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-JCI:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_jci,"
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-FAKT:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_fakt,"
-        cSelectFields += "COALESCE(substring(fin_suban.opis from 'JCI-IZN:\s*([\d.]+)')::DECIMAL, 0.0) as JCI_IZN,"
+        cSelectFields += "COALESCE(substring(fin_suban.opis from 'JCI-IZN:\s*([\d.\-]+)')::DECIMAL, 0.0) as JCI_IZN,"
         cSelectFields += "fin_suban.idkonto as idkonto_kup, fin_suban.idpartner as idpartner, '' as idkonto_pdv, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
         
     ELSE
@@ -458,7 +458,7 @@ STATIC FUNCTION gen_eisporuke_stavke(nRbr, dDatOd, dDatDo, cPorezniPeriod, cTipD
         cSelectFields += "'UNDEF' as from_opis_dat_jci,"
         cSelectFields += "COALESCE(substring(fin_suban.opis from 'DAT-FAKT:\s*([\d.]+)'), 'UNDEF') as from_opis_dat_fakt,"
         cSelectFields += "0 as JCI_IZN,"
-        cSelectFields += "COALESCE(substring(sub2.opis from 'OSN-PDV17:\s*([-+\d.]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
+        cSelectFields += "COALESCE(substring(sub2.opis from 'OSN-PDV17:\s*([-+\d.\-]+)')::DECIMAL, -9999999.99) as from_opis_osn_pdv17,"
         cSelectFields += "fin_suban.idkonto as idkonto_pdv, sub2.idkonto as idkonto_kup, sub2.idpartner as idpartner, fin_suban.idfirma, fin_suban.idvn, fin_suban.brnal, fin_suban.rbr,"
     ENDIF
 

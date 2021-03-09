@@ -633,7 +633,7 @@ METHOD F18Admin:f18_upd_download()
    info_bar( "upd", "download " +  ::update_app_info_file )
 
    MsgO( "preuzimanje podataka o aktuelnoj verziji ..." )
-   cUrl := f18_download_url() + "/"
+   cUrl := f18_check_version_url() + "/"
    IF !::wget_download( cUrl, ::update_app_info_file, cPath + ::update_app_info_file, _always_erase, _silent )
       MsgC()
       RETURN .F.
@@ -641,7 +641,7 @@ METHOD F18Admin:f18_upd_download()
 */
 
    info_bar( "upd", "download " +  ::update_app_script_file )
-   cUrl := f18_download_url() + "/scripts/"
+   cUrl := f18_check_version_url() + "/"
    IF !::wget_download( cUrl, ::update_app_script_file, cPath + ::update_app_script_file, _always_erase, _silent )
       MsgC()
       RETURN .F.

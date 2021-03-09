@@ -71,8 +71,8 @@
 #define F18_UTIL_VER  "1.0.0"
 #define F18_UTIL_URL_BASE "https://github.com/hernad/F18_util/releases/download/"
 #define F18_DOWNLOAD_URL_BASE "http://download.bring.out.ba/"
-//#define F18_VERSION_CHECK_BASE_URL "https://raw.github.com/knowhow/F18_knowhow/"
-#define F18_VERSION_CHECK_BASE_URL "http://download.bring.out.ba/F18_v3/"
+// "https://raw.github.com/knowhow/F18_knowhow/"
+#define F18_VERSION_CHECK_BASE_URL "http://download.bring.out.ba/F18_v3"
 
 
 #define INFO_MESSAGES_LENGTH       40

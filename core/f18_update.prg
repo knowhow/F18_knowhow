@@ -67,7 +67,7 @@ FUNCTION download_version( cUrl, lForceRefresh )
 
 PROCEDURE f18_update_available_version()
 
-   download_version( f18_download_url() + "/" + f18_version_file(), .T. )  // .T. - force refresh
+   download_version( f18_check_version_url() + "/" + f18_version_file(), .T. )  // .T. - force refresh
 
    RETURN
 
@@ -113,7 +113,7 @@ FUNCTION f18_preporuci_upgrade( cVersion )
       RETURN .F.
    ENDIF
 
-   cVersion := download_version( f18_download_url() + "/" + f18_version_file() )
+   cVersion := download_version( f18_check_version_url() + "/" + f18_version_file() )
 
    IF Empty( cVersion )
       cVersion := "0.0.0"
@@ -197,9 +197,10 @@ FUNCTION f18_varijanta_builtin()
     za Verzija=3 => "https://raw.github.com/knowhow/F18_knowhow/3"
 */
 
-FUNCTION f18_download_url()
+FUNCTION f18_check_version_url()
 
-   RETURN F18_VERSION_CHECK_BASE_URL + f18_verzija() + "-" + f18_varijanta()
+   //RETURN F18_VERSION_CHECK_BASE_URL + f18_verzija() + "-" + f18_varijanta()
+   RETURN F18_VERSION_CHECK_BASE_URL
 
 
 /*

@@ -49,7 +49,7 @@ FUNCTION fin_unos_naloga()
 
 FUNCTION fin_knjizenje_naloga()
 
-   LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
+   LOCAL cSeparator := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    LOCAL _w := 25
    LOCAL _d := f18_max_cols() - 6
    LOCAL _x_row := f18_max_rows() - 5
@@ -107,31 +107,31 @@ FUNCTION fin_knjizenje_naloga()
 
    _opt_d := ( _d / 4 ) - 1
 
-   aFinUnosOpcije := _upadr( " <c+N> Nova stavka", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <ENT> Ispravka", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <c+T> Briši stavku", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( " <c+N> Nova stavka", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <ENT> Ispravka", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <c+T> Briši stavku", _opt_d ) + cSeparator
    aFinUnosOpcije += _upadr( " <P> Povrat naloga", _opt_d )
 
    @ box_x_koord() + _x_row - 3, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   aFinUnosOpcije := _upadr( " <c+A> Ispravka stavki", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <c+P> Štampa naloga", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <a+A> Ažuriranje", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( " <c+A> Ispravka stavki", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <c+P> Štampa naloga", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <a+A> Ažuriranje", _opt_d ) + cSeparator
    aFinUnosOpcije += _upadr( " <X> Ažur.bez štampe", _opt_d )
 
    @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   aFinUnosOpcije := _upadr( iif( is_mac(), " <9>", " <c+F9>" ) + " Briši sve", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( iif( is_mac(), " <9>", " <c+F9>" ) + " Briši sve", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <F5> Kontrola zbira", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <a+F5> Pr.dat", _opt_d ) + cSeparator
    aFinUnosOpcije += _upadr( " <a+B> Blagajna", _opt_d )
 
    @ box_x_koord() + _x_row - 1, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   aFinUnosOpcije := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <F9> sredi Rbr.", _opt_d ) + _sep
-   aFinUnosOpcije += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( " <a+T> Briši po uslovu", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <B> odredi broj dokumenta", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <F9> sredi Rbr.", _opt_d ) + cSeparator
+   aFinUnosOpcije += _upadr( " <F10> Ostale opcije", _opt_d ) + cSeparator
 
 
    @ box_x_koord() + _x_row, box_y_koord() + 2 SAY8 aFinUnosOpcije

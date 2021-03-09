@@ -199,7 +199,7 @@ FUNCTION f18_varijanta_builtin()
 
 FUNCTION f18_download_url()
 
-   RETURN F18_GITHUB_DOWNLOAD_BASE_URL + f18_verzija() + "-" + f18_varijanta()
+   RETURN F18_VERSION_CHECK_BASE_URL + f18_verzija() + "-" + f18_varijanta()
 
 
 /*

@@ -696,7 +696,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
    cCmd := "wget "
 
 // #ifdef __PLATFORM__WINDOWS
-   cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
+   cCmd += " -q  --tries=2 --timeout=3  --no-cache --no-check-certificate "
 // #endif
 
    cCmd += cUrl + cFileName // http://test.com/FILE
